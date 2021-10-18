@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel = "stylesheet" th:href = "@{/css/styleLogin.css}" href = "../static/css/styleLogin.css" >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@300;500&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <div class = "main">
+        <form
+                class = "form"
+                method = "POST"
+                th:action = "@{/login-check}"
+        >
+            <h1 class = "form__title">Sign In</h1>
+            <div class = "form__container">
+                <label 
+                    for = "username" 
+                    class = "form__label"
+                >
+                    <img 
+                        th:src = @{/icons/username.svg}
+                        src="../static/icons/username.svg" 
+                        class = "form__icon"
+                    >
+                </label>
+                <input 
+                    type = "email"
+                    name = "username" 
+                    id = "username" 
+                    class = "form__input" 
+                    placeholder = "username"
+                >
+            </div>
+            <div class = "form__container">
+                <label 
+                    for = "password" 
+                    class = "form__label"
+                >
+                    <img 
+                        th:src = @{/icons/password.svg}
+                        src = "../static/icons/password.svg" 
+                        class = "form__icon"
+                    >
+                </label>
+                <input
+                        type = "password"
+                        name = "password"
+                        id = "password"
+                        class = "form__input"
+                        placeholder = "password"
+                >
+            </div>
+            <div
+                    th:if="${error.get('email')!=null}" style = "display:block"
+                    class = "form__container--error"
+            >
+                <p th:text = "${error!=null}? ${error.get('email')}: ''" class = "form__error">Error Sus credenciales son
+                incorrectas</p>
+            </div>
+            <div
+                    th:if="${error.get('locked')!=null}" style = "display:block"
+                    class = "form__container--error"
+            >
+                <p th:text = "${error!=null}? ${error.get('locked')}: ''" class = "form__error">Error Sus credenciales
+                    son
+                    incorrectas</p>
+            </div>
+            <div
+                    th:if="${error.get('password')!=null}" style = "display:block"
+                    class = "form__container--error"
+            >
+                <p th:text = "${error!=null}? ${error.get('password')}: ''" class = "form__error">Error Sus credenciales
+                    son
+                    incorrectas</p>
+            </div>
+            <div class = "form__container">
+                <input 
+                    type = "submit" 
+                    id = "loginbutton"
+                    value = "Login" 
+                    class = "form__button"
+                >
+            </div>
+            <div class = "form__container--option">
+                <a class = "form__href" href = "#" >¿Olvidaste tu Contraseña?</a>
+                <a class = "form__href" href = "#" >Desbloquear Usuario</a>
+            </div>
+            <div class = "form__container">
+                <a
+                        id = "signup"
+                        href = "#"
+                        class = "form__button form__href"
+                        style="padding-top: 15px"
+                >
+                    Sign Up
+                </a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

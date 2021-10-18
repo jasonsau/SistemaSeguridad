@@ -45,6 +45,7 @@ public class UserEmployee implements UserDetails {
     private boolean blocked;
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+    private int attempts;
 
     public UserEmployee(String userNameEmployee,
                         Employee employee,

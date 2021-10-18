@@ -26,7 +26,7 @@ public class UserEmployeeConfig {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Bean
-    CommandLineRunner commandLineRunner(UserRepository userRepository,
+    CommandLineRunner commandLineRunner(UserEmployeeRepository userEmployeeRepository,
                                         EmployeeRepository employeeRepository,
                                         WorkStationRepository workStationRepository,
                                         AddressRepository addressRepository,
@@ -75,7 +75,7 @@ public class UserEmployeeConfig {
             workStationRepository.save(workStation);
             gendersRepository.saveAll(List.of(masculino, femenino));
             employeeRepository.save(jason);
-            userRepository.save(userEmployeeJason);
+            userEmployeeRepository.save(userEmployeeJason);
         };
     }
 }

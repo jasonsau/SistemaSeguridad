@@ -1,6 +1,8 @@
 package com.example.demo.security.config;
 
-import com.example.demo.user.UserService;
+import com.example.demo.login.FailureHandler;
+import com.example.demo.login.SuccessHandler;
+import com.example.demo.user.UserEmployeeService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @AllArgsConstructor
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-private final UserService userService;
+    private final SuccessHandler successHandler;
+    private final FailureHandler failureHandler;
+    private final UserEmployeeService userEmployeeService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
@@ -23,13 +27,17 @@ private final UserService userService;
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/**")
+                .antMatchers("/login", "/css/**", "/icons/**")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .formLogin()
-                .defaultSuccessUrl("/home");
+                .loginPage("/login")
+                .loginProcessingUrl("/login-check")
+                .defaultSuccessUrl("/home")
+                .failureHandler(failureHandler)
+                .successHandler(successHandler);
     }
 
     @Override
@@ -41,7 +49,8 @@ private final UserService userService;
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(bCryptPasswordEncoder);
-        provider.setUserDetailsService(userService);
+        provider.setUserDetailsService(userEmployeeService);
+        provider.setHideUserNotFoundExceptions(false);
         return provider;
     }
 }
