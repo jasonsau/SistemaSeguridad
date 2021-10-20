@@ -13,7 +13,7 @@ import javax.mail.internet.MimeMessage;
 @AllArgsConstructor
 public class Email {
 
-    private final JavaMailSender mailSender;
+    private JavaMailSender mailSender;
 
     public static final String ACCOUNTLOCKED = "<h1>Recursos Humanos</h1>\n <h2>Cuenta Bloqueada</h2> \n " +
             "<p>Lamentamos" +

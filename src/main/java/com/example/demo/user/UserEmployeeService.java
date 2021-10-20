@@ -27,6 +27,13 @@ public class UserEmployeeService implements UserDetailsService {
     public Optional<UserEmployee> findByEmail(String email) {
         return userEmployeeRepository.findByEmail(email);
     }
+    public Optional<UserEmployee> findByIdUser(Long idUser) {
+        return userEmployeeRepository.findById(idUser);
+    }
+
+    public Optional<UserEmployee> findByUsername(String username) {
+        return userEmployeeRepository.findByUsername(username);
+    }
 
     public int updateUserAttempts(String email) {
         int response = 0;
@@ -53,4 +60,5 @@ public class UserEmployeeService implements UserDetailsService {
     public void restartAttempts(Long idUser) {
         userEmployeeRepository.restartAttempts(idUser);
     }
+
 }

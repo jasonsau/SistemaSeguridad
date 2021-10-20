@@ -40,24 +40,29 @@ public class UserEmployee implements UserDetails {
 
 
     private String userNameEmployee;
-    private String password;
+    private String passwordUserEmployee;
     private boolean enabled;
     private boolean blocked;
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
     private int attempts;
+    private boolean temporaryPassword;
+    private boolean isDoubleAuthenticator;
+    private String secretKeyGoogleAuthenticator;
 
     public UserEmployee(String userNameEmployee,
                         Employee employee,
                         boolean enabled,
                         boolean blocked,
-                        String password,
+                        String passwordUserEmployee,
+                        boolean temporaryPassword,
                         UserRole userRole) {
         this.userNameEmployee = userNameEmployee;
         this.employee = employee;
         this.enabled = enabled;
         this.blocked = blocked;
-        this.password = password;
+        this.passwordUserEmployee = passwordUserEmployee;
+        this.temporaryPassword = temporaryPassword;
         this.userRole = userRole;
     }
 
@@ -69,7 +74,7 @@ public class UserEmployee implements UserDetails {
 
     @Override
     public String getPassword() {
-        return password;
+        return passwordUserEmployee;
     }
 
     @Override
@@ -95,5 +100,16 @@ public class UserEmployee implements UserDetails {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public boolean getTemporaryPassword() {
+        return temporaryPassword;
+    }
+    public boolean getIsDoubleAuthenticator() {
+        return isDoubleAuthenticator;
+    }
+
+    public void setIsDoubleAuthenticator(boolean isDoubleAuthenticator) {
+        this.isDoubleAuthenticator = isDoubleAuthenticator;
     }
 }

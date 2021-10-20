@@ -56,25 +56,27 @@
                 >
             </div>
             <div
-                    th:if="${error.get('email')!=null}" style = "display:block"
-                    class = "form__container--error"
+                    th:if="${error.get('errorUser')!=null}" style = "display:block"
+                    class = "form__container&#45;&#45;error"
             >
-                <p th:text = "${error!=null}? ${error.get('email')}: ''" class = "form__error">Error Sus credenciales son
+                <p th:text = "${error!=null}? ${error.get('errorUser')}: ''" class = "form__error">Error Sus
+                    credenciales son
                 incorrectas</p>
             </div>
             <div
                     th:if="${error.get('locked')!=null}" style = "display:block"
-                    class = "form__container--error"
+                    class = "form__container&#45;&#45;error"
             >
                 <p th:text = "${error!=null}? ${error.get('locked')}: ''" class = "form__error">Error Sus credenciales
                     son
                     incorrectas</p>
             </div>
             <div
-                    th:if="${error.get('password')!=null}" style = "display:block"
-                    class = "form__container--error"
+                    th:if="${error.get('errorPassword')!=null}" style = "display:block"
+                    class = "form__container&#45;&#45;error"
             >
-                <p th:text = "${error!=null}? ${error.get('password')}: ''" class = "form__error">Error Sus credenciales
+                <p th:text = "${error!=null}? ${error.get('errorPassword')}: ''" class = "form__error">Error Sus
+                    credenciales
                     son
                     incorrectas</p>
             </div>

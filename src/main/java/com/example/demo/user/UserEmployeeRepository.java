@@ -28,4 +28,6 @@ public interface UserEmployeeRepository extends JpaRepository<UserEmployee, Long
     void restartAttempts(Long id);
 
 
+    @Query("SELECT u FROM UserEmployee u WHERE u.userNameEmployee = ?1")
+    Optional<UserEmployee> findByUsername(String username);
 }

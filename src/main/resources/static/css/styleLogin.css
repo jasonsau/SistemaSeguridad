@@ -14,7 +14,7 @@ body {
     width: 100vw;
     height: 100vh;
     color: white;
-    font-family: 'Alegreya Sans';
+    font-family: "Alegreya Sans";
 }
 
 .main {
@@ -143,4 +143,3 @@ body {
     text-decoration: none;
     text-align: center;
 }
-

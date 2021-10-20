@@ -24,6 +24,7 @@ public class PasswordHistory {
             strategy = GenerationType.SEQUENCE,
             generator = "password_history_sequence"
     )
+    private Long id;
     private LocalDateTime createAt;
     private LocalDateTime expiredAt;
 
@@ -33,13 +34,16 @@ public class PasswordHistory {
             name = "id_user_password_history"
     )
     private UserEmployee userEmployee;
+    private String userEmployeePasswordHistory;
 
     public PasswordHistory(LocalDateTime createAt,
                            LocalDateTime expiredAt,
-                           UserEmployee userEmployee) {
+                           UserEmployee userEmployee,
+                           String userEmployeePasswordHistory) {
         this.createAt = createAt;
         this.expiredAt = expiredAt;
         this.userEmployee = userEmployee;
+        this.userEmployeePasswordHistory = userEmployeePasswordHistory;
     }
 
 }

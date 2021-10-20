@@ -10,6 +10,8 @@ import com.example.demo.genders.Genders;
 import com.example.demo.genders.GendersRepository;
 import com.example.demo.municipality.Municipality;
 import com.example.demo.municipality.MunicipalityRepository;
+import com.example.demo.paswword.PasswordHistory;
+import com.example.demo.paswword.PasswordHistoryRepository;
 import com.example.demo.workstation.WorkStation;
 import com.example.demo.workstation.WorkStationRepository;
 import lombok.AllArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Configuration
@@ -32,7 +35,8 @@ public class UserEmployeeConfig {
                                         AddressRepository addressRepository,
                                         GendersRepository gendersRepository,
                                         MunicipalityRepository municipalityRepository,
-                                        DepartamentRepository departamentRepository) {
+                                        DepartamentRepository departamentRepository,
+                                        PasswordHistoryRepository passwordHistoryRepository) {
         return args -> {
 
             Genders masculino = new Genders("Masculino");
@@ -65,9 +69,17 @@ public class UserEmployeeConfig {
                     jason,
                     true,
                     false,
-                    bCryptPasswordEncoder.encode("password").toString(),
+                    bCryptPasswordEncoder.encode( "password").toString(),
+                    false,
                     UserRole.ADMIN
                     );
+            userEmployeeJason.setSecretKeyGoogleAuthenticator("PM23CN6VVDAAL52L364N5SBM6AEDNGZJ");
+            userEmployeeJason.setIsDoubleAuthenticator(true);
+
+            PasswordHistory passwordHistoryJason = new PasswordHistory(LocalDateTime.now(),
+                    LocalDateTime.now().plusMinutes(15),
+                    userEmployeeJason,
+                    userEmployeeJason.getPasswordUserEmployee());
 
             departamentRepository.save(departamentJason);
             municipalityRepository.save(municipalityJason);
@@ -76,6 +88,7 @@ public class UserEmployeeConfig {
             gendersRepository.saveAll(List.of(masculino, femenino));
             employeeRepository.save(jason);
             userEmployeeRepository.save(userEmployeeJason);
+            passwordHistoryRepository.save(passwordHistoryJason);
         };
     }
 }
