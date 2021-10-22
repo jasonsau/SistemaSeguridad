@@ -11,19 +11,14 @@ import org.springframework.web.servlet.ModelAndView;
 public class UserEmployeeController {
 
     @GetMapping("home")
-    public ModelAndView homeView(Authentication auth) {
-        String nombreUser = auth.getName();
-        System.out.println(auth);
-        System.out.println(nombreUser);
+    public ModelAndView homeView() {
         ModelAndView model = new ModelAndView();
-        model.addObject("user",nombreUser);
         model.setViewName("home");
         return model;
     }
 
     @GetMapping("password/changePassword")
-    public ModelAndView changePassword(Authentication authentication) {
-        System.out.println(authentication.getName());
+    public ModelAndView changePassword() {
         return new ModelAndView("/password/changePassword");
     }
 }

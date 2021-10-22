@@ -2,9 +2,6 @@ package com.example.demo.user;
 
 
 import com.example.demo.employee.Employee;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,12 +10,10 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
 
-@Getter
-@Setter
-@NoArgsConstructor
 @Entity
 public class UserEmployee implements UserDetails {
 
+    //Attributes
     @Id
     @SequenceGenerator(
             name = "user_sequence",
@@ -50,6 +45,7 @@ public class UserEmployee implements UserDetails {
     private boolean isDoubleAuthenticator;
     private String secretKeyGoogleAuthenticator;
 
+    //Constructs
     public UserEmployee(String userNameEmployee,
                         Employee employee,
                         boolean enabled,
@@ -65,7 +61,9 @@ public class UserEmployee implements UserDetails {
         this.temporaryPassword = temporaryPassword;
         this.userRole = userRole;
     }
+    public UserEmployee() {}
 
+    //Getters and Setters
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole.name());
@@ -111,5 +109,77 @@ public class UserEmployee implements UserDetails {
 
     public void setIsDoubleAuthenticator(boolean isDoubleAuthenticator) {
         this.isDoubleAuthenticator = isDoubleAuthenticator;
+    }
+
+    public Long getIdUser() {
+        return idUser;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public void setUserNameEmployee(String userNameEmployee) {
+        this.userNameEmployee = userNameEmployee;
+    }
+
+    public void setPasswordUserEmployee(String passwordUserEmployee) {
+        this.passwordUserEmployee = passwordUserEmployee;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
+    }
+
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
+    }
+
+    public int getAttempts() {
+        return attempts;
+    }
+
+    public void setAttempts(int attempts) {
+        this.attempts = attempts;
+    }
+
+    public boolean isTemporaryPassword() {
+        return temporaryPassword;
+    }
+
+    public void setTemporaryPassword(boolean temporaryPassword) {
+        this.temporaryPassword = temporaryPassword;
+    }
+
+    public boolean isDoubleAuthenticator() {
+        return isDoubleAuthenticator;
+    }
+
+    public void setDoubleAuthenticator(boolean doubleAuthenticator) {
+        isDoubleAuthenticator = doubleAuthenticator;
+    }
+
+    public String getSecretKeyGoogleAuthenticator() {
+        return secretKeyGoogleAuthenticator;
+    }
+
+    public void setSecretKeyGoogleAuthenticator(String secretKeyGoogleAuthenticator) {
+        this.secretKeyGoogleAuthenticator = secretKeyGoogleAuthenticator;
     }
 }

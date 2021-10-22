@@ -1,6 +1,5 @@
 package com.example.demo;
 
-import lombok.AllArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -10,10 +9,14 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 @Service
-@AllArgsConstructor
 public class Email {
 
-    private JavaMailSender mailSender;
+    private final JavaMailSender javaMailSender;
+
+    public Email(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
+    }
+
 
     public static final String ACCOUNTLOCKED = "<h1>Recursos Humanos</h1>\n <h2>Cuenta Bloqueada</h2> \n " +
             "<p>Lamentamos" +
@@ -24,13 +27,13 @@ public class Email {
     @Async
     public String sendEmailLocker(String email) {
         try {
-            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
             helper.setText(ACCOUNTLOCKED, true);
             helper.setTo(email);
             helper.setSubject("Cuenta Bloqueada");
             helper.setFrom("admin@recursoshumanos.com");
-            mailSender.send(mimeMessage);
+            javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
             throw new IllegalStateException("Error al enviar el email");
         }

@@ -5,8 +5,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PasswordHistoryService {
-    @Autowired
-    PasswordHistoryRepository passwordHistoryRepository;
+
+    private final PasswordHistoryRepository  passwordHistoryRepository;
+
+    public PasswordHistoryService(PasswordHistoryRepository passwordHistoryRepository) {
+        this.passwordHistoryRepository = passwordHistoryRepository;
+    }
 
     public void savePasswordHistory(PasswordHistory passwordHistory) {
          passwordHistoryRepository.save(passwordHistory);

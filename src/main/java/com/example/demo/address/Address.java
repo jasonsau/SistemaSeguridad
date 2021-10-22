@@ -1,19 +1,21 @@
 package com.example.demo.address;
 
 import com.example.demo.municipality.Municipality;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Id;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.ManyToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.Entity;
+import javax.persistence.GenerationType;
 
 
-@Getter
-@Setter
 @Entity
-@NoArgsConstructor
 public class Address {
 
+    //Attributes
     @Id
     @SequenceGenerator(
             name = "address_sequence",
@@ -45,6 +47,7 @@ public class Address {
     )
     private Municipality nameMunicipality;
 
+    //Constructors
     public Address(String streetAddress,
                    String neighbourhoodAddress,
                    int numberHouse,
@@ -55,4 +58,48 @@ public class Address {
         this.numberHouse = numberHouse;
         this.nameMunicipality = nameMunicipality;
     }
+    public Address() {}
+
+    //Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getStreetAddress() {
+        return streetAddress;
+    }
+
+    public void setStreetAddress(String streetAddress) {
+        this.streetAddress = streetAddress;
+    }
+
+    public String getNeighbourhoodAddress() {
+        return neighbourhoodAddress;
+    }
+
+    public void setNeighbourhoodAddress(String neighbourhoodAddress) {
+        this.neighbourhoodAddress = neighbourhoodAddress;
+    }
+
+    public int getNumberHouse() {
+        return numberHouse;
+    }
+
+    public void setNumberHouse(int numberHouse) {
+        this.numberHouse = numberHouse;
+    }
+
+    public Municipality getNameMunicipality() {
+        return nameMunicipality;
+    }
+
+    public void setNameMunicipality(Municipality nameMunicipality) {
+        this.nameMunicipality = nameMunicipality;
+    }
+
+
 }

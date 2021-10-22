@@ -16,7 +16,7 @@ import java.net.URLEncoder;
 import java.security.SecureRandom;
 
 @Service
-public class TwoFactorGoogleAuthenticatorService {
+public class TwoFactorService {
 
     //Crear una llave secreta para cada usuario para despues generar
     //los codigos otp

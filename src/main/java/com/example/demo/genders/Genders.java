@@ -1,14 +1,13 @@
 package com.example.demo.genders;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.GenerationType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Column;
 
-import javax.persistence.*;
 
-@Getter
-@Setter
-@NoArgsConstructor
 @Entity
 public class Genders {
 
@@ -29,6 +28,26 @@ public class Genders {
     private String nameGenders;
 
     public Genders(String nameGenders) {
+        this.nameGenders = nameGenders;
+    }
+
+    public Genders() {}
+
+    //Getters and Setters
+
+    public Long getIdGenders() {
+        return idGenders;
+    }
+
+    public void setIdGenders(Long idGenders) {
+        this.idGenders = idGenders;
+    }
+
+    public String getNameGenders() {
+        return nameGenders;
+    }
+
+    public void setNameGenders(String nameGenders) {
         this.nameGenders = nameGenders;
     }
 }

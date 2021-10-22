@@ -1,15 +1,8 @@
 package com.example.demo.workstation;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import javax.persistence.*;
 
-@Getter
-@Setter
 @Entity
-@NoArgsConstructor
 public class WorkStation {
 
     @Id
@@ -32,4 +25,17 @@ public class WorkStation {
         this.nameWorkStation = nameWorkStation;
     }
 
+    public WorkStation() {}
+
+    public Long getIdWorkStation() {
+        return idWorkStation;
+    }
+
+    public String getNameWorkStation() {
+        return nameWorkStation;
+    }
+
+    public void setNameWorkStation(String nameWorkStation) {
+        this.nameWorkStation = nameWorkStation;
+    }
 }

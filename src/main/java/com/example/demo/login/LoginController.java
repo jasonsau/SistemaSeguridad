@@ -3,14 +3,8 @@ package com.example.demo.login;
 import com.example.demo.Email;
 import com.example.demo.user.UserEmployee;
 import com.example.demo.user.UserEmployeeService;
-import lombok.AllArgsConstructor;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -18,25 +12,31 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 @Controller
 @RequestMapping("/")
-@AllArgsConstructor
 public class LoginController {
 
     private final UserEmployeeService userEmployeeService;
     private final Email email;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    public LoginController(UserEmployeeService userEmployeeService,
+                           Email email,
+                           BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.userEmployeeService = userEmployeeService;
+        this.email = email;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
     @GetMapping("/login")
     public String loginView(Model model,
                             @RequestParam(name = "error", required = false) String error){
 
-        Map<String, String> messagesError = new HashMap<String, String>();
+        Map<String, String> messagesError = new HashMap<>();
 
         if(error!=null){
             if(Integer.parseInt(error) == 1 ) {
@@ -55,14 +55,13 @@ public class LoginController {
 
     @PostMapping("/login-check")
     public ModelAndView loginCheck(@RequestParam(name = "username", required = true) String username,
-                                   @RequestParam(name = "password", required = true) String password,
-                                   HttpSession httpSession){
+                                   @RequestParam(name = "password", required = true) String password){
 
         boolean locked = false;
         ModelAndView modelAndView = new ModelAndView();
         Optional<UserEmployee> userEmployee = userEmployeeService.findByEmail(username);
         if(userEmployee.isPresent()) {
-            boolean correct = bCryptPasswordEncoder.matches(password, userEmployee.get().getPasswordUserEmployee());
+            boolean correct = bCryptPasswordEncoder.matches(password, userEmployee.get().getPassword());
             if(correct) {
                 if(userEmployee.get().getIsDoubleAuthenticator()) {
                     return new ModelAndView("redirect:/authentication/"+userEmployee.get().getIdUser());
@@ -90,12 +89,11 @@ public class LoginController {
     }
 
     private Authentication getAuthentication(UserEmployee userEmployee){
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                userEmployee.getUserNameEmployee(),
-                userEmployee.getPasswordUserEmployee(),
+        return new UsernamePasswordAuthenticationToken(
+                userEmployee.getUsername(),
+                userEmployee.getPassword(),
                 userEmployee.getAuthorities()
         );
-        return authentication;
     }
 
 }

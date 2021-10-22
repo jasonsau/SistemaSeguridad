@@ -1,27 +1,27 @@
 package com.example.demo.user;
 
-import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
 public class UserEmployeeService implements UserDetailsService {
 
     private final UserEmployeeRepository userEmployeeRepository;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public UserEmployeeService(UserEmployeeRepository userEmployeeRepository) {
+        this.userEmployeeRepository = userEmployeeRepository;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        UserEmployee userEmployee =  userEmployeeRepository.findByEmail(email)
+        return userEmployeeRepository.findByEmail(email)
                 .orElseThrow( () ->
                     new UsernameNotFoundException(String.format("No se ha encontrado el %s", email))
                 );
-        return userEmployee;
     }
 
     public Optional<UserEmployee> findByEmail(String email) {

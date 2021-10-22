@@ -14,7 +14,6 @@ import com.example.demo.paswword.PasswordHistory;
 import com.example.demo.paswword.PasswordHistoryRepository;
 import com.example.demo.workstation.WorkStation;
 import com.example.demo.workstation.WorkStationRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,9 +23,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Configuration
-@AllArgsConstructor
 public class UserEmployeeConfig {
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public UserEmployeeConfig(BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
 
     @Bean
     CommandLineRunner commandLineRunner(UserEmployeeRepository userEmployeeRepository,
@@ -79,7 +81,7 @@ public class UserEmployeeConfig {
             PasswordHistory passwordHistoryJason = new PasswordHistory(LocalDateTime.now(),
                     LocalDateTime.now().plusMinutes(15),
                     userEmployeeJason,
-                    userEmployeeJason.getPasswordUserEmployee());
+                    userEmployeeJason.getPassword());
 
             departamentRepository.save(departamentJason);
             municipalityRepository.save(municipalityJason);

@@ -4,18 +4,19 @@ package com.example.demo.employee;
 import com.example.demo.address.Address;
 import com.example.demo.genders.Genders;
 import com.example.demo.workstation.WorkStation;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Column;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
 public class Employee {
 
+    //Attributes
     @Id
     @SequenceGenerator(
             name = "employee_sequence",
@@ -83,6 +84,7 @@ public class Employee {
     )
     private Address addressEmployee;
 
+    //Constructors
     public Employee(String firstNameEmployee,
                     String lastNameEmployee,
                     String duiEmployee,
@@ -104,6 +106,102 @@ public class Employee {
         this.cellPhoneEmployee = cellPhoneEmployee;
         this.workStationEmployee = workStationEmployee;
         this.gendersEmployee = gendersEmployee;
+        this.addressEmployee = addressEmployee;
+    }
+
+    public Employee() {}
+
+    //Getters and Setters
+
+    public Long getIdEmployee() {
+        return idEmployee;
+    }
+
+    public String getFirstNameEmployee() {
+        return firstNameEmployee;
+    }
+
+    public void setFirstNameEmployee(String firstNameEmployee) {
+        this.firstNameEmployee = firstNameEmployee;
+    }
+
+    public String getLastNameEmployee() {
+        return lastNameEmployee;
+    }
+
+    public void setLastNameEmployee(String lastNameEmployee) {
+        this.lastNameEmployee = lastNameEmployee;
+    }
+
+    public String getDuiEmployee() {
+        return duiEmployee;
+    }
+
+    public void setDuiEmployee(String duiEmployee) {
+        this.duiEmployee = duiEmployee;
+    }
+
+    public String getNitEmployee() {
+        return nitEmployee;
+    }
+
+    public void setNitEmployee(String nitEmployee) {
+        this.nitEmployee = nitEmployee;
+    }
+
+    public String getIsssEmployee() {
+        return isssEmployee;
+    }
+
+    public void setIsssEmployee(String isssEmployee) {
+        this.isssEmployee = isssEmployee;
+    }
+
+    public String getNupEmployee() {
+        return nupEmployee;
+    }
+
+    public void setNupEmployee(String nupEmployee) {
+        this.nupEmployee = nupEmployee;
+    }
+
+    public String getEmailEmployee() {
+        return emailEmployee;
+    }
+
+    public void setEmailEmployee(String emailEmployee) {
+        this.emailEmployee = emailEmployee;
+    }
+
+    public String getCellPhoneEmployee() {
+        return cellPhoneEmployee;
+    }
+
+    public void setCellPhoneEmployee(String cellPhoneEmployee) {
+        this.cellPhoneEmployee = cellPhoneEmployee;
+    }
+
+    public WorkStation getWorkStationEmployee() {
+        return workStationEmployee;
+    }
+
+    public void setWorkStationEmployee(WorkStation workStationEmployee) {
+        this.workStationEmployee = workStationEmployee;
+    }
+
+    public Genders getGendersEmployee() {
+        return gendersEmployee;
+    }
+
+    public void setGendersEmployee(Genders gendersEmployee) {
+        this.gendersEmployee = gendersEmployee;
+    }
+
+    public Address getAddressEmployee() {
+        return addressEmployee;
+    }
+
+    public void setAddressEmployee(Address addressEmployee) {
         this.addressEmployee = addressEmployee;
     }
 }

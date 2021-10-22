@@ -2,7 +2,6 @@ package com.example.demo.security.twofactor;
 
 import com.example.demo.user.UserEmployee;
 import com.example.demo.user.UserEmployeeService;
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.BufferedImageHttpMessageConverter;
@@ -16,23 +15,28 @@ import org.springframework.web.servlet.ModelAndView;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
 
-@AllArgsConstructor
 @RestController
 @RequestMapping("/")
-public class TwoFactorGoogleAuthenticatorController {
+public class TwoFactorController {
     private final String ISSUER_COMPANY = "Sistema seguridad Recursos Humanos";
-    private final TwoFactorGoogleAuthenticatorService twoFactorGoogleAuthenticatorService;
+    private final TwoFactorService twoFactorService;
     private final UserEmployeeService userEmployeeService;
+
+    public TwoFactorController(TwoFactorService twoFactorService,
+                               UserEmployeeService userEmployeeService) {
+        this.twoFactorService = twoFactorService;
+        this.userEmployeeService = userEmployeeService;
+    }
 
     @GetMapping(value = "barCode", produces = MediaType.IMAGE_PNG_VALUE)
     public BufferedImage barCode(Authentication authentication) {
 
         Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
         if(userEmployee.isPresent()) {
-            return twoFactorGoogleAuthenticatorService.createQRCode(
-                    twoFactorGoogleAuthenticatorService.getGoogleAuthenticationBarCode(
+            return twoFactorService.createQRCode(
+                    twoFactorService.getGoogleAuthenticationBarCode(
                             userEmployee.get().getSecretKeyGoogleAuthenticator(),
-                            userEmployee.get().getUserNameEmployee(),
+                            userEmployee.get().getUsername(),
                             ISSUER_COMPANY),
                     "png",
                     200,
@@ -60,7 +64,7 @@ public class TwoFactorGoogleAuthenticatorController {
 
         Optional<UserEmployee> userEmployee = userEmployeeService.findByIdUser(idUser);
         if(userEmployee.isPresent()) {
-            if( twoFactorGoogleAuthenticatorService.verificationCode(userEmployee.get().getSecretKeyGoogleAuthenticator(),
+            if( twoFactorService.verificationCode(userEmployee.get().getSecretKeyGoogleAuthenticator(),
                     codigo) ) {
                 Authentication authentication = getAuthentication(userEmployee.get());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -81,8 +85,8 @@ public class TwoFactorGoogleAuthenticatorController {
 
     private Authentication getAuthentication(UserEmployee userEmployee){
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                userEmployee.getUserNameEmployee(),
-                userEmployee.getPasswordUserEmployee(),
+                userEmployee.getUsername(),
+                userEmployee.getPassword(),
                 userEmployee.getAuthorities()
         );
         return authentication;

@@ -1,17 +1,16 @@
 package com.example.demo.departament;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.GenerationType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Column;
 
-import javax.persistence.*;
-
-@Getter
-@Setter
-@NoArgsConstructor
 @Entity
 public class Departament {
 
+    //Attributes
     @Id
     @SequenceGenerator(
             name = "departament_sequence",
@@ -28,7 +27,27 @@ public class Departament {
     )
     private String nameDepartament;
 
+    //Constructors
     public Departament(String nameDepartament) {
         this.nameDepartament = nameDepartament;
     }
+    public Departament() {}
+
+    //Getters and Setters
+    public Long getIdDepartament() {
+        return idDepartament;
+    }
+
+    public void setIdDepartament(Long idDepartament) {
+        this.idDepartament = idDepartament;
+    }
+
+    public String getNameDepartament() {
+        return nameDepartament;
+    }
+
+    public void setNameDepartament(String nameDepartament) {
+        this.nameDepartament = nameDepartament;
+    }
+
 }
