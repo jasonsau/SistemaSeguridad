@@ -30,4 +30,9 @@ public interface UserEmployeeRepository extends JpaRepository<UserEmployee, Long
 
     @Query("SELECT u FROM UserEmployee u WHERE u.userNameEmployee = ?1")
     Optional<UserEmployee> findByUsername(String username);
+
+    @Modifying
+    @Query("UPDATE UserEmployee u SET u.passwordUserEmployee = ?1, u.temporaryPassword = false WHERE u" +
+            ".userNameEmployee = ?2")
+    int updatePassword(String password, String username);
 }

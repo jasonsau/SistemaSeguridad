@@ -3,6 +3,7 @@ package com.example.demo.user;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,16 +12,19 @@ import java.util.Optional;
 public class UserEmployeeService implements UserDetailsService {
 
     private final UserEmployeeRepository userEmployeeRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserEmployeeService(UserEmployeeRepository userEmployeeRepository) {
+    public UserEmployeeService(UserEmployeeRepository userEmployeeRepository,
+                               BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userEmployeeRepository = userEmployeeRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userEmployeeRepository.findByEmail(email)
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userEmployeeRepository.findByUsername(username)
                 .orElseThrow( () ->
-                    new UsernameNotFoundException(String.format("No se ha encontrado el %s", email))
+                    new UsernameNotFoundException(String.format("No se ha encontrado el %s", username))
                 );
     }
 
@@ -55,6 +59,10 @@ public class UserEmployeeService implements UserDetailsService {
             }
         }
         return false;
+    }
+
+    public int updatePassword(String password, String username) {
+        return userEmployeeRepository.updatePassword(bCryptPasswordEncoder.encode(password), username);
     }
 
     public void restartAttempts(Long idUser) {
