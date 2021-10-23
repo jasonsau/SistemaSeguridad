@@ -7,6 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -36,6 +37,7 @@ public class UserEmployee implements UserDetails {
 
     private String userNameEmployee;
     private String passwordUserEmployee;
+    private LocalDate passwordExpiredAt;
     private boolean enabled;
     private boolean blocked;
     @Enumerated(EnumType.STRING)
@@ -52,6 +54,7 @@ public class UserEmployee implements UserDetails {
                         boolean blocked,
                         String passwordUserEmployee,
                         boolean temporaryPassword,
+                        LocalDate passwordExpiredAt,
                         UserRole userRole) {
         this.userNameEmployee = userNameEmployee;
         this.employee = employee;
@@ -60,6 +63,7 @@ public class UserEmployee implements UserDetails {
         this.passwordUserEmployee = passwordUserEmployee;
         this.temporaryPassword = temporaryPassword;
         this.userRole = userRole;
+        this.passwordExpiredAt = passwordExpiredAt;
     }
     public UserEmployee() {}
 
@@ -181,5 +185,13 @@ public class UserEmployee implements UserDetails {
 
     public void setSecretKeyGoogleAuthenticator(String secretKeyGoogleAuthenticator) {
         this.secretKeyGoogleAuthenticator = secretKeyGoogleAuthenticator;
+    }
+
+    public LocalDate getPasswordExpiredAt() {
+        return passwordExpiredAt;
+    }
+
+    public void setPasswordExpiredAt(LocalDate passwordExpiredAt) {
+        this.passwordExpiredAt = passwordExpiredAt;
     }
 }

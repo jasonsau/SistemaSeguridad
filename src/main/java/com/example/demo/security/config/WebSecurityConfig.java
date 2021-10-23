@@ -1,5 +1,6 @@
 package com.example.demo.security.config;
 
+import com.example.demo.user.UserRole;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,7 +17,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/login", "/login-check", "/authentication/**", "/verification-code")
-                .permitAll().anyRequest().authenticated();
+                .permitAll()
+                .antMatchers("/change-password", "/change-password-check").hasAuthority(UserRole.CHANGE_PASSWORD.name())
+                .antMatchers("/authentication/**").hasAuthority(UserRole.AUTHENTICATOR.name())
+                .antMatchers("/barCode", "/home").hasAuthority(UserRole.ADMIN.name())
+                .anyRequest()
+                .authenticated();
     }
 
     @Bean
