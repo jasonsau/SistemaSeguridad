@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
     <title>Login</title>
     <link rel = "stylesheet" th:href = "@{/css/styleLogin.css}" href = "../static/css/styleLogin.css" >
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,7 +30,7 @@
                     >
                 </label>
                 <input 
-                    type = "email"
+                    type = "text"
                     name = "username" 
                     id = "username" 
                     class = "form__input" 
@@ -57,7 +58,7 @@
             </div>
             <div
                     th:if="${error.get('errorUser')!=null}" style = "display:block"
-                    class = "form__container&#45;&#45;error"
+                    class = "form__container--error"
             >
                 <p th:text = "${error!=null}? ${error.get('errorUser')}: ''" class = "form__error">Error Sus
                     credenciales son
@@ -65,7 +66,7 @@
             </div>
             <div
                     th:if="${error.get('locked')!=null}" style = "display:block"
-                    class = "form__container&#45;&#45;error"
+                    class = "form__container--error"
             >
                 <p th:text = "${error!=null}? ${error.get('locked')}: ''" class = "form__error">Error Sus credenciales
                     son
@@ -73,7 +74,7 @@
             </div>
             <div
                     th:if="${error.get('errorPassword')!=null}" style = "display:block"
-                    class = "form__container&#45;&#45;error"
+                    class = "form__container--error"
             >
                 <p th:text = "${error!=null}? ${error.get('errorPassword')}: ''" class = "form__error">Error Sus
                     credenciales

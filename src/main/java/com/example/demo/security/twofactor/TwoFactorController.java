@@ -48,14 +48,24 @@ public class TwoFactorController {
 
     @GetMapping(value = "authentication/{idUser}" )
     public ModelAndView verificationCodeView(@RequestParam(name = "error", required = false) String error,
-                                             @PathVariable(name = "idUser", required = false) String idUser) {
-        ModelAndView model = new ModelAndView();
-        model.addObject("idUser", idUser);
-        if(error!=null) {
-            model.addObject("error", "El codigo es incorrecto");
+                                             @PathVariable(name = "idUser", required = false) Long idUser,
+                                             Authentication authentication) {
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByIdUser(idUser);
+        if (userEmployee.isPresent()) {
+            if(userEmployee.get().getUsername().equals(authentication.getName())) {
+                ModelAndView model = new ModelAndView();
+                model.addObject("idUser", idUser);
+                if(error!=null) {
+                    model.addObject("error", "El codigo es incorrecto");
+                }
+                model.setViewName("/password/AppAuthenticator");
+                return model;
+            } else {
+                SecurityContextHolder.clearContext();
+                return new ModelAndView("redirect:/login");
+            }
         }
-        model.setViewName("/password/googleAuthenticator");
-        return model;
+        return null;
     }
 
     @PostMapping("verification-code")
@@ -68,6 +78,7 @@ public class TwoFactorController {
                     codigo) ) {
                 Authentication authentication = getAuthentication(userEmployee.get());
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+                System.out.println(SecurityContextHolder.getContext());
                 return new ModelAndView("redirect:/home");
             } else {
                 return new ModelAndView("redirect:/authentication/"+userEmployee.get().getIdUser()+"?error");
