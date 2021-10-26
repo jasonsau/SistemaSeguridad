@@ -68,5 +68,9 @@ public class UserEmployeeService implements UserDetailsService {
     public void restartAttempts(Long idUser) {
         userEmployeeRepository.restartAttempts(idUser);
     }
-
+    
+    public void saveUserEmployee(UserEmployee userEmployee) {
+    	userEmployeeRepository.save(userEmployee);
+    }
+    
 }

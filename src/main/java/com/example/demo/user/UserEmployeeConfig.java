@@ -70,6 +70,20 @@ public class UserEmployeeConfig {
                     masculino,
                     addressJason
             );
+            
+            Employee lizt= new Employee(
+            		"Azucena Yamileth",
+            		"Acosta Escobar",
+            		"213123123",
+            		"123213123",
+            		"121323231",
+            		"1232131232",
+            		"ae19001@ues.edu.sv",
+            		"79976350",
+            		workStation,
+            		masculino,
+            		addressJason
+            		);
 
             Employee juan = new Employee(
                     "Juan Carlos",
@@ -78,7 +92,7 @@ public class UserEmployeeConfig {
                     "06122809991200",
                     "123456788",
                     "123456788",
-                    "juan@gmail.com",
+                    "juanacostab.m.555@gmail.com",
                     "65655443",
                     workStation,
                     masculino,
@@ -126,7 +140,7 @@ public class UserEmployeeConfig {
             addressRepository.save(addressJason);
             workStationRepository.save(workStation);
             gendersRepository.saveAll(List.of(masculino, femenino));
-            employeeRepository.saveAll(List.of(jason, juan));
+            employeeRepository.saveAll(List.of(jason, juan, lizt));
             userEmployeeRepository.saveAll(List.of(userEmployeeJason, userEmployeeJuan));
             passwordHistoryRepository.saveAll(List.of(passwordHistoryJason, passwordHistoryJuan));
         };

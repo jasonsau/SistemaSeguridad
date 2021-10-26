@@ -10,8 +10,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 @Transactional
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-	//esto lo acabo de hacer y es para recuperar un solo emppeado
+	//esto lo acabo de hacer y es para recuperar un empleado
 	
-	 @Query("SELECT u FROM Employee u WHERE u.emailEmployee = ?1")
-	    Optional<Employee> findByEmail(String email);
+	
+	//lo agregue y se supone que busca a un empleado por su email y retorna su valor
+	
+	@Query(nativeQuery=false, value="Select e From Employee e WHERE e.emailEmployee= ?1")
+	Optional<Employee> findByEmail(String email);
+
 }

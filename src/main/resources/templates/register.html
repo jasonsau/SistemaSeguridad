@@ -23,8 +23,12 @@
         >
             <input type = "hidden" name = "register" value = "register"/>
             <div class = "container-form__data">
-                <div class = "container-form__error" id = "error-name">
-                    Esto es un error
+                <div class = "container-form__error" id = "error-name" 
+                
+                 >
+                <p th:text = "${errors!=null}? ${errors.get('errorFirstName')}: ''" class = "form__error">
+                Error de datos
+                </p>
                 </div>
                 <label class = "container-form__label">Nombres</label>
                 <span class = "container-form__icon">
@@ -38,12 +42,14 @@
                     class = "container-form__input"
                     type = "text" 
                     placeholder = "Nombres de Empleado" 
-                    name = "employee-name"
-                    id = "employee-name-id"
+                    name = "employee_name"
+                    id = "employee_name"
                 />
             </div>
             <div class = "container-form__data">
                 <div class = "container-form__error" id = "error-last-name">
+                <p th:text = "${errors!=null}? ${errors.get('errorFirstName')}: ''" class = "form__error">
+
                     Esto es un error
                 </div>
                 <label class = "container-form__label">
@@ -60,12 +66,14 @@
                     class = "container-form__input" 
                     type = "text" 
                     placeholder = "Apellidos de Empleado" 
-                    name = "employee-last-name"
-                    id = "employee-last-name-id"
+                    name = "employee_last_name"
+                    id = "employee_last_name"
                 />
             </div>
             <div class = "container-form__data">
                 <div class = "container-form__error" id = "error-dui">
+                 <p th:text = "${errors!=null}? ${errors.get('errorLastName')}: ''" class = "form__error">
+
                     Esto es un error
                 </div>
                 <label class = "container-form__label">
@@ -82,8 +90,8 @@
                     class = "container-form__input" 
                     type = "text" 
                     placeholder = "Email del empleado" 
-                    name = "employee-dui"
-                    id = "employee-dui-id"
+                    name = "employee_email"
+                    id = "employee_email"
                 />
             </div>
             <div class = "container-form__data">
@@ -104,8 +112,8 @@
                     class = "container-form__input" 
                     type = "date"
                      placeholder = "Fecha de nacimiento" 
-                    name = "employee-date-birthday"
-                    id = "employee-date-birthday-id"
+                    name = "employee_date_birthday"
+                    id = "employee_date_birthday"
                 />
             </div>
             
@@ -127,12 +135,14 @@
                     class = "container-form__input" 
                     type = "text" 
                     placeholder = "Telefono" 
-                    name = "employee-cellphone"
-                    id = "employee-cellphone-id"
+                    name = "employee_cellphone"
+                    id = "employee_cellphone"
                 />
             </div>
             <div class = "container-form__data">
                 <div class = "container-form__error" id = "error-position">
+                 <p th:text = "${errors!=null}? ${errors.get('errorCellphone')}: ''" class = "form__error">
+
                     Esto es un error
                 </div>
                 <label class = "container-form__label">
@@ -149,8 +159,9 @@
                 class = "container-form__input" 
                 type = "text" 
                 placeholder = "passcode" 
-                name = "employee-cellphone"
-                id = "employee-cellphone-id"
+                name = "employee_passcode"
+                id = "employee_passcode"
+                maxlength="4"
             />
             </div>
             <div class = "container-form__data">

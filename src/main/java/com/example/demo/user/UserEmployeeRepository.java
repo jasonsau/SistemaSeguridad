@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Repository
@@ -35,4 +36,10 @@ public interface UserEmployeeRepository extends JpaRepository<UserEmployee, Long
     @Query("UPDATE UserEmployee u SET u.passwordUserEmployee = ?1, u.temporaryPassword = false WHERE u" +
             ".userNameEmployee = ?2")
     int updatePassword(String password, String username);
+   /* @Modifying
+    @Query("INSERT INTO UserEmploye (id_user_employee,userNameEmployee,paswordUserEmployee,passwordExpiredAt,enabled,blocked"
+    		+ ",userRole,attempts,temporaryPassword,isDoubleAuthenticator,secretKeyGoogleAuthenticator)"
+    		+ " VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11)")
+    void insertUserEmployee(Long id_user_employee,String userNameEmployee,String passwordUserEmployee,LocalDate passwordExpiredAt,
+    		boolean enabled,boolean blocked,UserRole userRole,int attempts,boolean temporaryPassword,boolean isDoubleAuthenticator,String secretKeyGoogleAuthenticator);*/
 }
