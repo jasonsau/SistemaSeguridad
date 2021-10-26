@@ -14,13 +14,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/login", "/login-check", "/authentication/**", "/verification-code","/registration","/register-check")
+                .antMatchers("/login", "/login-check", "/verification-code",
+                        "/registration", "/register-check", "/unlocked-user")
                 .permitAll()
                 .antMatchers("/change-password", "/change-password-check").hasAuthority(UserRole.CHANGE_PASSWORD.name())
-                .antMatchers("/authentication/**").hasAuthority(UserRole.AUTHENTICATOR.name())
-                .antMatchers("/barCode", "/home").hasAuthority(UserRole.ADMIN.name())
+                .antMatchers("/authentication/**", "/api/getMethodsAuthentication", "/options").hasAuthority(UserRole.AUTHENTICATOR.name())
+                .antMatchers("/barCode", "/home", "users", "options").hasAuthority(UserRole.ADMIN.name())
                 .anyRequest()
                 .authenticated();
     }

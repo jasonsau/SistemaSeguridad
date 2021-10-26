@@ -1,11 +1,15 @@
 package com.example.demo.user;
 
+import com.example.demo.paswword.PasswordHistory;
+import com.example.demo.paswword.PasswordHistoryService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -13,11 +17,15 @@ public class UserEmployeeService implements UserDetailsService {
 
     private final UserEmployeeRepository userEmployeeRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordHistoryService passwordHistoryService;
+    private final int DATE_EXPIRET_PASSWORD = 30;
 
     public UserEmployeeService(UserEmployeeRepository userEmployeeRepository,
-                               BCryptPasswordEncoder bCryptPasswordEncoder) {
+                               BCryptPasswordEncoder bCryptPasswordEncoder,
+                               PasswordHistoryService passwordHistoryService) {
         this.userEmployeeRepository = userEmployeeRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.passwordHistoryService = passwordHistoryService;
     }
 
     @Override
@@ -39,9 +47,9 @@ public class UserEmployeeService implements UserDetailsService {
         return userEmployeeRepository.findByUsername(username);
     }
 
-    public int updateUserAttempts(String email) {
+    public int updateUserAttempts(String username) {
         int response = 0;
-        Optional<UserEmployee> userEmployee = userEmployeeRepository.findByEmail(email);
+        Optional<UserEmployee> userEmployee = userEmployeeRepository.findByUsername(username);
         if(userEmployee.isPresent()) {
             response = userEmployeeRepository.updateUserAttempts((userEmployee.get().getAttempts() + 1),
                     userEmployee.get().getIdUser());
@@ -49,8 +57,8 @@ public class UserEmployeeService implements UserDetailsService {
         return response;
     }
 
-    public boolean chekcedAttempts(String email) {
-        Optional<UserEmployee> userEmployee = userEmployeeRepository.findByEmail(email);
+    public boolean chekcedAttempts(String username) {
+        Optional<UserEmployee> userEmployee = userEmployeeRepository.findByUsername(username);
 
         if(userEmployee.isPresent()) {
             if(userEmployee.get().getAttempts() >= 2) {
@@ -62,11 +70,28 @@ public class UserEmployeeService implements UserDetailsService {
     }
 
     public int updatePassword(String password, String username) {
-        return userEmployeeRepository.updatePassword(bCryptPasswordEncoder.encode(password), username);
+        Optional<UserEmployee> userEmployee = findByUsername(username);
+        if(userEmployee.isPresent()) {
+            passwordHistoryService.savePasswordHistory(new PasswordHistory(
+                    LocalDateTime.now(),
+                    LocalDateTime.now().plusDays(DATE_EXPIRET_PASSWORD),
+                    userEmployee.get(),
+                    bCryptPasswordEncoder.encode(username)
+            ));
+        } else {
+            throw new IllegalStateException("Usuario no se ha encontrado");
+        }
+
+        return userEmployeeRepository.updatePassword(bCryptPasswordEncoder.encode(password), username,
+                LocalDateTime.now().plusDays(DATE_EXPIRET_PASSWORD));
     }
 
     public void restartAttempts(Long idUser) {
         userEmployeeRepository.restartAttempts(idUser);
+    }
+
+    public List<UserEmployee> selectUsers() {
+        return userEmployeeRepository.findAll();
     }
 
 }

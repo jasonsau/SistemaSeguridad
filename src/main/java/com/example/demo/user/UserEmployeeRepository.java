@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -32,7 +33,7 @@ public interface UserEmployeeRepository extends JpaRepository<UserEmployee, Long
     Optional<UserEmployee> findByUsername(String username);
 
     @Modifying
-    @Query("UPDATE UserEmployee u SET u.passwordUserEmployee = ?1, u.temporaryPassword = false WHERE u" +
-            ".userNameEmployee = ?2")
-    int updatePassword(String password, String username);
+    @Query("UPDATE UserEmployee u SET u.passwordUserEmployee = ?1, u.temporaryPassword = false, u.passwordExpiredAt = ?3" +
+            " WHERE u.userNameEmployee = ?2")
+    int updatePassword(String password, String username, LocalDateTime expiredAt);
 }

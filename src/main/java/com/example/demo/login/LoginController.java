@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller
@@ -58,38 +59,42 @@ public class LoginController {
     }
 
     @PostMapping("/login-check")
-    public ModelAndView loginCheck(@RequestParam(name = "username", required = true) String username,
-                                   @RequestParam(name = "password", required = true) String password){
+    public ModelAndView loginCheck(@RequestParam(name = "username") String username,
+                                   @RequestParam(name = "password") String password){
 
-        boolean locked = false;
-        ModelAndView modelAndView = new ModelAndView();
+        boolean locked;
+        if(username.isEmpty() || password.isEmpty()) {
+            return new ModelAndView("redirect:/login");
+        }
         Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(username);
+
         if(userEmployee.isPresent()) {
             boolean correct = bCryptPasswordEncoder.matches(password, userEmployee.get().getPassword());
             if(correct) {
-                if(verifiedPasswordTemporary(userEmployee.get())) {
+                if(userEmployee.get().isBlocked() || !userEmployee.get().isEnabled()) {
+                    return new ModelAndView("redirect:/login?error=3");
+
+                }else if(verifiedPasswordTemporary(userEmployee.get())) {
                     userName = userEmployee.get().getUsername();
                     Authentication authentication =
                             new UsernamePasswordAuthenticationToken( userEmployee.get().getUsername(),
                                     userEmployee.get().getPassword(),
                                     addRole("CHANGE_PASSWORD") );
-
                     setAuthentication(authentication);
                     System.out.println(authentication.getAuthorities());
                     return new ModelAndView("redirect:/change-password");
-                }
 
-                if(userEmployee.get().getIsDoubleAuthenticator()) {
+                } else if (userEmployee.get().getIsDoubleAuthenticator()) {
                     Authentication authentication =
                             new UsernamePasswordAuthenticationToken(userEmployee.get().getUsername(),
                                     userEmployee.get().getPassword(),
                                     addRole("AUTHENTICATOR"));
 
                     setAuthentication(authentication);
-                    System.out.println(authentication.getAuthorities());
-                    return new ModelAndView("redirect:/authentication/"+userEmployee.get().getIdUser());
+                    return new ModelAndView("redirect:/options");
 
-                } else{
+                }
+                else {
                     setAuthentication(getAuthentication(userEmployee.get()));
                     return new ModelAndView("redirect:/home");
                 }
@@ -99,15 +104,12 @@ public class LoginController {
                 locked = userEmployeeService.chekcedAttempts(username);
                 if(locked) {
                     email.sendEmailLocker(username);
-                    modelAndView.setViewName("redirect:/login?error=3");
-                    return modelAndView;
+                    return new ModelAndView("redirect:/login?error=3");
                 }
-                modelAndView.setViewName("redirect:/login?error=2");
-                return modelAndView;
+                return new ModelAndView("redirect:/login?error=2");
             }
         } else {
-            modelAndView.setViewName("redirect:/login?error=1");
-            return modelAndView;
+            return new ModelAndView("redirect:/login?error=1");
         }
     }
 
@@ -137,7 +139,7 @@ public class LoginController {
     }
 
     private boolean verifiedPasswordTemporary(UserEmployee userEmployee) {
-        return userEmployee.getPasswordExpiredAt().isEqual(LocalDate.now())
+        return userEmployee.getPasswordExpiredAt().isBefore(LocalDateTime.now())
                 || userEmployee.getTemporaryPassword();
     }
 

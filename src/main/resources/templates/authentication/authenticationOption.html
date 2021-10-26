@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+        <link
+                rel = "stylesheet"
+                th:href = "@{/css/styleOption.css}"
+                href = "../../static/css/styleOption.css"
+       >
+       <link rel="preconnect" href="https://fonts.googleapis.com">
+       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+       <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@300;500&display=swap" rel="stylesheet">
+       <title>Opciones</title>
+    </head>
+    <body>
+        <h1 class = "title">Elije una Opcion</h1>
+        <div class = "container" id = "idContainer">
+            <div class = "container__option" id = "idTokenApp">
+                <a id = "idLinkTokenApp">Con un token de una App</a>
+            </div>
+            <div class = "container__option" id = "idTokenEmail">
+                <a id = "idLinkTokenCorreo">Token por Correo</p>
+            </div>
+            <div class = "container__option" id = "idTokenSms">
+                <a>Token por SMS</p>
+            </div>
+        </div>
+    </body>
+    <script
+            src = "../../static/js/authenticationOption.js"
+            th:src = "@{/js/authenticationOption.js}"
+    >
+    </script>
+</html>
