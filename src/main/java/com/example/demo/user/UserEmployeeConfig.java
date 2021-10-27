@@ -63,7 +63,7 @@ public class UserEmployeeConfig {
                     "06142807991550",
                     "123456789",
                     "123456789",
-                    "jasonguerra253@gmail.com",
+                    "jason.guerra253@gmail.com",
                     "75330538",
                     workStation,
                     masculino,
@@ -91,7 +91,7 @@ public class UserEmployeeConfig {
                     "06122809991200",
                     "123456788",
                     "123456788",
-                    "juanacostab.m.555@gmail.com",
+                    "ma17092@ues.edu.sv",
                     "65655443",
                     workStation,
                     masculino,
@@ -124,6 +124,7 @@ public class UserEmployeeConfig {
             );
             userEmployeeJuan.setSecretKeyGoogleAuthenticator("64SXX3E6R6XJMG6JJ57JGWZUTUMNFQUL");
             userEmployeeJuan.setIsDoubleAuthenticator(true);
+            userEmployeeJuan.setDoubleAuthenticationEmail(true);
 
             PasswordHistory passwordHistoryJason = new PasswordHistory(LocalDateTime.now(),
                     LocalDateTime.now().plusMinutes(15),
