@@ -10,21 +10,58 @@
     <link rel = "stylesheet" href = "../../static/css/styleGoogleAuthenticator.css" th:href = "@{/css/styleGoogleAuthenticator.css}">
 </head>
 <body>
-    
+
     <div class = "container">
         <form
+            id = "idFormAuthentication"
             method = "POST"
             class = "container__form"
-            th:action = "@{/verification-code}"
-            
+
         >
             <input
                     type = "hidden"
                     name = "idUser"
                     th:value="${idUser!=null? idUser: ''}"
             >
-            <h1 class = "container__title">Autenticacion con App</h1>
-            <h2 class = "container__subtitle">Ingrese el codigo que le genera la App</h2>
+            <input
+                    type = "hidden"
+                    name = "codigoCorreo"
+                    th:value="${codigo!=null? codigo: ''}"
+            >
+            <h1 th:if = "${tipo == 'app'}" style="display: block"
+                class = "container__title"
+            >
+                Autenticacion con App
+            </h1>
+            <h1 th:if = "${tipo == 'correo'}" style="display: block"
+                class = "container__title"
+            >
+                Autenticacion con Correo
+            </h1>
+            <h1 th:if = "${tipo == 'sms'}" style="display: block"
+                class = "container__title"
+            >
+                Autenticacion con SMS
+            </h1>
+            <h2
+                    class = "container__subtitle"
+                    th:if = "${tipo == 'app'}" style = "display: block;"
+            >
+                Ingrese el codigo que le genera la App
+            </h2>
+            <h2
+                    class = "container__subtitle"
+                    th:if = "${tipo == 'correo'}" style = "display: block;"
+            >
+                Ingrese el codigo que se le envio a su correo
+            </h2>
+            <h2
+                    th:if = "${tipo == 'sms'}" style = "display: block;"
+                    class = "container__subtitle"
+            >
+                Ingrese el codigo que se le envio a su numero de telefono
+            </h2>
+
             <div class = "container__input">
                 <label for = "Idcodigo" class = "form__label">
                     <img src = "../../static/icons/password.svg"
@@ -52,4 +89,10 @@
         </form>
     </div>
 </body>
+<script
+        src = "../../static/js/authentication.js"
+        th:src = "@{/js/authentication.js}"
+>
+
+</script>
 </html>
