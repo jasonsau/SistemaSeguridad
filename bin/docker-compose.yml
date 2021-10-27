@@ -1,0 +1,35 @@
+version: "3.7"
+services:
+    servicedb:
+        container_name: postgres
+        image: postgres
+        ports:
+            - 5432:5432
+        volumes:
+            - volume-db-postgres:/var/lib/postgresql/data
+        networks:
+            - database-postgres
+        environment:
+            POSTGRES_USER: root
+            POSTGRES_PASSWORD: passwordroot
+
+    padmin:
+        container_name: pgadmin
+        image: dpage/pgadmin4:latest
+        ports:
+            - 4000:80
+        volumes:
+            - volume-db-pgadmin:/var/lib/pgadmin
+        networks:
+            - database-postgres
+        environment:
+            PGADMIN_DEFAULT_EMAIL: sistema@gmail.com
+            PGADMIN_DEFAULT_PASSWORD: passwordsistema
+
+volumes:
+    volume-db-postgres:
+    volume-db-pgadmin:
+
+networks:
+    database-postgres:
+        driver: bridge

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+    <title>Doble Autentificacion</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@300;500&display=swap" rel="stylesheet">
+    <link rel = "stylesheet" href = "../../static/css/styleGoogleAuthenticator.css" th:href = "@{/css/styleGoogleAuthenticator.css}">
+</head>
+<body>
+    
+    <div class = "container">
+        <form
+            method = "POST"
+            class = "container__form"
+            th:action = "@{/verification-code}"
+            
+        >
+            <input
+                    type = "hidden"
+                    name = "idUser"
+                    th:value="${idUser!=null? idUser: ''}"
+            >
+            <h1 class = "container__title">Autenticacion con App</h1>
+            <h2 class = "container__subtitle">Ingrese el codigo que le genera la App</h2>
+            <div class = "container__input">
+                <label for = "Idcodigo" class = "form__label">
+                    <img src = "../../static/icons/password.svg"
+                         th:src = "@{/icons/password.svg}"
+                    >
+                </label>
+                <input
+                        name = "codigo"
+                        class = "form__input"
+                        type = "text"
+                        placeholder = "codigo"
+                        id = "idCodigo"
+                >
+            </div>
+            <div
+                    class = "container__input container__input--error"
+                    th:if = "${error!=null}" style="display: block"
+                    th:text = "${error!=null}? ${error}: ''"
+            >
+                <p>Error</p>
+            </div>
+            <div class = "container__input">
+                <input  type = "submit" class = "form__button" value = "Verificar Codigo">
+            </div>
+        </form>
+    </div>
+</body>
+</html>
