@@ -1,16 +1,16 @@
 package com.example.demo.user;
 
 import com.example.demo.login.LoginController;
-
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.responsebody.ResponseBodyUserEmail;
+import com.example.demo.security.twofactor.email.ConfirmationToken;
+import com.example.demo.security.twofactor.email.ConfirmationTokenService;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -18,13 +18,15 @@ import com.example.demo.api.email.rest.SendEmailService;
 import com.example.demo.employee.Employee;
 import com.example.demo.employee.EmployeeService;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.StringTokenizer;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @RestController
@@ -33,17 +35,22 @@ public class UserEmployeeController {
     private final UserEmployeeService userEmployeeService;
     private final LoginController loginController;
     private final EmployeeService employeeService;
+    private final ConfirmationTokenService confirmationTokenService;
 
+    private final SendEmailService  sendEmailSender;
     public UserEmployeeController(LoginController loginController,
                                   UserEmployeeService userEmployeeService,
-                                  EmployeeService employeeService) {
+                                  EmployeeService employeeService,
+                                  ConfirmationTokenService confirmationTokenService,
+                                  SendEmailService sendEmailSender) {
         this.loginController = loginController;
         this.userEmployeeService = userEmployeeService;
-        this.employeeService= employeeService;
+        this.employeeService = employeeService;
+        this.confirmationTokenService = confirmationTokenService;
+        this.sendEmailSender = sendEmailSender;
     }
-    @Autowired
-    private SendEmailService  sendEmailSender;
-    
+
+
     
 
 	
@@ -117,7 +124,7 @@ public class UserEmployeeController {
              }
          }
      ModelAndView model= new ModelAndView("register");
-     model.addObject(errors);
+     model.addObject("errors",errors);
     return model;
     }
     
@@ -164,7 +171,7 @@ public class UserEmployeeController {
 	    	String tmpWord;
 	    	StringTokenizer words= new StringTokenizer(employee_last_name);
 	    	Date passwordExpiredAt= new Date();
-	    	LocalDate localDate= LocalDate.now() ;
+	    	LocalDateTime localDate= LocalDateTime.now().plusDays(30) ;
 	    	
 	    	//Genera una parte de lo que sera el nombre de usuario
 			String characters = "0123456789";
@@ -198,6 +205,7 @@ public class UserEmployeeController {
     			newUser.setAttempts(0);
     			newUser.setIsDoubleAuthenticator(false);
     			newUser.setSecretKeyGoogleAuthenticator("");
+                newUser.setDoubleAuthenticationEmail(false);
     			
     			userEmployeeService.saveUserEmployee(newUser);
     			
@@ -208,13 +216,35 @@ public class UserEmployeeController {
     			sendEmailSender.sendMail("juanacostab.m.555@gmail.com", employee.get().getEmailEmployee(), "Registro de usuario", body);
     			model.setViewName("register-check"); 
     			model.addObject("newUser",newUser);
-    			
-	
-return model;
-    		
-        
-    	
-    	
+                return model;
+    }
+
+    @GetMapping("/users")
+    public List<UserEmployee> selectUsers() {
+        return userEmployeeService.selectUsers();
+    }
+
+    @PostMapping("/unlocked-user")
+    public Map<String, String> unlockedUser(@RequestBody ResponseBodyUserEmail responseBodyUserEmail) {
+        Map<String, String> messages = new HashMap<>();
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByEmail(responseBodyUserEmail.getEmail());
+
+        if(userEmployee.isPresent()) {
+            if(userEmployee.get().isBlocked()) {
+                ConfirmationToken confirmationToken = confirmationTokenService
+                        .createNewToken(userEmployee.get());
+                confirmationTokenService.insertConfirmationToken(confirmationToken);
+                messages.put("message", "Se le ha enviado a su correo las indicaciones");
+                messages.put("number", "1");
+            } else {
+                messages.put("message", "Su usuario no esta bloqueado");
+                messages.put("number", "2");
+            }
+        } else {
+            messages.put("message", "No se ha encontrado el usuario");
+            messages.put("number", "3");
+        }
+        return  messages;
     }
     
 }

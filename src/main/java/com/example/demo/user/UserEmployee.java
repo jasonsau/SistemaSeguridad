@@ -7,7 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -37,7 +37,7 @@ public class UserEmployee implements UserDetails {
 
     private String userNameEmployee;
     private String passwordUserEmployee;
-    private LocalDate passwordExpiredAt;
+    private LocalDateTime passwordExpiredAt;
     private boolean enabled;
     private boolean blocked;
     @Enumerated(EnumType.STRING)
@@ -46,6 +46,7 @@ public class UserEmployee implements UserDetails {
     private boolean temporaryPassword;
     private boolean isDoubleAuthenticator;
     private String secretKeyGoogleAuthenticator;
+    private boolean isDoubleAuthenticationEmail;
 
     //Constructs
     public UserEmployee(String userNameEmployee,
@@ -54,7 +55,7 @@ public class UserEmployee implements UserDetails {
                         boolean blocked,
                         String passwordUserEmployee,
                         boolean temporaryPassword,
-                        LocalDate passwordExpiredAt,
+                        LocalDateTime passwordExpiredAt,
                         UserRole userRole) {
         this.userNameEmployee = userNameEmployee;
         this.employee = employee;
@@ -187,11 +188,19 @@ public class UserEmployee implements UserDetails {
         this.secretKeyGoogleAuthenticator = secretKeyGoogleAuthenticator;
     }
 
-    public LocalDate getPasswordExpiredAt() {
+    public LocalDateTime getPasswordExpiredAt() {
         return passwordExpiredAt;
     }
 
-    public void setPasswordExpiredAt(LocalDate passwordExpiredAt) {
+    public void setPasswordExpiredAt(LocalDateTime passwordExpiredAt) {
         this.passwordExpiredAt = passwordExpiredAt;
+    }
+
+    public boolean isDoubleAuthenticationEmail() {
+        return isDoubleAuthenticationEmail;
+    }
+
+    public void setDoubleAuthenticationEmail(boolean doubleAuthenticationEmail) {
+        isDoubleAuthenticationEmail = doubleAuthenticationEmail;
     }
 }

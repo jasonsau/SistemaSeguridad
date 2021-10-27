@@ -91,6 +91,7 @@ body {
 
 .form__title {
     margin-bottom: 20px;
+    display: none;
 }
 .form__input {
     position: absolute;
@@ -142,4 +143,77 @@ body {
     color: white;
     text-decoration: none;
     text-align: center;
+}
+
+.form__modal {
+    position: absolute;
+    display: none;
+    width: 400px;
+    height: 300px;
+    background-color: var(--background-color);
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+.form__input--unlocked {
+    top: 20px;
+    width: 300px;
+    left: 75px;
+}
+.form__label--unloked {
+    top: 20px;
+    left: 35px;
+}
+.form__subtitle {
+    position: relative;
+    text-align: center;
+    top: 15px;
+}
+
+.form__close {
+    position: relative;
+    top: 10px;
+    left: 90%;
+    cursor: pointer;
+}
+
+.form__container--errorModal {
+    width: 330px;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+.form__error--modal {
+    width: 330px;
+    text-align: center;
+}
+
+.open__modal {
+    display: block;
+    animation: openModal 0.5s;
+}
+
+.close_modal {
+    animation: closeModal 0.3s forwards;
+}
+
+@keyframes openModal {
+    0% {
+        transform: scale(0.5);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes closeModal {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(0);
+    }
 }

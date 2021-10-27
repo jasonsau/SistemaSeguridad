@@ -74,7 +74,7 @@
 			<artifactId>javase</artifactId>
 			<version>3.4.1</version>
 		</dependency>
-		
+
 		<dependency>
     			<groupId>org.apache.commons</groupId>
     			<artifactId>commons-lang3</artifactId>
@@ -88,6 +88,12 @@
 			<scope>test</scope>
 		</dependency>
 		
+		<dependency>
+			<groupId>com.twilio.sdk</groupId>
+		    <artifactId>twilio</artifactId>
+		    <version>8.21.0</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>

@@ -12,7 +12,7 @@ import com.example.demo.municipality.Municipality;
 import com.example.demo.municipality.MunicipalityRepository;
 import com.example.demo.paswword.PasswordHistory;
 import com.example.demo.paswword.PasswordHistoryRepository;
-import com.example.demo.security.twofactor.TwoFactorService;
+import com.example.demo.security.twofactor.app.TwoFactorService;
 import com.example.demo.workstation.WorkStation;
 import com.example.demo.workstation.WorkStationRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -20,7 +20,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -105,12 +104,13 @@ public class UserEmployeeConfig {
                     true,
                     false,
                     bCryptPasswordEncoder.encode( "password").toString(),
-                    true,
-                    LocalDate.now().plusDays(3),
+                    false,
+                    LocalDateTime.now().plusDays(30),
                     UserRole.ADMIN
                     );
             userEmployeeJason.setSecretKeyGoogleAuthenticator("PM23CN6VVDAAL52L364N5SBM6AEDNGZJ");
-            userEmployeeJason.setIsDoubleAuthenticator(false);
+            userEmployeeJason.setIsDoubleAuthenticator(true);
+            userEmployeeJason.setDoubleAuthenticationEmail(true);
 
             UserEmployee userEmployeeJuan = new UserEmployee(
                     "juan__acosta",
@@ -119,7 +119,7 @@ public class UserEmployeeConfig {
                     false,
                     bCryptPasswordEncoder.encode("password1234").toString(),
                     false,
-                    LocalDate.now().plusDays(3),
+                    LocalDateTime.now().plusDays(30),
                     UserRole.ADMIN
             );
             userEmployeeJuan.setSecretKeyGoogleAuthenticator("64SXX3E6R6XJMG6JJ57JGWZUTUMNFQUL");

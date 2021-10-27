@@ -1,4 +1,4 @@
-package com.example.demo.security.twofactor;
+package com.example.demo.security.twofactor.app;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
