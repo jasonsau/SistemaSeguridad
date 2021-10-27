@@ -1,0 +1,115 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+body {
+    background-color: #333;
+    color: white;
+    height: 100%;
+}
+
+.title {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    font-family: "Alegreya", serif;
+    font-size: 50px;
+}
+
+.container-form {
+    position: relative;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 800px;
+}
+
+.container-form__error {
+    width: 730px;
+    height: 30px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    text-align: center;
+    font-size: 18px;
+    color: red;
+    opacity: 0;
+}
+.container-form__data--hidden {
+    display: none;
+}
+
+.show-error-block {
+    animation: showErrorBlock 0.3;
+    opacity: 1;
+}
+
+.container-form__data {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    margin-top: 15px;
+    align-items: center;
+    width: 730px;
+}
+
+.container-form__label {
+    font-weight: 400;
+    text-align: right;
+    width: 235px;
+    margin-right: 20px;
+    height: 40px;
+    font-family: "Alegreya";
+    font-size: 20px;
+}
+
+.container-form__icon {
+    background-color: #eeeeee;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    text-align: center;
+    height: 40px;
+    border: solid 1px #ccc;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.container-form__input,
+.container-form__input--text-area {
+    height: 40px;
+    padding: 0;
+    border: solid 1px #ccc;
+    width: 235px;
+    font-family: "Alegreya";
+    font-size: 17px;
+}
+
+.container-form__input:focus {
+    outline: none;
+}
+
+.container-form__button {
+    font-family: "Alegreya", serif;
+    position: relative;
+    width: 80%;
+    height: 40px;
+    left: 45px;
+    border-radius: 5px;
+    border: solid 1px #5595ed;
+    background-color: #5595ed;
+    font-size: 30px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+
+.container-form__select {
+    border: solid 1px #ccc;
+    width: 235px;
+    height: 40px;
+    font-family: "Alegreya";
+    font-size: 17px;
+}

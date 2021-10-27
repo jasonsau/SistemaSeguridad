@@ -1,0 +1,177 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <title>Register</title>
+        <meta charset = "UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content = "IE = edge" />
+        <meta 
+        name = "viewport" 
+        content = "width = device-width, 
+        initial-scale = 1.0" />
+        <link rel = "stylesheet" href = "../static/css/style.css" />
+        <link rel = "stylesheet" th:href = "@{/css/style.css}" href = "../static/css/style.css" >
+    </head>
+    <body>
+        <h1 class = "title">Nuevo Empleado</h1>
+
+        <form 
+            class = "container-form" 
+            method = "POST" 
+            name = "form-register-employee"
+            id = "form-register-employee-id"
+            th:action = "@{/register-check}"
+        >
+            <input type = "hidden" name = "register" value = "register"/>
+            <div class = "container-form__data">
+                <div class = "container-form__error" id = "error-name" 
+                
+                 >
+                <p th:text = "${errors!=null}? ${errors.get('errorFirstName')}: ''" class = "form__error">
+                Error de datos
+                </p>
+                </div>
+                <label class = "container-form__label">Nombres</label>
+                <span class = "container-form__icon">
+                    <img 
+                        th:src = @{/icons/person.svg}
+                        src = "../static/icons/person.svg" 
+                        alt = "Icon person" 
+                    />
+                </span>
+                <input
+                    class = "container-form__input"
+                    type = "text" 
+                    placeholder = "Nombres de Empleado" 
+                    name = "employee_name"
+                    id = "employee_name"
+                />
+            </div>
+            <div class = "container-form__data">
+                <div class = "container-form__error" id = "error-last-name">
+                <p th:text = "${errors!=null}? ${errors.get('errorFirstName')}: ''" class = "form__error">
+
+                    Esto es un error
+                </div>
+                <label class = "container-form__label">
+                    Apellidos
+                </label>
+                <span class = "container-form__icon">
+                    <img
+                    th:src = @{/icons/person.svg}
+                    src = "../static/icons/person.svg"  
+                        alt = "Icon person" 
+                    />
+                </span>
+                <input 
+                    class = "container-form__input" 
+                    type = "text" 
+                    placeholder = "Apellidos de Empleado" 
+                    name = "employee_last_name"
+                    id = "employee_last_name"
+                />
+            </div>
+            <div class = "container-form__data">
+                <div class = "container-form__error" id = "error-dui">
+                 <p th:text = "${errors!=null}? ${errors.get('errorLastName')}: ''" class = "form__error">
+
+                    Esto es un error
+                </div>
+                <label class = "container-form__label">
+                    Email
+                </label>
+                <span class = "container-form__icon">
+                    <img 
+                        th:src = @{/icons/mail.svg}
+                        src = "../static/icons/mail.svg" 
+                        alt = "Icon person" 
+                    />
+                </span>
+                <input 
+                    class = "container-form__input" 
+                    type = "text" 
+                    placeholder = "Email del empleado" 
+                    name = "employee_email"
+                    id = "employee_email"
+                />
+            </div>
+            <div class = "container-form__data">
+                <div class = "container-form__error" id = "error-date">
+                    Esto es un error
+                </div>
+                <label class = "container-form__label">
+                    Fecha de Nacimiento
+                </label>
+                <span class = "container-form__icon">
+                    <img 
+                    th:src = @{/icons/date.svg}
+                    src = "../static/icons/date.svg"
+                        alt = "Icon date" 
+                    />
+                </span>
+                <input 
+                    class = "container-form__input" 
+                    type = "date"
+                     placeholder = "Fecha de nacimiento" 
+                    name = "employee_date_birthday"
+                    id = "employee_date_birthday"
+                />
+            </div>
+            
+            <div class = "container-form__data">
+                <div class = "container-form__error" id = "error-cellphone">
+                    Esto es un error
+                </div>
+                <label class = "container-form__label">
+                    Telefono
+                </label>
+                <span class = "container-form__icon">
+                    <img 
+                    th:src = @{/icons/cell.svg}
+                    src = "../static/icons/cell.svg"
+                        alt = "Icon cellphone" 
+                    />
+                </span>
+                <input 
+                    class = "container-form__input" 
+                    type = "text" 
+                    placeholder = "Telefono" 
+                    name = "employee_cellphone"
+                    id = "employee_cellphone"
+                />
+            </div>
+            <div class = "container-form__data">
+                <div class = "container-form__error" id = "error-position">
+                 <p th:text = "${errors!=null}? ${errors.get('errorCellphone')}: ''" class = "form__error">
+
+                    Esto es un error
+                </div>
+                <label class = "container-form__label">
+                    Passcode
+                </label>
+                <span class = "container-form__icon">
+                    <img 
+                    th:src = @{/icons/password.svg}
+                    src = "../static/icons/password.svg" 
+                        alt = "Icon type" 
+                    />
+                </span>
+                <input 
+                class = "container-form__input" 
+                type = "text" 
+                placeholder = "passcode" 
+                name = "employee_passcode"
+                id = "employee_passcode"
+                maxlength="4"
+            />
+            </div>
+            <div class = "container-form__data">
+                <button 
+                    class = "container-form__button"
+                    id = "button-register-employee-id"
+                >
+                    Registrar
+                </button>
+            </div>
+        </form>
+    </body>
+</html>
