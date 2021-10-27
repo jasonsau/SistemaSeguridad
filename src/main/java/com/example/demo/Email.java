@@ -25,7 +25,7 @@ public class Email {
 
 
     @Async
-    public String sendEmailLocker(String email) {
+    public void sendEmailLocker(String email) {
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
@@ -37,7 +37,6 @@ public class Email {
         } catch (MessagingException e) {
             throw new IllegalStateException("Error al enviar el email");
         }
-        return "Enviado";
     }
 
     @Async

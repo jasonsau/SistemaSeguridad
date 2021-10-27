@@ -23,6 +23,8 @@ body {
     right: 0;
     margin: auto;
     width: 800px;
+    display: flex;
+    flex-direction: column;
 }
 
 .container-form__error {
@@ -50,7 +52,6 @@ body {
     flex-wrap: wrap;
     flex-direction: row;
     margin-top: 15px;
-    align-items: center;
     width: 730px;
 }
 
@@ -60,7 +61,7 @@ body {
     width: 235px;
     margin-right: 20px;
     height: 40px;
-    font-family: "Alegreya";
+    font-family: "Alegreya", serif;
     font-size: 20px;
 }
 
@@ -83,7 +84,7 @@ body {
     padding: 0;
     border: solid 1px #ccc;
     width: 235px;
-    font-family: "Alegreya";
+    font-family: "Alegreya", serif;
     font-size: 17px;
 }
 
@@ -110,6 +111,6 @@ body {
     border: solid 1px #ccc;
     width: 235px;
     height: 40px;
-    font-family: "Alegreya";
+    font-family: "Alegreya", serif;
     font-size: 17px;
 }

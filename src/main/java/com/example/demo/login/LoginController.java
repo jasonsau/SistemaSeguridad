@@ -71,6 +71,7 @@ public class LoginController {
         if(userEmployee.isPresent()) {
             boolean correct = bCryptPasswordEncoder.matches(password, userEmployee.get().getPassword());
             if(correct) {
+                userEmployeeService.restartAttempts(userEmployee.get().getIdUser());
                 if(userEmployee.get().isBlocked() || !userEmployee.get().isEnabled()) {
                     return new ModelAndView("redirect:/login?error=3");
 
@@ -103,7 +104,7 @@ public class LoginController {
                 userEmployeeService.updateUserAttempts(username);
                 locked = userEmployeeService.chekcedAttempts(username);
                 if(locked) {
-                    email.sendEmailLocker(username);
+                    email.sendEmailLocker(userEmployee.get().getEmployee().getEmailEmployee());
                     return new ModelAndView("redirect:/login?error=3");
                 }
                 return new ModelAndView("redirect:/login?error=2");

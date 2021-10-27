@@ -8,7 +8,6 @@
         name = "viewport" 
         content = "width = device-width, 
         initial-scale = 1.0" />
-        <link rel = "stylesheet" href = "../static/css/style.css" />
         <link rel = "stylesheet" th:href = "@{/css/style.css}" href = "../static/css/style.css" >
     </head>
     <body>
@@ -23,14 +22,12 @@
         >
             <input type = "hidden" name = "register" value = "register"/>
             <div class = "container-form__data">
-                <div class = "container-form__error" id = "error-name" 
-                
-                 >
-                <p th:text = "${errors!=null}? ${errors.get('errorUserNotExist')}: ''" class = "form__error">
-                Error de datos
-                </p>
-                </div>
-                <label class = "container-form__label">Nombres</label>
+                <label
+                        class = "container-form__label"
+                        for = "idInputFirstName"
+                >
+                    Nombres
+                </label>
                 <span class = "container-form__icon">
                     <img 
                         th:src = @{/icons/person.svg}
@@ -43,16 +40,25 @@
                     type = "text" 
                     placeholder = "Nombres de Empleado" 
                     name = "employee_name"
-                    id = "employee_name"
+                    id = "idInputFirstName"
                 />
             </div>
+            <div
+                    class = "container-form__error"
+                    id = "error-name"
+                    th:if = "${errors.get('errorFirstName') != null}" style="opacity: 1"
+            >
+                <p
+                        th:text = "${errors.get('errorFirstName')!=null}? ${errors.get('errorFirstName')}: ''"
+                        class = "form__error">
+                    Error de datos
+                </p>
+            </div>
             <div class = "container-form__data">
-                <div class = "container-form__error" id = "error-last-name">
-                <p th:text = "${errors!=null}? ${errors.get('errorFirstName')}: ''" class = "form__error">
-
-                    Esto es un error
-                </div>
-                <label class = "container-form__label">
+                <label
+                        class = "container-form__label"
+                        for = "idInputLastName"
+                >
                     Apellidos
                 </label>
                 <span class = "container-form__icon">
@@ -67,16 +73,25 @@
                     type = "text" 
                     placeholder = "Apellidos de Empleado" 
                     name = "employee_last_name"
-                    id = "employee_last_name"
+                    id = "idInputLastName"
                 />
             </div>
-            <div class = "container-form__data">
-                <div class = "container-form__error" id = "error-dui">
-                 <p th:text = "${errors!=null}? ${errors.get('errorLastName')}: ''" class = "form__error">
-
+            <div
+                    class = "container-form__error"
+                    id = "error-last-name"
+                    th:if = "${errors.get('errorLastName') != null}" style="opacity: 1"
+            >
+                <p
+                        th:text = "${errors.get('errorLastName') != null}? ${errors.get('errorLastName')}: ''"
+                        class = "form__error">
                     Esto es un error
-                </div>
-                <label class = "container-form__label">
+                </p>
+            </div>
+            <div class = "container-form__data">
+                <label
+                        class = "container-form__label"
+                        for = "idInputEmail"
+                >
                     Email
                 </label>
                 <span class = "container-form__icon">
@@ -91,14 +106,27 @@
                     type = "text" 
                     placeholder = "Email del empleado" 
                     name = "employee_email"
-                    id = "employee_email"
+                    id = "idInputEmail"
                 />
             </div>
-            <div class = "container-form__data">
-                <div class = "container-form__error" id = "error-date">
+            <div
+                    class = "container-form__error"
+                    id = "error-email"
+                    th:if = "${errors.get('errorEmail') != null}" style="opacity: 1"
+            >
+                <p
+                        th:text = "${errors.get('errorEmail') !=null}? ${errors.get('errorEmail')}: ''"
+                        class = "form__error"
+                >
+
                     Esto es un error
-                </div>
-                <label class = "container-form__label">
+                </p>
+            </div>
+            <div class = "container-form__data">
+                <label
+                        class = "container-form__label"
+                        for = "idInputDateBirth"
+                >
                     Fecha de Nacimiento
                 </label>
                 <span class = "container-form__icon">
@@ -113,15 +141,27 @@
                     type = "date"
                      placeholder = "Fecha de nacimiento" 
                     name = "employee_date_birthday"
-                    id = "employee_date_birthday"
+                    id = "idInputDateBirth"
                 />
             </div>
-            
-            <div class = "container-form__data">
-                <div class = "container-form__error" id = "error-cellphone">
+            <div
+                    class = "container-form__error"
+                    id = "error-date"
+                    th:if = "${errors.get('errorDateBirth') != null}" style="opacity: 1"
+            >
+                <p
+                        th:text = "${errors.get('errorDateBirth') != null}? ${errors.get('errorDateBirth')}: ''"
+                        class = "form__error">
+
                     Esto es un error
-                </div>
-                <label class = "container-form__label">
+                </p>
+            </div>
+
+            <div class = "container-form__data">
+                <label
+                        class = "container-form__label"
+                        for = "idInputCellPhone"
+                >
                     Telefono
                 </label>
                 <span class = "container-form__icon">
@@ -136,16 +176,25 @@
                     type = "text" 
                     placeholder = "Telefono" 
                     name = "employee_cellphone"
-                    id = "employee_cellphone"
+                    id = "idInputCellPhone"
                 />
             </div>
-            <div class = "container-form__data">
-                <div class = "container-form__error" id = "error-position">
-                 <p th:text = "${errors!=null}? ${errors.get('errorCellphone')}: ''" class = "form__error">
+            <div
+                    class = "container-form__error"
+                    id = "error-cellphone"
+                    th:if = "${errors.get('errorCellPhone') != null}" style="opacity: 1"
+            >
+                <p th:text = "${errors.get('errorCellPhone') !=null}? ${errors.get('errorCellPhone')}: ''" class =
+                        "form__error">
 
                     Esto es un error
-                </div>
-                <label class = "container-form__label">
+                </p>
+            </div>
+            <div class = "container-form__data">
+                <label
+                        class = "container-form__label"
+                        for = "idInputPassword"
+                >
                     Passcode
                 </label>
                 <span class = "container-form__icon">
@@ -156,13 +205,24 @@
                     />
                 </span>
                 <input 
-                class = "container-form__input" 
-                type = "text" 
-                placeholder = "passcode" 
-                name = "employee_passcode"
-                id = "employee_passcode"
-                maxlength="4"
-            />
+                    class = "container-form__input"
+                    type = "text"
+                    placeholder = "passcode"
+                    name = "employee_passcode"
+                    id = "idInputPassword"
+                    maxlength="4"
+                />
+            </div>
+            <div
+                    class = "container-form__error"
+                    id = "error-passcode"
+                    th:if = "${errors.get('emptyPasscode') != null}" style="opacity: 1"
+            >
+                <p
+                        th:text = "${errors.get('emptyPasscode') !=null}? ${errors.get('emptyPasscode')}: ''"
+                        class = "form__error">
+                    Esto es un error
+                </p>
             </div>
             <div class = "container-form__data">
                 <button 

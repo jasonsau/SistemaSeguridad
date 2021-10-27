@@ -101,23 +101,23 @@ public class UserEmployeeController {
     
  
 	@GetMapping("register")
-    public ModelAndView viewRegister(@RequestParam(name = "error", required = false) String error) { 	
+    public ModelAndView viewRegister(@RequestParam(name = "error", required = false) String error) {
     	 Map<String, String> errors = new HashMap<>();
          if(error!=null) {
              if(error.equals("1")) {
-                 errors.put("errorUserNotExist", "El empleado no se encuentra registrado, o el correo esta mal escirto");
+                 errors.put("errorFirstName", "El nombre no se encuentra");
              }
              if(error.equals("2")) {
-                 errors.put("errorFirstName", "Los nombres no corresponden a ningun registro de empleado");
+                 errors.put("errorLastName", "Los apellidos no corresponden a ningun registro de empleado");
              } 
              if(error.equals("3")) {
-            	 errors.put("errorLastName", "Los apellidos no corresponde a ningun registro de empleado");
+            	 errors.put("errorEmail", "El email no corresponde a ningun registro de empleado");
              }
              if(error.equals("4")) {
-            	 errors.put("errorCellphone", "El numero de telefono no corresponde a ningun registro de empleado");
+            	 errors.put("errorDateBirth", "La fecha de nacimiento no corresponde a ningn registro");
              }
              if(error.equals("5")) {
-            	 errors.put("errorExistUser", "El empleado ya se encuentra registrado. Vuelva a la pagina de login e inicie sesion");
+            	 errors.put("errorCellPhone", "El numero de telefono no coincide con ningun registro");
              }
              if(error.equals("6")) {
             	 errors.put("emptyPasscode","Se debe ingrear un passcode de 4 digitos");
@@ -140,21 +140,21 @@ public class UserEmployeeController {
     	Optional<Employee> employee= employeeService.retrieveEmployee(employee_email); 
     	Optional<UserEmployee> userEmployee = userEmployeeService.findByEmail(employee_email);
     	if(!employee.isPresent()) {
-            return new ModelAndView("redirect:/register?error=1");
+            return new ModelAndView("redirect:/register?error=3");
         }
     	if(!employee.get().getFirstNameEmployee().toLowerCase().equals(String.valueOf(employee_name).toLowerCase())){
     		System.out.println("El nombre guardado es:"+" "+employee.get().getFirstNameEmployee());
     		System.out.println("El nombre recivido es"+" "+employee_name);
-            return new ModelAndView("redirect:/register?error=2");
+            return new ModelAndView("redirect:/register?error=1");
         }
     	if(!employee.get().getLastNameEmployee().toLowerCase().equals(String.valueOf(employee_last_name).toLowerCase())) {
             
-    		return new ModelAndView("redirect:/register?error=3");
+    		return new ModelAndView("redirect:/register?error=2");
         } 
     	if(!employee.get().getCellPhoneEmployee().equals(employee_cellphone)) {
     		System.out.println("El numero guardado es:"+" "+employee.get().getCellPhoneEmployee());
     		System.out.println("El numreo recivido es"+" "+employee_cellphone);
-            return new ModelAndView("redirect:/register?error=4");
+            return new ModelAndView("redirect:/register?error=5");
         }
     	if(userEmployee.isPresent()) {
             return new ModelAndView("redirect:/register?error=5");
