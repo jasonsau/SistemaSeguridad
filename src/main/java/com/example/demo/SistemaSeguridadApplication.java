@@ -6,6 +6,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.time.LocalDate;
+
 @SpringBootApplication
 @EnableScheduling
 public class SistemaSeguridadApplication {
@@ -24,6 +26,7 @@ public class SistemaSeguridadApplication {
 				"Prueba de mi mensaje"
 		).create();
 		System.out.println(message.getSid());*/
+
 	}
 
 }

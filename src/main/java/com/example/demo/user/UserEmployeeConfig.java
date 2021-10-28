@@ -12,7 +12,6 @@ import com.example.demo.municipality.Municipality;
 import com.example.demo.municipality.MunicipalityRepository;
 import com.example.demo.paswword.PasswordHistory;
 import com.example.demo.paswword.PasswordHistoryRepository;
-import com.example.demo.security.twofactor.app.TwoFactorService;
 import com.example.demo.workstation.WorkStation;
 import com.example.demo.workstation.WorkStationRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -20,18 +19,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Configuration
 public class UserEmployeeConfig {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final TwoFactorService twoFactorService;
 
-    public UserEmployeeConfig(BCryptPasswordEncoder bCryptPasswordEncoder,
-                              TwoFactorService twoFactorService) {
+    public UserEmployeeConfig(BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-        this.twoFactorService = twoFactorService;
     }
 
     @Bean
@@ -67,7 +64,9 @@ public class UserEmployeeConfig {
                     "75330538",
                     workStation,
                     masculino,
-                    addressJason
+                    addressJason,
+                    LocalDate.of(1999, 7, 28)
+
             );
             
             Employee lizt= new Employee(
@@ -77,12 +76,13 @@ public class UserEmployeeConfig {
             		"123213123",
             		"121323231",
             		"1232131232",
-            		"ae19001@ues.edu.sv",
+            		"ma17092@ues.edu.sv",
             		"79976350",
             		workStation,
             		masculino,
-            		addressJason
-            		);
+            		addressJason,
+                    LocalDate.of(2001, 12, 5)
+           );
 
             Employee juan = new Employee(
                     "Juan Carlos",
@@ -91,19 +91,20 @@ public class UserEmployeeConfig {
                     "06122809991200",
                     "123456788",
                     "123456788",
-                    "ma17092@ues.edu.sv",
+                    "ae19001@ues.edu.sv",
                     "65655443",
                     workStation,
                     masculino,
-                    addressJason
+                    addressJason,
+                    LocalDate.of(1999,6,5)
             );
 
             UserEmployee userEmployeeJason = new UserEmployee(
                     "jason__saul",
                     jason,
                     true,
-                    false,
-                    bCryptPasswordEncoder.encode( "password").toString(),
+                    true,
+                    bCryptPasswordEncoder.encode( "password"),
                     false,
                     LocalDateTime.now().plusDays(30),
                     UserRole.ADMIN
@@ -117,7 +118,7 @@ public class UserEmployeeConfig {
                     juan,
                     true,
                     false,
-                    bCryptPasswordEncoder.encode("password1234").toString(),
+                    bCryptPasswordEncoder.encode("password1234"),
                     false,
                     LocalDateTime.now().plusDays(30),
                     UserRole.ADMIN

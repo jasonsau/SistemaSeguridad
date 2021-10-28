@@ -1,11 +1,12 @@
 package com.example.demo.user;
 
-import com.example.demo.login.LoginController;
+import com.example.demo.Email;
 import org.apache.commons.lang3.RandomStringUtils;
 import com.example.demo.responsebody.ResponseBodyUserEmail;
 import com.example.demo.security.twofactor.email.ConfirmationToken;
 import com.example.demo.security.twofactor.email.ConfirmationTokenService;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,39 +23,36 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.StringTokenizer;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 
 @RestController
 @RequestMapping("/")
 public class UserEmployeeController {
+
     private final UserEmployeeService userEmployeeService;
-    private final LoginController loginController;
     private final EmployeeService employeeService;
     private final ConfirmationTokenService confirmationTokenService;
-
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final SendEmailService  sendEmailSender;
-    public UserEmployeeController(LoginController loginController,
-                                  UserEmployeeService userEmployeeService,
+    private final Email email;
+
+    public UserEmployeeController(UserEmployeeService userEmployeeService,
                                   EmployeeService employeeService,
                                   ConfirmationTokenService confirmationTokenService,
-                                  SendEmailService sendEmailSender) {
-        this.loginController = loginController;
+                                  SendEmailService sendEmailSender,
+                                  BCryptPasswordEncoder bCryptPasswordEncoder,
+                                  Email email) {
         this.userEmployeeService = userEmployeeService;
         this.employeeService = employeeService;
         this.confirmationTokenService = confirmationTokenService;
         this.sendEmailSender = sendEmailSender;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.email = email;
     }
 
-
-    
-
-	
-	
     @GetMapping("home")
     public ModelAndView homeView() {
         ModelAndView model = new ModelAndView();
@@ -84,6 +82,8 @@ public class UserEmployeeController {
     public ModelAndView changePasswordCheck(Authentication authentication,
                                     @RequestParam(name = "password") String password,
                                     @RequestParam(name = "passwordVerified") String passwordVerified) {
+
+
         if(password.length()<12) {
             return new ModelAndView("redirect:/change-password?error=1");
         }
@@ -92,6 +92,13 @@ public class UserEmployeeController {
         }
         int response = userEmployeeService.updatePassword(password, authentication.getName());
         if(response == 1) {
+
+            Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+            if(userEmployee.isPresent()) {
+                if(userEmployee.get().isBlocked()) {
+                    userEmployeeService.updateUserUnlockedUser(userEmployee.get().getIdUser());
+                }
+            }
             SecurityContextHolder.clearContext();
             return new ModelAndView("redirect:/login");
         } else {
@@ -133,11 +140,12 @@ public class UserEmployeeController {
     public ModelAndView viewCheckRegister(@RequestParam(name="employee_name")String employee_name,
     		@RequestParam(name="employee_last_name")String employee_last_name,
     		@RequestParam(name="employee_email")String employee_email,
-    		//@RequestParam(name="employee_date_birthday")LocalDate employee_date_birthday,
+    		@RequestParam(name="employee_date_birthday")String employee_date_birthday,
     		@RequestParam(name="employee_cellphone")String employee_cellphone,
-    		@RequestParam(name="employee_passcode") String employee_passcode)
-    {
-    	Optional<Employee> employee= employeeService.retrieveEmployee(employee_email); 
+    		@RequestParam(name="employee_passcode") String employee_passcode) {
+
+        LocalDate dateBirth = LocalDate.parse(employee_date_birthday);
+        Optional<Employee> employee= employeeService.retrieveEmployee(employee_email);
     	Optional<UserEmployee> userEmployee = userEmployeeService.findByEmail(employee_email);
     	if(!employee.isPresent()) {
             return new ModelAndView("redirect:/register?error=3");
@@ -159,64 +167,59 @@ public class UserEmployeeController {
     	if(userEmployee.isPresent()) {
             return new ModelAndView("redirect:/register?error=5");
         }
-    	if(employee_passcode=="") {
+    	if(employee_passcode.isEmpty()) {
     		return new ModelAndView("redirect:/register?error=6");
     	}
-    	
-    	
-    		ModelAndView model= new ModelAndView();
-        	
-        	
-			String employeeUser="";
-	    	String tmpWord;
-	    	StringTokenizer words= new StringTokenizer(employee_last_name);
-	    	Date passwordExpiredAt= new Date();
-	    	LocalDateTime localDate= LocalDateTime.now().plusDays(30) ;
-	    	
-	    	//Genera una parte de lo que sera el nombre de usuario
-			String characters = "0123456789";
-			String employeeUser_1 = RandomStringUtils.random( 5, characters );
-			
-	    	
-	    	//cuerpo del mensaje
-			String body;
-			//este de aqui puede dar error
-			UserEmployee newUser= new UserEmployee();
-			
-			//userEmployee.get().setEmployee(employee.get());//aqui voy cheles
-			
-			 			
-			//crear nombre de usuario    		    	
-		    	while (words.hasMoreTokens()) {
-		    	   tmpWord= words.nextToken();
-		    	   employeeUser+=tmpWord.substring(0, 1);
-		    	}
-		    	employeeUser+= employeeUser_1;
-		    
-		    	
-		    //llenar los campos del nuevo objeto userEmployee
-		    	newUser.setEmployee(employee.get());
-    			newUser.setPasswordUserEmployee(employee_passcode);
-    			newUser.setTemporaryPassword(true);   
-    			newUser.setUserNameEmployee(employeeUser);
-    			newUser.setPasswordExpiredAt(localDate);
-    			newUser.setEnabled(true);
-    			newUser.setUserRole(UserRole.USER);
-    			newUser.setAttempts(0);
-    			newUser.setIsDoubleAuthenticator(false);
-    			newUser.setSecretKeyGoogleAuthenticator("");
-                newUser.setDoubleAuthenticationEmail(false);
-    			
-    			userEmployeeService.saveUserEmployee(newUser);
-    			
-    			//enviar mensajes con credenciales
-   			body="Su usuario es:"+" "+newUser.getUsername()+"\n"+"Su contraseña temporal es:"+" "
-    			+newUser.getPassword()+"\n"+"Inicie sesiòn con su usuario y contraseña, al entrar por  "
-    					+ "primera vez debe cambiar la contraseña. Ingrese al siguiente link para iniciar sesion: \n HTTP://localhost:8080/login";
-    			sendEmailSender.sendMail("juanacostab.m.555@gmail.com", employee.get().getEmailEmployee(), "Registro de usuario", body);
-    			model.setViewName("register-check"); 
-    			model.addObject("newUser",newUser);
-                return model;
+
+        if(!employee.get().getDateBirth().equals(dateBirth)) {
+            return new ModelAndView("redirect:/register?error=7");
+        }
+        ModelAndView model= new ModelAndView();
+
+        String employeeUser="";
+        String tmpWord;
+        StringTokenizer words= new StringTokenizer(employee_last_name);
+
+        //Genera una parte de lo que sera el nombre de usuario
+        String characters = "0123456789";
+        String employeeUser_1 = RandomStringUtils.random( 5, characters );
+
+        //cuerpo del mensaje
+        String body;
+        //este de aqui puede dar error
+        UserEmployee newUser= new UserEmployee();
+
+        //userEmployee.get().setEmployee(employee.get());//aqui voy cheles
+        //crear nombre de usuario
+        while (words.hasMoreTokens()) {
+           tmpWord= words.nextToken();
+           employeeUser+=tmpWord.substring(0, 1);
+        }
+        employeeUser+= employeeUser_1;
+        //llenar los campos del nuevo objeto userEmployee
+        newUser.setEmployee(employee.get());
+        newUser.setPasswordUserEmployee(bCryptPasswordEncoder.encode(employee_passcode));
+        newUser.setTemporaryPassword(true);
+        newUser.setUserNameEmployee(employeeUser);
+        newUser.setPasswordExpiredAt(LocalDateTime.now().plusDays(30));
+        newUser.setEnabled(true);
+        newUser.setUserRole(UserRole.USER);
+        newUser.setAttempts(0);
+        newUser.setIsDoubleAuthenticator(false);
+        newUser.setSecretKeyGoogleAuthenticator("");
+        newUser.setDoubleAuthenticationEmail(false);
+
+        userEmployeeService.saveUserEmployee(newUser);
+
+            //enviar mensajes con credenciales
+        body="Su usuario es:"+" "+newUser.getUsername()+"\n"+"Su contraseña temporal es:"+" "
+            +employee_passcode+"\n"+"Inicie sesiòn con su usuario y contraseña, al entrar por  "
+                    + "primera vez debe cambiar la contraseña. Ingrese al siguiente link para iniciar sesion: \n http://localhost:8080/login";
+            sendEmailSender.sendMail("juanacostab.m.555@gmail.com", employee.get().getEmailEmployee(), "Registro de usuario", body);
+            model.setViewName("register-check");
+            model.addObject("newUser",newUser);
+
+        return model;
     }
 
     @GetMapping("/users")
@@ -232,8 +235,11 @@ public class UserEmployeeController {
         if(userEmployee.isPresent()) {
             if(userEmployee.get().isBlocked()) {
                 ConfirmationToken confirmationToken = confirmationTokenService
-                        .createNewToken(userEmployee.get());
+                        .createNewTokenUnlocked(userEmployee.get());
                 confirmationTokenService.insertConfirmationToken(confirmationToken);
+                email.sendEmailToken(userEmployee.get().getEmployee().getEmailEmployee(),
+                        createBodyEmailUnlockedUser(confirmationToken.getToken()),
+                        "Desbloquear Usuario");
                 messages.put("message", "Se le ha enviado a su correo las indicaciones");
                 messages.put("number", "1");
             } else {
@@ -246,5 +252,25 @@ public class UserEmployeeController {
         }
         return  messages;
     }
-    
+
+    @GetMapping("/unlocked-user/check")
+    public ModelAndView unlockedUserCheck(@RequestParam("token") String token) {
+        Optional<ConfirmationToken>confirmationToken = confirmationTokenService.findByToken(token);
+        if(confirmationToken.isPresent()) {
+            UserEmployee userEmployee = confirmationToken.get().getUserEmployee();
+            Authentication authentication = userEmployeeService.getAuthentication(userEmployee.getUsername(),
+                    userEmployee.getPassword(),
+                    userEmployeeService.addRole("AUTHENTICATOR"));
+            userEmployeeService.setAuthentication(authentication);
+        }
+        return new ModelAndView("redirect:/options");
+
+    }
+
+    private String createBodyEmailUnlockedUser(String token) {
+        return "<h1>Instrucciones para desbloqueo</h1>"+
+                "<p>Ingrese al siguiente link para seguir con el proceso</p>"+
+                "http://localhost:8080/unlocked-user/check?token="+token;
+
+    }
 }
