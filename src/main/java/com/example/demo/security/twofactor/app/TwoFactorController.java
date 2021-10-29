@@ -129,9 +129,6 @@ public class TwoFactorController {
                                          Authentication authentication) {
 
         Optional<UserEmployee> userEmployee = userEmployeeService.findByIdUser(idUser);
-        System.out.println(authentication.getCredentials());
-        System.out.println(authentication.getName());
-        System.out.println(authentication.getAuthorities());
         if(userEmployee.isPresent()) {
             if(userEmployee.get().isBlocked()) {
                 authentication = userEmployeeService.getAuthentication(authentication.getName(),
@@ -154,7 +151,6 @@ public class TwoFactorController {
             } else if (tipo.equals("correo")) {
                 Optional<ConfirmationToken> confirmationToken = confirmationTokenService.getLastRegister(idUser);
                 if(confirmationToken.isPresent()) {
-                    System.out.println(confirmationToken.get().getToken());
                     if(confirmationToken.get().getToken().equals(codigo)) {
                         if(!confirmationToken.get().getExpiredAtToken().isBefore(LocalDateTime.now())) {
                             authentication = getAuthentication(userEmployee.get());

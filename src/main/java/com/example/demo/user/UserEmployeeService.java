@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 public class UserEmployeeService implements UserDetailsService {
@@ -27,6 +28,9 @@ public class UserEmployeeService implements UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final PasswordHistoryService passwordHistoryService;
     private final int DATE_EXPIRET_PASSWORD = 30;
+    private final String REGEX_PASSWORD = "(?=(.*[0-9]))(?=.*[!@#$%^&*()\\[\\]\\{\\}\\-+=~`\"'<>,./?])(?=.*[a-z])(?=" +
+            "(.*[A-Z]))(?=(.*)).{12,}";
+
 
     public UserEmployeeService(UserEmployeeRepository userEmployeeRepository,
                                BCryptPasswordEncoder bCryptPasswordEncoder,
@@ -84,7 +88,7 @@ public class UserEmployeeService implements UserDetailsService {
                     LocalDateTime.now(),
                     LocalDateTime.now().plusDays(DATE_EXPIRET_PASSWORD),
                     userEmployee.get(),
-                    bCryptPasswordEncoder.encode(username)
+                    bCryptPasswordEncoder.encode(password)
             ));
         } else {
             throw new IllegalStateException("Usuario no se ha encontrado");
@@ -158,4 +162,8 @@ public class UserEmployeeService implements UserDetailsService {
                 || userEmployee.getTemporaryPassword();
     }
 
+    public boolean validatePassword(String password) {
+        Pattern pattern = Pattern.compile(REGEX_PASSWORD);
+        return pattern.matcher(password).find();
+    }
 }

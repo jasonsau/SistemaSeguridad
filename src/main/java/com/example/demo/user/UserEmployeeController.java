@@ -1,6 +1,7 @@
 package com.example.demo.user;
 
 import com.example.demo.Email;
+import com.example.demo.paswword.PasswordHistoryService;
 import org.apache.commons.lang3.RandomStringUtils;
 import com.example.demo.responsebody.ResponseBodyUserEmail;
 import com.example.demo.security.twofactor.email.ConfirmationToken;
@@ -38,19 +39,22 @@ public class UserEmployeeController {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final SendEmailService  sendEmailSender;
     private final Email email;
+    private final PasswordHistoryService passwordHistoryService;
 
     public UserEmployeeController(UserEmployeeService userEmployeeService,
                                   EmployeeService employeeService,
                                   ConfirmationTokenService confirmationTokenService,
                                   SendEmailService sendEmailSender,
                                   BCryptPasswordEncoder bCryptPasswordEncoder,
-                                  Email email) {
+                                  Email email,
+                                  PasswordHistoryService passwordHistoryService) {
         this.userEmployeeService = userEmployeeService;
         this.employeeService = employeeService;
         this.confirmationTokenService = confirmationTokenService;
         this.sendEmailSender = sendEmailSender;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.email = email;
+        this.passwordHistoryService = passwordHistoryService;
     }
 
     @GetMapping("home")
@@ -66,10 +70,15 @@ public class UserEmployeeController {
         Map<String, String> errors = new HashMap<>();
         if(error!=null) {
             if(error.equals("1")) {
-                errors.put("errorLength", "La contraseña deber ser igual o mayor a 12 caracteres");
+                errors.put("errorLength", "La contraseña deber tener una mayuscula, un numero y un caracter " +
+                        "especial " +
+                        "con 12 caracteres");
             }
             if(error.equals("2")) {
                 errors.put("errorNoEquals", "Las contraseña no coinciden");
+            }
+            if(error.equals("3")) {
+                errors.put("errorPasswordFound", "La contraseña coincide con las ultimas 3 elija otra");
             }
 
         }
@@ -83,16 +92,21 @@ public class UserEmployeeController {
                                     @RequestParam(name = "password") String password,
                                     @RequestParam(name = "passwordVerified") String passwordVerified) {
 
+        Optional<UserEmployee> userEmployeeT = userEmployeeService.findByUsername(authentication.getName());
 
-        if(password.length()<12) {
+        if(!userEmployeeService.validatePassword(password)) {
             return new ModelAndView("redirect:/change-password?error=1");
+        }
+        if(userEmployeeT.isPresent()) {
+            if(passwordHistoryService.verifiedLastestPassword(password, userEmployeeT.get())) {
+                return new ModelAndView("redirect:/change-password?error=3");
+            }
         }
         if(!password.equals(passwordVerified)) {
             return new ModelAndView("redirect:/change-password?error=2");
         }
         int response = userEmployeeService.updatePassword(password, authentication.getName());
         if(response == 1) {
-
             Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
             if(userEmployee.isPresent()) {
                 if(userEmployee.get().isBlocked()) {
@@ -151,8 +165,6 @@ public class UserEmployeeController {
             return new ModelAndView("redirect:/register?error=3");
         }
     	if(!employee.get().getFirstNameEmployee().toLowerCase().equals(String.valueOf(employee_name).toLowerCase())){
-    		System.out.println("El nombre guardado es:"+" "+employee.get().getFirstNameEmployee());
-    		System.out.println("El nombre recivido es"+" "+employee_name);
             return new ModelAndView("redirect:/register?error=1");
         }
     	if(!employee.get().getLastNameEmployee().toLowerCase().equals(String.valueOf(employee_last_name).toLowerCase())) {
@@ -160,8 +172,6 @@ public class UserEmployeeController {
     		return new ModelAndView("redirect:/register?error=2");
         } 
     	if(!employee.get().getCellPhoneEmployee().equals(employee_cellphone)) {
-    		System.out.println("El numero guardado es:"+" "+employee.get().getCellPhoneEmployee());
-    		System.out.println("El numreo recivido es"+" "+employee_cellphone);
             return new ModelAndView("redirect:/register?error=5");
         }
     	if(userEmployee.isPresent()) {

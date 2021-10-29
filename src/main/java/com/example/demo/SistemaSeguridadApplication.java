@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.time.LocalDate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SpringBootApplication
 @EnableScheduling
@@ -26,7 +28,15 @@ public class SistemaSeguridadApplication {
 				"Prueba de mi mensaje"
 		).create();
 		System.out.println(message.getSid());*/
+		Pattern pattern = Pattern.compile("(?=(.*[0-9]))(?=.*[!@#$%^&*()\\[\\]\\{\\}\\-+=~`\"'<>,./?])(?=.*[a-z])(?=" +
+				"(.*[A-Z]))(?=(.*)).{12,}");
 
+		Matcher math = pattern.matcher("ruebawooo3ord!");
+		if(math.find()) {
+			System.out.println("true");
+		} else  {
+			System.out.println("false");
+		}
 	}
 
 }
