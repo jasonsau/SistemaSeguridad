@@ -25,15 +25,19 @@ public class PasswordHistoryService {
     }
 
     public boolean verifiedLastestPassword(String password, UserEmployee userEmployee) {
-        boolean response = false;
+        int contadorMatches = 0;
         List<PasswordHistory> passwordHistoryList =
                 passwordHistoryRepository.findLastThreeRegister(userEmployee.getIdUser());
-        for(int i = 0; i < passwordHistoryList.size(); i++) {
-            if(bCryptPasswordEncoder.matches(password, passwordHistoryList.get(i).getUserEmployee().getPassword())) {
-                response = true;
-                break;
+        for (PasswordHistory passwordHistory: passwordHistoryList) {
+            System.out.println(passwordHistory.getUserEmployee());
+            System.out.println(passwordHistory.getUserEmployeePasswordHistory());
+        }
+        for(PasswordHistory passwordHistory: passwordHistoryList) {
+            if(bCryptPasswordEncoder.matches(password, passwordHistory.getUserEmployeePasswordHistory())) {
+                contadorMatches = contadorMatches + 1;
             }
         }
-        return response;
+        System.out.println(contadorMatches);
+        return contadorMatches > 0;
     }
 }

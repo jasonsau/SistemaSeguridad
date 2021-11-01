@@ -1,5 +1,7 @@
 package com.example.demo.security.twofactor.app;
 
+import com.example.demo.user.UserEmployee;
+import com.example.demo.user.UserEmployeeService;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -17,6 +19,11 @@ import java.security.SecureRandom;
 
 @Service
 public class TwoFactorService {
+    private final UserEmployeeService userEmployeeService;
+
+    public TwoFactorService(UserEmployeeService userEmployeeService) {
+        this.userEmployeeService = userEmployeeService;
+    }
 
     //Crear una llave secreta para cada usuario para despues generar
     //los codigos otp
@@ -74,5 +81,22 @@ public class TwoFactorService {
         return false;
     }
 
+    public boolean redirectChangePasswordTempory(UserEmployee userEmployee) {
+        if(userEmployeeService.verifiedPasswordTemporary(userEmployee)) {
+            userEmployeeService.setAuthentication(userEmployeeService.getAuthentication(
+                    userEmployee.getUsername(),
+                    userEmployee.getPassword(),
+                    userEmployeeService.addRole("CHANGE_PASSWORD")
+            ));
+            return true;
+        }else {
+            return false;
+        }
+    }
 
+    public String createBodyEmailConfirmationToken(String token) {
+        return "<h1>Codigo de Verificacion</h1>" +
+                "<p>Su codigo de es " + token +
+                " El codigo expira en 15 minutos";
+    }
 }

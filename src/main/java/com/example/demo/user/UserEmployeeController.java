@@ -212,7 +212,7 @@ public class UserEmployeeController {
         newUser.setTemporaryPassword(true);
         newUser.setUserNameEmployee(employeeUser);
         newUser.setPasswordExpiredAt(LocalDateTime.now().plusDays(30));
-        newUser.setEnabled(true);
+        newUser.setEnabled(false);
         newUser.setUserRole(UserRole.USER);
         newUser.setAttempts(0);
         newUser.setIsDoubleAuthenticator(false);
@@ -220,11 +220,15 @@ public class UserEmployeeController {
         newUser.setDoubleAuthenticationEmail(false);
 
         userEmployeeService.saveUserEmployee(newUser);
+        ConfirmationToken confirmationToken = confirmationTokenService.createNewTokenUnlocked(newUser);
+        confirmationTokenService.insertConfirmationToken(confirmationToken);
+
 
             //enviar mensajes con credenciales
         body="Su usuario es:"+" "+newUser.getUsername()+"\n"+"Su contraseña temporal es:"+" "
             +employee_passcode+"\n"+"Inicie sesiòn con su usuario y contraseña, al entrar por  "
-                    + "primera vez debe cambiar la contraseña. Ingrese al siguiente link para iniciar sesion: \n http://localhost:8080/login";
+                    + "primera vez debe cambiar la contraseña. Ingrese al siguiente link para verificar su cuenta: \n"+
+                "http://localhost:8080/enabled-user?token="+confirmationToken.getToken();
             sendEmailSender.sendMail("juanacostab.m.555@gmail.com", employee.get().getEmailEmployee(), "Registro de usuario", body);
             model.setViewName("register-check");
             model.addObject("newUser",newUser);
@@ -275,6 +279,21 @@ public class UserEmployeeController {
         }
         return new ModelAndView("redirect:/options");
 
+    }
+
+    @GetMapping("/enabled-user")
+    public String enabledUser(@RequestParam("token") String token) {
+        Optional<ConfirmationToken>confirmationToken = confirmationTokenService.findByToken(token);
+        int response = 0;
+        if(confirmationToken.isPresent()) {
+            response = userEmployeeService.enabledUser(confirmationToken.get().getUserEmployee().getIdUser());
+        }
+        if(response == 1) {
+            return "<p>Se ha verificado su cuenta ingrese al siguiente link para hacer el primer inicio de Sesion</p>" +
+                    "<a href = 'http://localhost:8080/login'>Iniciar Sesion</a>";
+        } else {
+            throw new IllegalStateException("Error no se ha podido verificar su usuario");
+        }
     }
 
     private String createBodyEmailUnlockedUser(String token) {

@@ -166,4 +166,8 @@ public class UserEmployeeService implements UserDetailsService {
         Pattern pattern = Pattern.compile(REGEX_PASSWORD);
         return pattern.matcher(password).find();
     }
+
+    public int enabledUser(Long idUser) {
+        return userEmployeeRepository.enabledUser(idUser);
+    }
 }

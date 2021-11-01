@@ -1,6 +1,7 @@
 package com.example.demo.security.twofactor.app;
 
 import com.example.demo.Email;
+import com.example.demo.employee.Employee;
 import com.example.demo.security.twofactor.email.ConfirmationToken;
 import com.example.demo.security.twofactor.email.ConfirmationTokenService;
 import com.example.demo.user.UserEmployee;
@@ -81,7 +82,7 @@ public class TwoFactorController {
                         model.addObject("tipo", "correo");
                         email.sendEmailToken(
                                 userEmployee.get().getEmployee().getEmailEmployee(),
-                                createBodyEmailConfirmationToken(confirmationToken.getToken()),
+                                twoFactorService.createBodyEmailConfirmationToken(confirmationToken.getToken()),
                                 "Codigo de Verificacion"
                         );
                     } else {
@@ -141,7 +142,10 @@ public class TwoFactorController {
             if(tipo.equals("app")) {
                 if( twoFactorService.verificationCode(userEmployee.get().getSecretKeyGoogleAuthenticator(),
                         codigo) ) {
-                    authentication = getAuthentication(userEmployee.get());
+                    if(twoFactorService.redirectChangePasswordTempory(userEmployee.get())) {
+                        return new ModelAndView("redirect:/change-password");
+                    }
+                    authentication = userEmployeeService.getAuthentication(userEmployee.get());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     return new ModelAndView("redirect:/home");
                 } else {
@@ -153,7 +157,10 @@ public class TwoFactorController {
                 if(confirmationToken.isPresent()) {
                     if(confirmationToken.get().getToken().equals(codigo)) {
                         if(!confirmationToken.get().getExpiredAtToken().isBefore(LocalDateTime.now())) {
-                            authentication = getAuthentication(userEmployee.get());
+                            if(twoFactorService.redirectChangePasswordTempory(userEmployee.get())) {
+                                return new ModelAndView("redirect:/change-password");
+                            }
+                            authentication = userEmployeeService.getAuthentication(userEmployee.get());
                             SecurityContextHolder.getContext().setAuthentication(authentication);
                             confirmationTokenService.updateDateConfiramtionToken(confirmationToken.get().getIdToken()
                                     , LocalDateTime.now());
@@ -191,18 +198,6 @@ public class TwoFactorController {
         return new BufferedImageHttpMessageConverter();
     }
 
-    private Authentication getAuthentication(UserEmployee userEmployee){
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                userEmployee.getUsername(),
-                userEmployee.getPassword(),
-                userEmployee.getAuthorities()
-        );
-        return authentication;
-    }
 
-    private String createBodyEmailConfirmationToken(String token) {
-        return "<h1>Codigo de Verificacion</h1>" +
-                "<p>Su codigo de es " + token +
-                " El codigo expira en 15 minutos";
-    }
+
 }
