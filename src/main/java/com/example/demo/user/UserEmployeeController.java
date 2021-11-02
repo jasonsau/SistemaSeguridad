@@ -18,11 +18,14 @@ import org.springframework.web.servlet.ModelAndView;
 import com.example.demo.api.email.rest.SendEmailService;
 import com.example.demo.employee.Employee;
 import com.example.demo.employee.EmployeeService;
+import com.example.demo.paswword.PasswordHistory;
+import com.example.demo.paswword.PasswordHistoryService;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.StringTokenizer;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,19 +41,23 @@ public class UserEmployeeController {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final SendEmailService  sendEmailSender;
     private final Email email;
+    private final PasswordHistoryService passwordHistoryService;
+    
 
     public UserEmployeeController(UserEmployeeService userEmployeeService,
                                   EmployeeService employeeService,
                                   ConfirmationTokenService confirmationTokenService,
                                   SendEmailService sendEmailSender,
                                   BCryptPasswordEncoder bCryptPasswordEncoder,
-                                  Email email) {
+                                  Email email,
+                                  PasswordHistoryService passwordHistoryService) {
         this.userEmployeeService = userEmployeeService;
         this.employeeService = employeeService;
         this.confirmationTokenService = confirmationTokenService;
         this.sendEmailSender = sendEmailSender;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.email = email;
+        this.passwordHistoryService=passwordHistoryService;
     }
 
     @GetMapping("home")
@@ -273,4 +280,122 @@ public class UserEmployeeController {
                 "http://localhost:8080/unlocked-user/check?token="+token;
 
     }
+    
+    //aqui empieza el codigo de las interfces que vera el usuario
+    @GetMapping("/userAccount")
+    public ModelAndView userAccount(Authentication authentication){
+    	ModelAndView model= new ModelAndView();
+    	//descomentar la instruccion de abajo para probar con el objeto authentication y comentar la segunda contando despues de esta linea
+    	//Optional<UserEmployee> users = userEmployeeService.findByUsername(authentication.getName());
+        Optional<UserEmployee> users = userEmployeeService.findByEmail("ae19001@ues.edu.sv");
+        if(users.isPresent()) {
+        	UserEmployee newUser= users.get();
+        	model.setViewName("/account/userAccount");
+        	model.addObject("userNameEmployee",newUser.getUsername());
+        	model.addObject("userAdress",newUser.getEmployee().getAddressEmployee().toString());
+        	model.addObject("userWorkstation", newUser.getEmployee().getWorkStationEmployee().getNameWorkStation());
+        	model.addObject("userDui",newUser.getEmployee().getDuiEmployee());
+        	model.addObject("userEmail", newUser.getEmployee().getEmailEmployee());
+        	model.addObject("userCell", newUser.getEmployee().getCellPhoneEmployee());
+        	model.addObject("nameEmployee", newUser.getEmployee().getFirstNameEmployee()+" "+newUser.getEmployee().getLastNameEmployee());
+        	model.addObject("idUser",newUser.getIdUser());
+        	model.addObject("userMunicipality",users.get().getEmployee().getAddressEmployee().getNameMunicipality().getNameMunicipality());
+        	model.addObject("userStreet",users.get().getEmployee().getAddressEmployee().getStreetAddress());
+            
+        }
+    	return model;
+    }
+ 
+    @GetMapping("/userStatistics")
+    public ModelAndView userStatistics(@RequestParam(name="userNameEmployee", required= false) String userNameEmployee) {
+    	ModelAndView model= new ModelAndView();
+    	Optional<UserEmployee> users = userEmployeeService.findByUsername(userNameEmployee);
+    	if(users.isPresent()) {
+    		ArrayList<PasswordHistory> passwordHistory=  passwordHistoryService.findByIdUser(users.get().getIdUser());
+    		if(!passwordHistory.isEmpty()) {
+    		    PasswordHistory passHistory= passwordHistory.get(passwordHistory.size()-1);
+    			model.setViewName("/account/userStatistics");
+    			model.addObject("passwordChanges",passwordHistory.size());
+            	model.addObject("userPasswordHistory", passHistory.getUserEmployee().getUsername());
+            	model.addObject("passwordCreateAt",passHistory.getCreateAt());
+            	model.addObject("passwordExpiredAt",passHistory.getExpiredAt());
+            	if(passHistory.getCreateAt().getMonth()==passHistory.getExpiredAt().getMonth()) {
+            	    model.addObject("daysToExpire",passHistory.getExpiredAt().getDayOfMonth()-passHistory.getCreateAt().getDayOfMonth());
+            	}
+            	else {
+            	    model.addObject("daysToExpire",30-(passHistory.getExpiredAt().getDayOfMonth()-passHistory.getCreateAt().getDayOfMonth()));	
+            	}
+            	
+            	return model;
+    		}
+    		model.setViewName("redirect:/userAccount");
+    	 return model;
+    	}
+    	else {
+    		model.setViewName("redirect:/userAccount");
+    		return model;	
+    	}
+   }
+    
+  @GetMapping("/changePasswordUser")
+  public ModelAndView changePasswordUser(@RequestParam(name="error", required=false)String error,
+		  @RequestParam(name="userNameEmployee", required= false) String userNameEmployee){
+	  ModelAndView model= new ModelAndView();
+	  Map<String, String> errors = new HashMap<>();
+	 if(error!=null) {
+		 if(error.equals("1")) {
+			  errors.put("usuarioNoExiste", "El usuario que ha ingresado es incorrecto");
+		  }
+		  else if(error.equals("2")) {
+			  errors.put("longituIncorrecta","La contraseña tiene que tener minimo 12 caracteres");
+		  }
+		  else if(error.equals("3")) {
+			  errors.put("contraseñasDistintas","las contraseña no coincide");
+		  }
+		  else if(error.equals("4")) {
+			  errors.put("exito","Se cambio la contraeña correctamente");
+		  }
+	 }
+	  model.setViewName("/account/changePassword");
+	  model.addObject("errors",errors);
+	  model.addObject("userNameEmployee",userNameEmployee);
+	  return model;
+  }
+  
+  @PostMapping("/changePassword/check-password")
+  public ModelAndView checkChangePasswordUser(
+		  @RequestParam(name="user")String user,
+		  @RequestParam(name="password")String password,
+		  @RequestParam(name="new_password")String new_password) {
+	  Optional<UserEmployee> users = userEmployeeService.findByUsername(user);
+	  BCryptPasswordEncoder newbCryptPasswordEncoder= new BCryptPasswordEncoder();
+	  if(users.isPresent()) {
+		  if(!(new_password.length()<12)) {
+			  boolean condicion= newbCryptPasswordEncoder.matches(password, users.get().getPassword());
+		  if(condicion) {
+			  userEmployeeService.updatePassword(new_password, user);
+			  return new ModelAndView("redirect:/changePasswordUser?error=4");
+		  }
+		  else {
+			  return new ModelAndView("redirect:/changePasswordUser?error=3");
+		  }
+		}
+		  else {
+			return new ModelAndView("redirect:/changePasswordUser?error=2");  
+		  }
+	  }
+	  else {
+		  return new ModelAndView("redirect:/changePasswordUser?error=1");
+	  }
+
+  }
+  
+  @GetMapping("/logout")
+  public ModelAndView logout(){
+	  SecurityContextHolder.clearContext();
+	  return new ModelAndView("redirect:/login");
+  }
+  
+  //aqui termina el codigo para las interfazes y funciones del usuario 
+    
 }

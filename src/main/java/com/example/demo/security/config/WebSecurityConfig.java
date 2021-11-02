@@ -18,7 +18,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/login", "/login-check" , "/register", "/register-check",
-                        "/unlocked-user/**")
+                        "/unlocked-user/**","/changeAuthenticationForm","/changePasswordUser","/userAccount","/userStatistics","/changePassword/check-password")
                 .permitAll()
                 .antMatchers("/change-password", "/change-password-check").hasAuthority(UserRole.CHANGE_PASSWORD.name())
                 .antMatchers("/authentication/**", "/api/getMethodsAuthentication", "/options", "verification-code").hasAuthority(UserRole.AUTHENTICATOR.name())
