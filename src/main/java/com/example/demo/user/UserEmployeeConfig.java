@@ -97,6 +97,19 @@ public class UserEmployeeConfig {
                     masculino,
                     addressJason
             );
+            Employee marvin = new Employee(
+                    "Marvin Sigfredo",
+                    "Martinez Hernandez",
+                    "058225507",
+                    "06141601991394",
+                    "069898767",
+                    "341234567",
+                    "mh18083@ues.edu.sv",
+                    "77994095",
+                    workStation,
+                    masculino,
+                    addressJason
+            );
 
             UserEmployee userEmployeeJason = new UserEmployee(
                     "jason__saul",
@@ -125,6 +138,20 @@ public class UserEmployeeConfig {
             userEmployeeJuan.setSecretKeyGoogleAuthenticator("64SXX3E6R6XJMG6JJ57JGWZUTUMNFQUL");
             userEmployeeJuan.setIsDoubleAuthenticator(true);
             userEmployeeJuan.setDoubleAuthenticationEmail(true);
+            
+            UserEmployee userEmployeeMarvin = new UserEmployee(
+                    "marvin_martinez",
+                    marvin,
+                    true,
+                    false,
+                    bCryptPasswordEncoder.encode( "password").toString(),
+                    false,
+                    LocalDateTime.now().plusDays(30),
+                    UserRole.ADMIN
+                    );
+            userEmployeeMarvin.setSecretKeyGoogleAuthenticator("PM23CN6VVDAAL52L364N5SBM6AEDNGZJ");
+            userEmployeeMarvin.setIsDoubleAuthenticator(true);
+            userEmployeeMarvin.setDoubleAuthenticationEmail(true);
 
             PasswordHistory passwordHistoryJason = new PasswordHistory(LocalDateTime.now(),
                     LocalDateTime.now().plusMinutes(15),
@@ -136,14 +163,19 @@ public class UserEmployeeConfig {
                     userEmployeeJuan,
                     userEmployeeJuan.getPassword());
 
+            PasswordHistory passwordHistoryMarvin = new PasswordHistory(LocalDateTime.now(),
+                    LocalDateTime.now().plusMinutes(15),
+                    userEmployeeMarvin,
+                    userEmployeeMarvin.getPassword());
+
             departamentRepository.save(departamentJason);
             municipalityRepository.save(municipalityJason);
             addressRepository.save(addressJason);
             workStationRepository.save(workStation);
             gendersRepository.saveAll(List.of(masculino, femenino));
-            employeeRepository.saveAll(List.of(jason, juan, lizt));
-            userEmployeeRepository.saveAll(List.of(userEmployeeJason, userEmployeeJuan));
-            passwordHistoryRepository.saveAll(List.of(passwordHistoryJason, passwordHistoryJuan));
+            employeeRepository.saveAll(List.of(jason, juan, lizt, marvin));
+            userEmployeeRepository.saveAll(List.of(userEmployeeJason, userEmployeeJuan, userEmployeeMarvin));
+            passwordHistoryRepository.saveAll(List.of(passwordHistoryJason, passwordHistoryJuan, passwordHistoryMarvin));
         };
     }
 }

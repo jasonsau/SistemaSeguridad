@@ -128,6 +128,9 @@ public class UserEmployee implements UserDetails {
         this.employee = employee;
     }
 
+    public String getUserNameEmployee() {
+    	return userNameEmployee;
+    }
     public void setUserNameEmployee(String userNameEmployee) {
         this.userNameEmployee = userNameEmployee;
     }

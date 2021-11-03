@@ -1,0 +1,245 @@
+:root {
+    --background-color: rgb(0, 128, 255);
+    --background-color-windows: #333;
+   
+}
+
+
+#fondo{
+	min-width:1000px;
+	min-height:700px;
+	width:auto;
+	height:auto;
+	background-image: url(https://www.esan.edu.pe/apuntes-empresariales/2019/02/05/1500x844_sistema_informacion_seguridad.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center; 
+}
+#fondo h1{
+	-webkit-text-stroke: 2px black;
+	color: white;
+	position: center;
+	font-size: 100px;
+}
+
+#fondo h2{
+		-webkit-text-stroke: 2px black;
+	color: white;
+	font-size:90px;
+	position:center;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    border: 0;
+}
+
+body {
+    background-color: var(--background-color);
+    width: 100vw;
+    height: 100vh;
+    color: Black;
+    font-family: "Alegreya Sans";
+}
+
+.main {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.form {
+    background-color: var(--background-color-windows);
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    position: absolute;
+    width: 500px;
+    height: 600px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.form__title {
+    font-family: "Alegreya Sans";
+    font-weight: 500;
+    font-size: 50px;
+}
+
+.form__container,
+.form__container--option {
+    margin-top: 0;
+    width: 400px;
+    height: 70px;
+    position: relative;
+}
+
+.form__button {
+    cursor: pointer;
+    position: absolute;
+    width: 90%;
+    height: 50px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    border-radius: 10px;
+    font-size: 20px;
+    background-color: blue;
+    color: white;
+}
+
+.form__container--option {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: column;
+}
+
+.form__container--error {
+    position: relative;
+    width: 400px;
+    height: 40px;
+    background-color: #f57d7d;
+    margin-top: 7px;
+    margin-bottom: -5px;
+    border-radius: 5px;
+    display: none;
+}
+
+.form__title {
+    margin-bottom: 20px;
+    display: none;
+}
+.form__input {
+    position: absolute;
+    width: 350px;
+    height: 40px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    left: 40px;
+    color: black;
+    font-size: 20px;
+}
+
+.form__input:focus {
+    outline: none;
+}
+
+.form__label {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    left: 5px;
+    background-color: #eee;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form__error {
+    position: absolute;
+    width: 380px;
+    height: 30px;
+    color: white;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.form__href {
+    color: white;
+    text-decoration: none;
+    text-align: center;
+}
+
+.form__modal {
+    position: absolute;
+    display: none;
+    width: 400px;
+    height: 300px;
+    background-color: var(--background-color);
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+.form__input--unlocked {
+    top: 20px;
+    width: 300px;
+    left: 75px;
+}
+.form__label--unloked {
+    top: 20px;
+    left: 35px;
+}
+.form__subtitle {
+    position: relative;
+    text-align: center;
+    top: 15px;
+}
+
+.form__close {
+    position: relative;
+    top: 10px;
+    left: 90%;
+    cursor: pointer;
+}
+
+.form__container--errorModal {
+    width: 330px;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+.form__error--modal {
+    width: 330px;
+    text-align: center;
+}
+
+.open__modal {
+    display: block;
+    animation: openModal 0.5s;
+}
+
+.close_modal {
+    animation: closeModal 0.3s forwards;
+}
+
+@keyframes openModal {
+    0% {
+        transform: scale(0.5);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes closeModal {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(0);
+    }
+}

@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class EmployeeService{
 	
@@ -20,5 +21,11 @@ public class EmployeeService{
 		return employeeRepository.findByEmail(email);
 	}
 	
+	public Employee save(Employee e) {
+		return employeeRepository.save(e);
+	}
 	
+	public Optional<Employee> listByDui(String dui){
+		return retrieveEmployee(dui);
+	}
 }

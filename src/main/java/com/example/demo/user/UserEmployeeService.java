@@ -97,5 +97,9 @@ public class UserEmployeeService implements UserDetailsService {
     public List<UserEmployee> selectUsers() {
         return userEmployeeRepository.findAll();
     }
+    
+    public List<UserEmployee> getAll(){
+    	return userEmployeeRepository.findAll();
+    }
 
 }

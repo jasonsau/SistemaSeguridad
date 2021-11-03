@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -36,7 +37,8 @@ public class UserEmployeeController {
     private final LoginController loginController;
     private final EmployeeService employeeService;
     private final ConfirmationTokenService confirmationTokenService;
-
+	private static final String INDEX_VIEW="index";
+	
     private final SendEmailService  sendEmailSender;
     public UserEmployeeController(LoginController loginController,
                                   UserEmployeeService userEmployeeService,
@@ -55,13 +57,22 @@ public class UserEmployeeController {
 
 	
 	
-    @GetMapping("home")
+    @GetMapping("/home")
     public ModelAndView homeView() {
         ModelAndView model = new ModelAndView();
         model.setViewName("home");
         return model;
     }
 
+    @GetMapping("/employee/index")
+    public ModelAndView index() {
+    	ModelAndView model = new ModelAndView(INDEX_VIEW);
+        model.setViewName("/employee/index");
+        List<UserEmployee> empleados=userEmployeeService.getAll();
+		model.addObject("empleados",empleados);
+        return model;
+    }
+    
     @GetMapping("change-password")
     public ModelAndView changePassword(@RequestParam(name = "error", required = false) String error) {
         ModelAndView model = new ModelAndView();
@@ -247,4 +258,10 @@ public class UserEmployeeController {
         return  messages;
     }
     
+//    @GetMapping("/home")
+//    public ModelAndView inicio(Model model,@RequestParam(name="employee_name")String username) {
+//		Optional<UserEmployee> empleados=this.userEmployeeService.findByUsername(username);
+//		model.addAttribute("empleados",empleados);
+//		return model;
+//    }
 }
