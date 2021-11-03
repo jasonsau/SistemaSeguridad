@@ -3,11 +3,8 @@ package com.example.demo.login;
 import com.example.demo.Email;
 import com.example.demo.user.UserEmployee;
 import com.example.demo.user.UserEmployeeService;
-import com.example.demo.user.UserRole;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -15,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller
@@ -36,9 +32,25 @@ public class LoginController {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
+    @GetMapping("/")
+    public String raiz() {
+        return "redirect:/login";
+    }
+
+    @GetMapping("logout")
+    public String logout() {
+        SecurityContextHolder.clearContext();
+        return "redirect:/login";
+    }
+
     @GetMapping("/login")
     public String loginView(Model model,
-                            @RequestParam(name = "error", required = false) String error){
+                            @RequestParam(name = "error", required = false) String error,
+                            Authentication authentication){
+
+        if(authentication!=null) {
+            return "redirect:/home";
+        }
 
         Map<String, String> messagesError = new HashMap<>();
 
@@ -51,6 +63,9 @@ public class LoginController {
             }
             if(Integer.parseInt(error) == 3) {
                 messagesError.put("locked", "El usuario ha sido bloqueado");
+            }
+            if(Integer.parseInt(error) == 4) {
+                messagesError.put("locked", "El usuario debe ser verificado");
             }
         }
         model.addAttribute("error", messagesError);
@@ -71,22 +86,17 @@ public class LoginController {
             boolean correct = bCryptPasswordEncoder.matches(password, userEmployee.get().getPassword());
             if(correct) {
                 userEmployeeService.restartAttempts(userEmployee.get().getIdUser());
-                if(userEmployee.get().isBlocked() || !userEmployee.get().isEnabled()) {
+                if(userEmployee.get().isBlocked()) {
                     return new ModelAndView("redirect:/login?error=3");
-                }else if(userEmployeeService.verifiedPasswordTemporary(userEmployee.get())) {
-                    Authentication authentication =
-                            new UsernamePasswordAuthenticationToken( userEmployee.get().getUsername(),
-                                    userEmployee.get().getPassword(),
-                                    userEmployeeService.addRole("CHANGE_PASSWORD") );
-
-                    userEmployeeService.setAuthentication(authentication);
-                    return new ModelAndView("redirect:/change-password");
+                }
+                else if(!userEmployee.get().isEnabled()) {
+                    return new ModelAndView("redirect:/login?error=4");
                 } else if (userEmployee.get().getIsDoubleAuthenticator()) {
-                    Authentication authentication =
-                            new UsernamePasswordAuthenticationToken(userEmployee.get().getUsername(),
-                                    userEmployee.get().getPassword(),
-                                    userEmployeeService.addRole("AUTHENTICATOR"));
-                    userEmployeeService.setAuthentication(authentication);
+                    userEmployeeService.setAuthentication(userEmployeeService.getAuthentication(
+                            userEmployee.get().getUsername(),
+                            userEmployee.get().getPassword(),
+                            userEmployeeService.addRole("AUTHENTICATOR")
+                    ));
                     return new ModelAndView("redirect:/options");
                 }
                 else {

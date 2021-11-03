@@ -1,0 +1,14 @@
+INSERT INTO departament (name_departament) VALUES ("Ahuachapán");
+INSERT INTO departament (name_departament) VALUES ("Cabañas");
+INSERT INTO departament (name_departament) VALUES ("Chalatenango");
+INSERT INTO departament (name_departament) VALUES ("Cuscatlán");
+INSERT INTO departament (name_departament) VALUES ("La Libertad");
+INSERT INTO departament (name_departament) VALUES ("Morazán");
+INSERT INTO departament (name_departament) VALUES ("La Paz");
+INSERT INTO departament (name_departament) VALUES ("Santa Ana");
+INSERT INTO departament (name_departament) VALUES ("San Miguel");
+INSERT INTO departament (name_departament) VALUES ("San Salvador");
+INSERT INTO departament (name_departament) VALUES ("San Vicente");
+INSERT INTO departament (name_departament) VALUES ("Sonsonate");
+INSERT INTO departament (name_departament) VALUES ("La Unión");
+INSERT INTO departament (name_departament) VALUES ("Usulután");

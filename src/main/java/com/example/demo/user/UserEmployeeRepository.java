@@ -46,4 +46,8 @@ public interface UserEmployeeRepository extends JpaRepository<UserEmployee, Long
     @Query("UPDATE UserEmployee u SET u.passwordUserEmployee = ?1, u.temporaryPassword = false, u.passwordExpiredAt = ?3" +
             " WHERE u.userNameEmployee = ?2")
     int updatePassword(String password, String username, LocalDateTime expiredAt);
+
+    @Modifying
+    @Query("UPDATE UserEmployee u set u.enabled = true WHERE u.idUser = ?1")
+    int enabledUser(Long idUser);
 }

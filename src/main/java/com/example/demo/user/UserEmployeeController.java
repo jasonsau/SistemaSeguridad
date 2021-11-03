@@ -1,6 +1,7 @@
 package com.example.demo.user;
 
 import com.example.demo.Email;
+import com.example.demo.paswword.PasswordHistoryService;
 import org.apache.commons.lang3.RandomStringUtils;
 import com.example.demo.responsebody.ResponseBodyUserEmail;
 import com.example.demo.security.twofactor.email.ConfirmationToken;
@@ -42,7 +43,7 @@ public class UserEmployeeController {
     private final SendEmailService  sendEmailSender;
     private final Email email;
     private final PasswordHistoryService passwordHistoryService;
-    
+
 
     public UserEmployeeController(UserEmployeeService userEmployeeService,
                                   EmployeeService employeeService,
@@ -57,7 +58,7 @@ public class UserEmployeeController {
         this.sendEmailSender = sendEmailSender;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.email = email;
-        this.passwordHistoryService=passwordHistoryService;
+        this.passwordHistoryService = passwordHistoryService;
     }
 
     @GetMapping("home")
@@ -73,10 +74,15 @@ public class UserEmployeeController {
         Map<String, String> errors = new HashMap<>();
         if(error!=null) {
             if(error.equals("1")) {
-                errors.put("errorLength", "La contraseña deber ser igual o mayor a 12 caracteres");
+                errors.put("errorLength", "La contraseña deber tener una mayuscula, un numero y un caracter " +
+                        "especial " +
+                        "con 12 caracteres");
             }
             if(error.equals("2")) {
                 errors.put("errorNoEquals", "Las contraseña no coinciden");
+            }
+            if(error.equals("3")) {
+                errors.put("errorPasswordFound", "La contraseña coincide con las ultimas 3 elija otra");
             }
 
         }
@@ -90,16 +96,21 @@ public class UserEmployeeController {
                                     @RequestParam(name = "password") String password,
                                     @RequestParam(name = "passwordVerified") String passwordVerified) {
 
+        Optional<UserEmployee> userEmployeeT = userEmployeeService.findByUsername(authentication.getName());
 
-        if(password.length()<12) {
+        if(!userEmployeeService.validatePassword(password)) {
             return new ModelAndView("redirect:/change-password?error=1");
+        }
+        if(userEmployeeT.isPresent()) {
+            if(passwordHistoryService.verifiedLastestPassword(password, userEmployeeT.get())) {
+                return new ModelAndView("redirect:/change-password?error=3");
+            }
         }
         if(!password.equals(passwordVerified)) {
             return new ModelAndView("redirect:/change-password?error=2");
         }
         int response = userEmployeeService.updatePassword(password, authentication.getName());
         if(response == 1) {
-
             Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
             if(userEmployee.isPresent()) {
                 if(userEmployee.get().isBlocked()) {
@@ -158,8 +169,6 @@ public class UserEmployeeController {
             return new ModelAndView("redirect:/register?error=3");
         }
     	if(!employee.get().getFirstNameEmployee().toLowerCase().equals(String.valueOf(employee_name).toLowerCase())){
-    		System.out.println("El nombre guardado es:"+" "+employee.get().getFirstNameEmployee());
-    		System.out.println("El nombre recivido es"+" "+employee_name);
             return new ModelAndView("redirect:/register?error=1");
         }
     	if(!employee.get().getLastNameEmployee().toLowerCase().equals(String.valueOf(employee_last_name).toLowerCase())) {
@@ -167,8 +176,6 @@ public class UserEmployeeController {
     		return new ModelAndView("redirect:/register?error=2");
         } 
     	if(!employee.get().getCellPhoneEmployee().equals(employee_cellphone)) {
-    		System.out.println("El numero guardado es:"+" "+employee.get().getCellPhoneEmployee());
-    		System.out.println("El numreo recivido es"+" "+employee_cellphone);
             return new ModelAndView("redirect:/register?error=5");
         }
     	if(userEmployee.isPresent()) {
@@ -209,7 +216,7 @@ public class UserEmployeeController {
         newUser.setTemporaryPassword(true);
         newUser.setUserNameEmployee(employeeUser);
         newUser.setPasswordExpiredAt(LocalDateTime.now().plusDays(30));
-        newUser.setEnabled(true);
+        newUser.setEnabled(false);
         newUser.setUserRole(UserRole.USER);
         newUser.setAttempts(0);
         newUser.setIsDoubleAuthenticator(false);
@@ -217,11 +224,15 @@ public class UserEmployeeController {
         newUser.setDoubleAuthenticationEmail(false);
 
         userEmployeeService.saveUserEmployee(newUser);
+        ConfirmationToken confirmationToken = confirmationTokenService.createNewTokenUnlocked(newUser);
+        confirmationTokenService.insertConfirmationToken(confirmationToken);
+
 
             //enviar mensajes con credenciales
         body="Su usuario es:"+" "+newUser.getUsername()+"\n"+"Su contraseña temporal es:"+" "
             +employee_passcode+"\n"+"Inicie sesiòn con su usuario y contraseña, al entrar por  "
-                    + "primera vez debe cambiar la contraseña. Ingrese al siguiente link para iniciar sesion: \n http://localhost:8080/login";
+                    + "primera vez debe cambiar la contraseña. Ingrese al siguiente link para verificar su cuenta: \n"+
+                "http://localhost:8080/enabled-user?token="+confirmationToken.getToken();
             sendEmailSender.sendMail("juanacostab.m.555@gmail.com", employee.get().getEmailEmployee(), "Registro de usuario", body);
             model.setViewName("register-check");
             model.addObject("newUser",newUser);
@@ -272,6 +283,21 @@ public class UserEmployeeController {
         }
         return new ModelAndView("redirect:/options");
 
+    }
+
+    @GetMapping("/enabled-user")
+    public String enabledUser(@RequestParam("token") String token) {
+        Optional<ConfirmationToken>confirmationToken = confirmationTokenService.findByToken(token);
+        int response = 0;
+        if(confirmationToken.isPresent()) {
+            response = userEmployeeService.enabledUser(confirmationToken.get().getUserEmployee().getIdUser());
+        }
+        if(response == 1) {
+            return "<p>Se ha verificado su cuenta ingrese al siguiente link para hacer el primer inicio de Sesion</p>" +
+                    "<a href = 'http://localhost:8080/login'>Iniciar Sesion</a>";
+        } else {
+            throw new IllegalStateException("Error no se ha podido verificar su usuario");
+        }
     }
 
     private String createBodyEmailUnlockedUser(String token) {
@@ -388,12 +414,6 @@ public class UserEmployeeController {
 		  return new ModelAndView("redirect:/changePasswordUser?error=1");
 	  }
 
-  }
-  
-  @GetMapping("/logout")
-  public ModelAndView logout(){
-	  SecurityContextHolder.clearContext();
-	  return new ModelAndView("redirect:/login");
   }
   
   //aqui termina el codigo para las interfazes y funciones del usuario 
