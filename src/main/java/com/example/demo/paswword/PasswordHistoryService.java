@@ -1,11 +1,20 @@
 package com.example.demo.paswword;
 
+import java.util.ArrayList;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.user.UserEmployee;
+
 import com.example.demo.user.UserEmployee;
 import com.example.demo.user.UserEmployeeService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
 
 @Service
 public class PasswordHistoryService {
@@ -23,6 +32,12 @@ public class PasswordHistoryService {
     public void savePasswordHistory(PasswordHistory passwordHistory) {
          passwordHistoryRepository.save(passwordHistory);
     }
+
+    
+    public ArrayList<PasswordHistory> findByIdUser(long idUser) {
+        return  passwordHistoryRepository.findByUserId(idUser);
+        }
+    
 
     public boolean verifiedLastestPassword(String password, UserEmployee userEmployee) {
         int contadorMatches = 0;
