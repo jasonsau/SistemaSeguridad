@@ -2,6 +2,7 @@ package com.example.demo.user;
 
 import com.example.demo.Email;
 import com.example.demo.paswword.PasswordHistoryService;
+import com.example.demo.responsebody.ResponseBodyPassword;
 import org.apache.commons.lang3.RandomStringUtils;
 import com.example.demo.responsebody.ResponseBodyUserEmail;
 import com.example.demo.security.twofactor.email.ConfirmationToken;
@@ -435,5 +436,5 @@ public class UserEmployeeController {
   }
   
   //aqui termina el codigo para las interfazes y funciones del usuario 
-    
+
 }

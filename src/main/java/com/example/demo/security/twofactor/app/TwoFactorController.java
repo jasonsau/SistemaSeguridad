@@ -1,6 +1,7 @@
 package com.example.demo.security.twofactor.app;
 
 import com.example.demo.Email;
+import com.example.demo.responsebody.ResponseBodyPassword;
 import com.example.demo.responsebody.ResponsebodyCode;
 import com.example.demo.security.twofactor.email.ConfirmationToken;
 import com.example.demo.security.twofactor.email.ConfirmationTokenService;
@@ -99,7 +100,6 @@ public class TwoFactorController {
                                              @PathVariable(name = "idUser", required = false) Long idUser,
                                              @RequestParam(name = "tipo") String tipo,
                                              Authentication authentication) {
-        System.out.println(authentication.getAuthorities());
         Optional<UserEmployee> userEmployee = userEmployeeService.findByIdUser(idUser);
         ModelAndView model = new ModelAndView();
         ConfirmationToken confirmationToken = new ConfirmationToken();
@@ -162,7 +162,6 @@ public class TwoFactorController {
                                          @RequestParam(name = "idUser") Long idUser,
                                          @RequestParam(name = "tipo") String tipo,
                                          Authentication authentication) {
-        System.out.println(authentication.getAuthorities());
 
         Optional<UserEmployee> userEmployee = userEmployeeService.findByIdUser(idUser);
         if(userEmployee.isPresent()) {
@@ -265,6 +264,78 @@ public class TwoFactorController {
         return messages;
     }
 
+    @PostMapping("api/verified-equals-password")
+    public Map<String, Boolean> verifiedEqualsPassword(Authentication authentication,
+                                                       @RequestBody ResponseBodyPassword responseBodyPassword) {
+
+        Map<String, Boolean> messages = new HashMap<>();
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        if(userEmployee.isPresent()) {
+            if(userEmployeeService.verifieEquealsPassword(responseBodyPassword.getPassword(),
+                    userEmployee.get())) {
+                twoFactorService.updateDoubleApp(false, userEmployee.get().getIdUser());
+                userEmployeeService.updateSecretKey("", userEmployee.get().getIdUser());
+                int number = numberMethods(userEmployee.get());
+                if(number == 1) {
+                    twoFactorService.uddateDoubleAuthenticator(false,
+                            userEmployee.get().getIdUser());
+                }
+                messages.put("messageT", true);
+            } else {
+                messages.put("messageT", false);
+            }
+        } else {
+            messages.put("messageT", false);
+        }
+        return messages;
+    }
+
+    @PostMapping("api/send-email-token")
+    public Map<String, String> sendEmailToken(Authentication authentication){
+        Map<String, String> messages = new HashMap<>();
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        if(userEmployee.isPresent()) {
+            ConfirmationToken confirmationToken =
+                    confirmationTokenService.createNewToken(userEmployee.get());
+            confirmationTokenService.insertConfirmationToken(confirmationToken);
+            email.sendEmailToken(
+                    userEmployee.get().getEmployee().getEmailEmployee(),
+                    twoFactorService.createBodyEmailConfirmationToken(confirmationToken.getToken()),
+                    "Codigo de Verificacion"
+            );
+        }
+        return messages;
+    }
+    @PostMapping("api/verified-code-email")
+    public Map<String,String> verifiedCodeEmail(Authentication authentication,
+                                                @RequestBody ResponsebodyCode responsebodyCode) {
+        Map<String, String> messages = new HashMap<>();
+
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        if(userEmployee.isPresent()) {
+            Optional<ConfirmationToken> confirmationToken =
+                    confirmationTokenService.getLastRegister(userEmployee.get().getIdUser());
+            if(confirmationToken.isPresent()) {
+                if(confirmationToken.get().getToken().equals(responsebodyCode.getCode())) {
+                    if(!confirmationToken.get().getExpiredAtToken().isBefore(LocalDateTime.now())) {
+                        if(!verifiedMethods(userEmployee.get())) {
+                            twoFactorService.uddateDoubleAuthenticator(true, userEmployee.get().getIdUser());
+                        }
+                        twoFactorService.updateDoubleEmail(true, userEmployee.get().getIdUser());
+                        messages.put("messageT", "correcto");
+                    } else {
+                        messages.put("messageE", "correcto");
+                    }
+                } else {
+                    messages.put("messageT", "incorrecto");
+                }
+            }
+
+        }
+
+        return messages;
+    }
+
     @Bean
     public HttpMessageConverter<BufferedImage> imageHttpMessageConverter() {
         return new BufferedImageHttpMessageConverter();
@@ -281,8 +352,20 @@ public class TwoFactorController {
         if(userEmployee.isDoubleAuthenticationSms()){
             contador+=1;
         }
-
         return contador > 0;
+    }
+    public int numberMethods(UserEmployee userEmployee) {
+        int contador = 0;
+        if(userEmployee.isDoubleAuthenticationEmail()) {
+            contador+=1;
+        }
+        if(userEmployee.isDoubleAuthenticationApp()) {
+            contador+=1;
+        }
+        if(userEmployee.isDoubleAuthenticationSms()){
+            contador+=1;
+        }
+        return contador;
     }
 
 }

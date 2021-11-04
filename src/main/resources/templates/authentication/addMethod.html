@@ -37,6 +37,7 @@
             </div>
 
         </div>
+        <!-- Modal para configurar el metodo por App -->
         <div
                 class = "modal__configurar"
                 id = "idModalConfigurar"
@@ -89,6 +90,89 @@
                         style="margin-top: 5px"
                 >
             </div>
+        </div>
+        <!-- Modal pedir password -->
+        <div class = "container__password" id = "idContainerPassword">
+            <h2 class = "modal__subtitle">Escriba su Password</h2>
+            <img
+                    class = "form__close"
+                    src = "../static/icons/close.svg"
+                    th:src = "@{/icons/close.svg}"
+                    id = "idCloseFormModalPassword"
+            >
+            <div class = "container__input" style="margin-top: 15px;">
+                <label for = "idInputPassword" class = "form__label">
+                    <img
+                            th:src = @{/icons/password.svg}
+                            src = "../../static/icons/password.svg"
+                            class = "form__icon"
+                    >
+                </label>
+                <input type = "password" id = "idInputPassword" placeholder="Password" class = "form__input">
+            </div>
+            <div
+                    class = "container__input container__input--error"
+                    style="margin-top: 15px; margin-bottom: -15px"
+                    id = "idContainerPasswordError"
+            >
+                <p id = "idMessagePasswordError">Error</p>
+            </div>
+            <div class = "container__input container__input--modal" style="margin-top: 15px">
+                <input
+                        type = "submit"
+                        value = "Confirmar"
+                        class = "form__button"
+                        style = "margin-top: 5px"
+                        id = "idButtonPassword"
+                >
+            </div>
+        </div>
+        <!-- Modal Autenticacion Correo-->
+        <div
+                class = "container__email"
+                id = "idContainerEmail"
+        >
+            <img
+                    class = "form__close"
+                    src = "../static/icons/close.svg"
+                    th:src = "@{/icons/close.svg}"
+                    id = "idCloseFormModalEmail"
+            >
+            <h2 class = "modal__subtitle">Autenticacion Correo</h2>
+            <p>Se le envio un correo con el codigo</p>
+            <div class = "container__input">
+                <label class = "form__label">
+                    <img src = "../../static/icons/password.svg"
+                         th:src = "@{/icons/password.svg}"
+                    >
+                </label>
+                <input
+                        class = "form__input"
+                        type = "form__input"
+                        id = "idInputCorreo"
+                        placeholder="Codigo"
+                >
+            </div>
+            <div
+                    class = "container__input container__input--error"
+                    style="margin-top: 15px; margin-bottom: -15px"
+                    id = "idContainerEmailError"
+            >
+                <p id = "idMessageEmailError">Error</p>
+            </div>
+            <div
+                    class = "container__input container__input--modal"
+                    style="margin-top: 15px"
+            >
+                <input
+                        type = "submit"
+                        id = "idButtonEmail"
+                        value = "Configurar"
+                        class = "form__button"
+                        style="margin-top: 5px"
+                >
+            </div>
+
         </div>
     </body>
 <script

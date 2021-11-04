@@ -111,4 +111,8 @@ public class TwoFactorService {
     public int uddateDoubleAuthenticator(boolean value, Long idUser) {
         return userEmployeeRepository.updateDoubleAuthenticator(value, idUser);
     }
+
+    public int updateDoubleEmail(boolean value, Long idUser) {
+        return userEmployeeRepository.updateDoubleEmail(value, idUser);
+    }
 }
