@@ -1,6 +1,7 @@
 package com.example.demo.security.twofactor.app;
 
 import com.example.demo.Email;
+import com.example.demo.responsebody.ResponsebodyCode;
 import com.example.demo.security.twofactor.email.ConfirmationToken;
 import com.example.demo.security.twofactor.email.ConfirmationTokenService;
 import com.example.demo.user.UserEmployee;
@@ -16,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.awt.image.BufferedImage;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -53,9 +56,26 @@ public class TwoFactorController {
         }
         return null;
     }
+    @GetMapping(value = "create-secret-key")
+    public Map<String, String> createSecretKey(Authentication authentication) {
+        Map<String, String> messages = new HashMap<>();
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        int response = 0;
+        if(userEmployee.isPresent()) {
+            String secretKey = twoFactorService.generateSecretKey();
+            response = userEmployeeService.updateSecretKey(secretKey, userEmployee.get().getIdUser());
+            if(response == 1) {
+                messages.put("message", "Creado");
+            } else {
+                messages.put("message", "No Creado");
+            }
+        }
+        return messages;
+    }
 
     @GetMapping(value = "options")
-    public ModelAndView optionsAuthentication() {
+    public ModelAndView optionsAuthentication(Authentication authentication) {
+        System.out.println(authentication.getAuthorities());
         return new ModelAndView("authentication/authenticationOption");
     }
 
@@ -64,6 +84,7 @@ public class TwoFactorController {
                                              @PathVariable(name = "idUser", required = false) Long idUser,
                                              @RequestParam(name = "tipo") String tipo,
                                              Authentication authentication) {
+        System.out.println(authentication.getAuthorities());
         Optional<UserEmployee> userEmployee = userEmployeeService.findByIdUser(idUser);
         ModelAndView model = new ModelAndView();
         ConfirmationToken confirmationToken = new ConfirmationToken();
@@ -126,6 +147,7 @@ public class TwoFactorController {
                                          @RequestParam(name = "idUser") Long idUser,
                                          @RequestParam(name = "tipo") String tipo,
                                          Authentication authentication) {
+        System.out.println(authentication.getAuthorities());
 
         Optional<UserEmployee> userEmployee = userEmployeeService.findByIdUser(idUser);
         if(userEmployee.isPresent()) {
@@ -190,12 +212,62 @@ public class TwoFactorController {
         return userEmployee.orElseGet(UserEmployee::new);
     }
 
+    @PostMapping("api/getMethods2Fac")
+    public UserEmployee getMethods2Fac(Authentication authentication) {
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        return userEmployee.orElseGet(UserEmployee::new);
+    }
+
+    @GetMapping("/add-2fac")
+    public ModelAndView addMethod() {
+        return new ModelAndView("/authentication/addMethod");
+    }
+
+    @PostMapping("api/verification-code-app")
+    public Map<String, String> verificationCodeApp(@RequestBody ResponsebodyCode responsebodyCode,
+                                   Authentication authentication) {
+        Map<String, String> messages = new HashMap<>();
+        boolean response;
+
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        if (userEmployee.isPresent()) {
+            response = twoFactorService.verificationCode(userEmployee.get().getSecretKeyGoogleAuthenticator(),
+                    responsebodyCode.getCode());
+
+            if (response) {
+                boolean resp = verifiedMethods(userEmployee.get());
+                int res = twoFactorService.updateDoubleApp(true, userEmployee.get().getIdUser());
+                if(!resp) {
+                    twoFactorService.uddateDoubleAuthenticator(true, userEmployee.get().getIdUser());
+                }
+                if (res == 1) {
+                    messages.put("messageSend", "creado");
+                }
+            } else {
+                messages.put("messageSend", "NoValido");
+            }
+        }
+        return messages;
+    }
 
     @Bean
     public HttpMessageConverter<BufferedImage> imageHttpMessageConverter() {
         return new BufferedImageHttpMessageConverter();
     }
 
+    private boolean verifiedMethods(UserEmployee userEmployee) {
+        int contador = 0;
+        if(userEmployee.isDoubleAuthenticationEmail()) {
+            contador+=1;
+        }
+        if(userEmployee.isDoubleAuthenticationApp()) {
+            contador+=1;
+        }
+        if(userEmployee.isDoubleAuthenticationSms()){
+            contador+=1;
+        }
 
+        return contador > 0;
+    }
 
 }

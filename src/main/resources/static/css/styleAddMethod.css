@@ -13,6 +13,9 @@ body {
     text-align: center;
     font-family: "Alegreya", serif;
     font-size: 25px;
+    margin-bottom: 20px;
+    position: relative;
+    top: 40px;
 }
 
 .main {
@@ -21,11 +24,10 @@ body {
     right: 0;
     margin: auto;
     display: grid;
-    grid-template-rows: 50%, 50%;
     grid-template-columns: 100%;
     background-color: #000000;
     width: 70%;
-    height: 800px;
+    top: 100px;
 }
 
 .main__first {
@@ -52,6 +54,7 @@ body {
 }
 
 .main__subtitle {
+    margin-bottom: 20px;
     text-align: center;
 }
 
@@ -78,4 +81,65 @@ body {
 
 .main__option {
     cursor: pointer;
+}
+
+.modal__configurar {
+    background-color: #333333;
+    width: 400px;
+    height: 430px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin:auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+    transform: scale(0);
+}
+
+.modal__img {
+    width: 200px;
+    height: 200px;
+
+}
+
+.modal__subtitle {
+    position: relative;
+    top: 10px;
+    margin-bottom: 20px;
+}
+
+.open-modal-configurar {
+    animation: openModalConfigurar 0.3s forwards;
+}
+
+.close-modal-configurar {
+    animation: closeModalConfigurar 0.3s forwards;
+}
+
+.form__close {
+    position: absolute;
+    top: 10px;
+    left: 90%;
+    cursor: pointer;
+}
+
+@keyframes openModalConfigurar {
+     0% {
+         transform: scale(0);
+     }
+    100% {
+        transform: scale(1);
+    }
+}
+@keyframes closeModalConfigurar {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(0);
+    }
 }

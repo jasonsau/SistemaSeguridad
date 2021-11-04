@@ -47,6 +47,8 @@ public class UserEmployee implements UserDetails {
     private boolean isDoubleAuthenticator;
     private String secretKeyGoogleAuthenticator;
     private boolean isDoubleAuthenticationEmail;
+    private boolean isDoubleAuthenticationApp;
+    private boolean isDoubleAuthenticationSms;
 
     //Constructs
     public UserEmployee(String userNameEmployee,
@@ -202,5 +204,21 @@ public class UserEmployee implements UserDetails {
 
     public void setDoubleAuthenticationEmail(boolean doubleAuthenticationEmail) {
         isDoubleAuthenticationEmail = doubleAuthenticationEmail;
+    }
+
+    public boolean isDoubleAuthenticationApp() {
+        return isDoubleAuthenticationApp;
+    }
+
+    public void setDoubleAuthenticationApp(boolean doubleAuthenticationApp) {
+        isDoubleAuthenticationApp = doubleAuthenticationApp;
+    }
+
+    public boolean isDoubleAuthenticationSms() {
+        return isDoubleAuthenticationSms;
+    }
+
+    public void setDoubleAuthenticationSms(boolean doubleAuthenticationSms) {
+        isDoubleAuthenticationSms = doubleAuthenticationSms;
     }
 }

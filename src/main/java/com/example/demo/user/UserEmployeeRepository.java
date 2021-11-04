@@ -50,4 +50,16 @@ public interface UserEmployeeRepository extends JpaRepository<UserEmployee, Long
     @Modifying
     @Query("UPDATE UserEmployee u set u.enabled = true WHERE u.idUser = ?1")
     int enabledUser(Long idUser);
+
+    @Modifying
+    @Query("UPDATE UserEmployee u set u.secretKeyGoogleAuthenticator = ?1 WHERE u.idUser = ?2")
+    int updateSecretKey(String secretKey, Long idUser);
+
+    @Modifying
+    @Query("UPDATE UserEmployee u set u.isDoubleAuthenticationApp = ?1 WHERE u.idUser = ?2")
+    int updateDoubleApp(boolean value, Long idUser);
+
+    @Modifying
+    @Query("UPDATE UserEmployee u set u.isDoubleAuthenticator = ?1 WHERE u.idUser = ?2")
+    int updateDoubleAuthenticator(boolean value, Long idUser);
 }

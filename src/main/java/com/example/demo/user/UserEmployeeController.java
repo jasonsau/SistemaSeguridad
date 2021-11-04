@@ -135,7 +135,7 @@ public class UserEmployeeController {
             	 errors.put("errorEmail", "El email no corresponde a ningun registro de empleado");
              }
              if(error.equals("4")) {
-            	 errors.put("errorDateBirth", "La fecha de nacimiento no corresponde a ningn registro");
+            	 errors.put("errorDateBirth", "La fecha de nacimiento no corresponde a ningun registro");
              }
              if(error.equals("5")) {
             	 errors.put("errorCellPhone", "El numero de telefono no coincide con ningun registro");

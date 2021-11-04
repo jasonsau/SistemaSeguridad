@@ -167,6 +167,11 @@ public class UserEmployeeService implements UserDetailsService {
         return pattern.matcher(password).find();
     }
 
+    public int updateSecretKey(String secretKey, Long idUser) {
+        System.out.println(secretKey);
+        return userEmployeeRepository.updateSecretKey(secretKey, idUser);
+    }
+
     public int enabledUser(Long idUser) {
         return userEmployeeRepository.enabledUser(idUser);
     }

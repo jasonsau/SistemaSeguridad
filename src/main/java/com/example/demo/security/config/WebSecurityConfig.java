@@ -21,8 +21,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/unlocked-user/**", "/enabled-user")
                 .permitAll()
                 .antMatchers("/change-password", "/change-password-check").hasAuthority(UserRole.CHANGE_PASSWORD.name())
-                .antMatchers("/authentication/**", "/api/getMethodsAuthentication", "/options", "verification-code").hasAuthority(UserRole.AUTHENTICATOR.name())
-                .antMatchers("/barCode", "/home", "users", "options").hasAuthority(UserRole.ADMIN.name())
+                .antMatchers("/authentication/**", "/api/getMethodsAuthentication", "/options", "/verification-code")
+                .hasAuthority(UserRole.AUTHENTICATOR.name())
+                .antMatchers("/barCode", "/home", "/users",
+                        "/add-2fac", "/api/getMethods2Fac", "/create-secret-key", "api/verification-code-app")
+                .hasAuthority(UserRole.ADMIN.name())
                 .anyRequest()
                 .authenticated();
     }
@@ -37,6 +40,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/", "/css/**", "/js/**", "/icons/**");
+        web.ignoring().antMatchers("/", "/css/**", "/js/**", "/icons/**", "/img/**");
     }
 }

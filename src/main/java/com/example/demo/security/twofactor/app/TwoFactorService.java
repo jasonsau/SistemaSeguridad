@@ -1,6 +1,7 @@
 package com.example.demo.security.twofactor.app;
 
 import com.example.demo.user.UserEmployee;
+import com.example.demo.user.UserEmployeeRepository;
 import com.example.demo.user.UserEmployeeService;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -20,9 +21,12 @@ import java.security.SecureRandom;
 @Service
 public class TwoFactorService {
     private final UserEmployeeService userEmployeeService;
+    private final UserEmployeeRepository userEmployeeRepository;
 
-    public TwoFactorService(UserEmployeeService userEmployeeService) {
+    public TwoFactorService(UserEmployeeService userEmployeeService,
+                            UserEmployeeRepository userEmployeeRepository) {
         this.userEmployeeService = userEmployeeService;
+        this.userEmployeeRepository = userEmployeeRepository;
     }
 
     //Crear una llave secreta para cada usuario para despues generar
@@ -98,5 +102,13 @@ public class TwoFactorService {
         return "<h1>Codigo de Verificacion</h1>" +
                 "<p>Su codigo de es " + token +
                 " El codigo expira en 15 minutos";
+    }
+
+    public int updateDoubleApp(boolean value, Long idUser) {
+        return userEmployeeRepository.updateDoubleApp(value, idUser);
+    }
+
+    public int uddateDoubleAuthenticator(boolean value, Long idUser) {
+        return userEmployeeRepository.updateDoubleAuthenticator(value, idUser);
     }
 }
