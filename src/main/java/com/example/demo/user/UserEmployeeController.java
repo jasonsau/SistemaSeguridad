@@ -318,8 +318,8 @@ public class UserEmployeeController {
     public ModelAndView userAccount(Authentication authentication){
     	ModelAndView model= new ModelAndView();
     	//descomentar la instruccion de abajo para probar con el objeto authentication y comentar la segunda contando despues de esta linea
-    	//Optional<UserEmployee> users = userEmployeeService.findByUsername(authentication.getName());
-        Optional<UserEmployee> users = userEmployeeService.findByEmail("ae19001@ues.edu.sv");
+    	Optional<UserEmployee> users = userEmployeeService.findByUsername(authentication.getName());
+        //Optional<UserEmployee> users = userEmployeeService.findByEmail("ae19001@ues.edu.sv");
         if(users.isPresent()) {
         	UserEmployee newUser= users.get();
         	model.setViewName("/account/userAccount");

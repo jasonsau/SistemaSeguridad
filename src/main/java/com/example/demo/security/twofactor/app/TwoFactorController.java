@@ -75,8 +75,23 @@ public class TwoFactorController {
 
     @GetMapping(value = "options")
     public ModelAndView optionsAuthentication(Authentication authentication) {
-        System.out.println(authentication.getAuthorities());
-        return new ModelAndView("authentication/authenticationOption");
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+
+        if(userEmployee.isPresent()) {
+            if(userEmployee.get().isDoubleAuthenticator()) {
+                return new ModelAndView("authentication/authenticationOption");
+            }
+            if(userEmployee.get().isBlocked()) {
+                authentication = userEmployeeService.getAuthentication(userEmployee.get().getUsername(),
+                        userEmployee.get().getPassword(),
+                        userEmployeeService.addRole("CHANGE_PASSWORD"));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                return new ModelAndView("redirect:/change-password");
+            }
+            return new ModelAndView("redirect:/home");
+        } else {
+             throw new IllegalStateException("Error el usuario no se encuentra");
+        }
     }
 
     @GetMapping(value = "authentication/{idUser}" )
