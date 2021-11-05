@@ -2,11 +2,10 @@ package com.example.demo.user;
 
 import com.example.demo.Email;
 import com.example.demo.paswword.PasswordHistoryService;
-import com.example.demo.responsebody.ResponseBodyPassword;
 import org.apache.commons.lang3.RandomStringUtils;
 import com.example.demo.responsebody.ResponseBodyUserEmail;
-import com.example.demo.security.twofactor.email.ConfirmationToken;
-import com.example.demo.security.twofactor.email.ConfirmationTokenService;
+import com.example.demo.security.twofactor.token.ConfirmationToken;
+import com.example.demo.security.twofactor.token.ConfirmationTokenService;
 import com.example.demo.state.StateHistory;
 import com.example.demo.state.StateHistoryService;
 
@@ -24,7 +23,6 @@ import com.example.demo.api.email.rest.SendEmailService;
 import com.example.demo.employee.Employee;
 import com.example.demo.employee.EmployeeService;
 import com.example.demo.paswword.PasswordHistory;
-import com.example.demo.paswword.PasswordHistoryService;
 
 import java.time.LocalDateTime;
 import java.util.Optional;

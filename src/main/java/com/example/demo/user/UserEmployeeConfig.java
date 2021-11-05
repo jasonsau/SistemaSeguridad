@@ -391,6 +391,20 @@ public class UserEmployeeConfig {
                     addressJason,
                     LocalDate.of(1999,6,5)
             );
+            Employee gerson = new Employee(
+                    "Gerson Wilfredo",
+                    "Palacios Giron",
+                    "048633790",
+                    "06141808931510",
+                    "8888888",
+                    "88888888",
+                    "pg15012@ues.edu.sv",
+                    "76288036",
+                    workStation,
+                    masculino,
+                    addressJason,
+                    LocalDate.of(1993,8,18)
+            );
 
             UserEmployee userEmployeeJason = new UserEmployee(
                     "jason__saul",
@@ -403,8 +417,9 @@ public class UserEmployeeConfig {
                     UserRole.ADMIN
                     );
             //userEmployeeJason.setSecretKeyGoogleAuthenticator("PM23CN6VVDAAL52L364N5SBM6AEDNGZJ");
-            userEmployeeJason.setIsDoubleAuthenticator(false);
-            userEmployeeJason.setDoubleAuthenticationEmail(false);
+            userEmployeeJason.setIsDoubleAuthenticator(true);
+            userEmployeeJason.setDoubleAuthenticationEmail(true);
+            userEmployeeJason.setDoubleAuthenticationSms(true);
 
             UserEmployee userEmployeeJuan = new UserEmployee(
                     "juan__acosta",
@@ -716,7 +731,7 @@ public class UserEmployeeConfig {
             addressRepository.save(addressJason);
             workStationRepository.save(workStation);
             gendersRepository.saveAll(List.of(masculino, femenino));
-            employeeRepository.saveAll(List.of(jason, juan, lizt));
+            employeeRepository.saveAll(List.of(jason, juan, lizt, gerson));
             userEmployeeRepository.saveAll(List.of(userEmployeeJason, userEmployeeJuan));
             passwordHistoryRepository.saveAll(List.of(passwordHistoryJason, passwordHistoryJuan));
         };

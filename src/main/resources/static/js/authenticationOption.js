@@ -21,6 +21,11 @@ fetch("http://localhost:8080/api/getMethodsAuthentication", {
         idTokenEmail.style.display = "block";
         idLinkTokenCorreo.setAttribute("href", `/authentication/${data.idUser}?tipo=correo`);
     }
+    if(data.doubleAuthenticationSms === true) {
+            contador = contador + 1;
+            idTokenSms.style.display = "block";
+            idLinkTokenSms.setAttribute("href", `/authentication/${data.idUser}?tipo=sms`);
+        }
     idContainer.style.height = `${(100*contador)+100}px`;
     console.log(data);
 })

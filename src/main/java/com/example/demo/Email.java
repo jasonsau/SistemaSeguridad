@@ -8,10 +8,14 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+
+
 @Service
 public class Email {
 
     private final JavaMailSender javaMailSender;
+    private static final String ACCOUNT_SID = "ACf8ec6b5e02f25200f14b1bdabe376f55";
+    private static final String AUTH_TOKEN = "bbf5fa72dd29e0dc702c2319ece6a54f";
 
     public Email(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;

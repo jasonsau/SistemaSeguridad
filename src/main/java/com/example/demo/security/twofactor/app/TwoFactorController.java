@@ -1,10 +1,12 @@
 package com.example.demo.security.twofactor.app;
 
 import com.example.demo.Email;
+import com.example.demo.Sms;
+
 import com.example.demo.responsebody.ResponseBodyPassword;
 import com.example.demo.responsebody.ResponsebodyCode;
-import com.example.demo.security.twofactor.email.ConfirmationToken;
-import com.example.demo.security.twofactor.email.ConfirmationTokenService;
+import com.example.demo.security.twofactor.token.ConfirmationToken;
+import com.example.demo.security.twofactor.token.ConfirmationTokenService;
 import com.example.demo.user.UserEmployee;
 import com.example.demo.user.UserEmployeeService;
 import org.springframework.context.annotation.Bean;
@@ -30,15 +32,17 @@ public class TwoFactorController {
     private final UserEmployeeService userEmployeeService;
     private final ConfirmationTokenService confirmationTokenService;
     private final Email email;
+    private final Sms sms;
 
     public TwoFactorController(TwoFactorService twoFactorService,
                                UserEmployeeService userEmployeeService,
                                ConfirmationTokenService confirmationTokenService,
-                               Email email) {
+                               Email email, Sms sms) {
         this.twoFactorService = twoFactorService;
         this.userEmployeeService = userEmployeeService;
         this.confirmationTokenService = confirmationTokenService;
         this.email = email;
+        this.sms=sms;
     }
 
     @GetMapping(value = "barCode", produces = MediaType.IMAGE_PNG_VALUE)
@@ -119,7 +123,11 @@ public class TwoFactorController {
                                 twoFactorService.createBodyEmailConfirmationToken(confirmationToken.getToken()),
                                 "Codigo de Verificacion"
                         );
-                    } else {
+                    } else if(tipo.equals("sms")){
+                        confirmationToken = confirmationTokenService.createNewToken(userEmployee.get());
+                        confirmationTokenService.insertConfirmationToken(confirmationToken);
+                        model.addObject("tipo", "sms");
+                        sms.sendSmsToken(twoFactorService.createBodySmsConfirmationToken(confirmationToken.getToken()));
                         model.addObject("tipo", "sms");
                     }
                 } else if (error.equals("1")) {
@@ -143,6 +151,7 @@ public class TwoFactorController {
                         model.addObject("tipo", "correo");
                     }
                     if(tipo.equals("sms")) {
+                        model.addObject("codigo", confirmationToken.getIdToken());
                         model.addObject("tipo", "sms");
                     }
                     model.addObject("error", "El codigo que ha ingresado ya ha expirado");
@@ -164,8 +173,8 @@ public class TwoFactorController {
                                          Authentication authentication) {
 
         Optional<UserEmployee> userEmployee = userEmployeeService.findByIdUser(idUser);
-        if(userEmployee.isPresent()) {
-            if(userEmployee.get().isBlocked()) {
+        if (userEmployee.isPresent()) {
+            if (userEmployee.get().isBlocked()) {
                 authentication = userEmployeeService.getAuthentication(authentication.getName(),
                         authentication.getCredentials().toString(),
                         userEmployeeService.addRole("CHANGE_PASSWORD"));
@@ -173,25 +182,25 @@ public class TwoFactorController {
                 return new ModelAndView("redirect:/change-password");
             }
 
-            if(tipo.equals("app")) {
-                if( twoFactorService.verificationCode(userEmployee.get().getSecretKeyGoogleAuthenticator(),
-                        codigo) ) {
-                    if(twoFactorService.redirectChangePasswordTempory(userEmployee.get())) {
+            if (tipo.equals("app")) {
+                if (twoFactorService.verificationCode(userEmployee.get().getSecretKeyGoogleAuthenticator(),
+                        codigo)) {
+                    if (twoFactorService.redirectChangePasswordTempory(userEmployee.get())) {
                         return new ModelAndView("redirect:/change-password");
                     }
                     authentication = userEmployeeService.getAuthentication(userEmployee.get());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     return new ModelAndView("redirect:/home");
                 } else {
-                    return new ModelAndView("redirect:/authentication/"+userEmployee.get().getIdUser()+"?error=1&tipo" +
+                    return new ModelAndView("redirect:/authentication/" + userEmployee.get().getIdUser() + "?error=1&tipo" +
                             "=app");
                 }
             } else if (tipo.equals("correo")) {
                 Optional<ConfirmationToken> confirmationToken = confirmationTokenService.getLastRegister(idUser);
-                if(confirmationToken.isPresent()) {
-                    if(confirmationToken.get().getToken().equals(codigo)) {
-                        if(!confirmationToken.get().getExpiredAtToken().isBefore(LocalDateTime.now())) {
-                            if(twoFactorService.redirectChangePasswordTempory(userEmployee.get())) {
+                if (confirmationToken.isPresent()) {
+                    if (confirmationToken.get().getToken().equals(codigo)) {
+                        if (!confirmationToken.get().getExpiredAtToken().isBefore(LocalDateTime.now())) {
+                            if (twoFactorService.redirectChangePasswordTempory(userEmployee.get())) {
                                 return new ModelAndView("redirect:/change-password");
                             }
                             authentication = userEmployeeService.getAuthentication(userEmployee.get());
@@ -209,16 +218,34 @@ public class TwoFactorController {
                     }
                 }
                 return new ModelAndView("redirect:/options");
-            } else if (tipo.equals("sms")){
+            } else if (tipo.equals("sms")) {
+                Optional<ConfirmationToken> confirmationToken = confirmationTokenService.getLastRegister(idUser);
+                if (confirmationToken.isPresent()) {
+                    if (confirmationToken.get().getToken().equals(codigo)) {
+                        if (!confirmationToken.get().getExpiredAtToken().isBefore(LocalDateTime.now())) {
+                            if (twoFactorService.redirectChangePasswordTempory(userEmployee.get())) {
+                                return new ModelAndView("redirect:/change-password");
+                            }
+                            authentication = userEmployeeService.getAuthentication(userEmployee.get());
+                            SecurityContextHolder.getContext().setAuthentication(authentication);
+                            confirmationTokenService.updateDateConfiramtionToken(confirmationToken.get().getIdToken()
+                                    , LocalDateTime.now());
+                            return new ModelAndView("redirect:/home");
+                        } else {
+                            return new ModelAndView("redirect:/authentication/" + userEmployee.get().getIdUser() +
+                                    "?error=2&tipo=sms");
+                        }
+                    } else {
+                        return new ModelAndView("redirect:/authentication/" + userEmployee.get().getIdUser() +
+                                "?error=1&tipo=sms");
+                    }
+                }
                 return new ModelAndView("redirect:/options");
-            } else {
-                return null;
             }
-
-        } else {
-            return new ModelAndView("redirect:/authentication");
         }
+        return new ModelAndView("redirect:/options");
     }
+
 
     @PostMapping("api/getMethodsAuthentication")
     public UserEmployee getMethodsAuthentication(Authentication authentication) {
