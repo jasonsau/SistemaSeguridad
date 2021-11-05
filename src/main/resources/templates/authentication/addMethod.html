@@ -13,13 +13,14 @@
         <link href = "../../static/css/styleGoogleAuthenticator.css.css" th:href = "@{/css/styleGoogleAuthenticator.css}" rel = "stylesheet ">
        <title>Recursos Humanos</title>
     </head>
-    <body>
+    <body id = "idBody">
         <div class="container-fluid">
             <nav class="navbar navbar-light bg-light border-3 border-bottom border-primary">
                 <span class="navbar-brand mb-0 h1">Sistema de Seguridad</span>
                 <a class="navbar-brand" th:href="@{http://localhost:8080/userAccount}">Inicio</a>
             </nav>
         </div>
+
         <h1 class = "title">Autenticacion de 2 pasos</h1>
         <div class = "main">
             <div
@@ -44,8 +45,7 @@
         >
             <img
                     class = "form__close"
-                    src = "../static/icons/close.svg"
-                    th:src = "@{/icons/close.svg}"
+                    src = "/icons/close.svg"
                     id = "idCloseFormModal"
             >
             <h2 class = "modal__subtitle">Autenticacion App</h2>
@@ -60,8 +60,9 @@
                     style="margin-top: 15px"
             >
                 <label for = "idInputCodigo" class = "form__label">
-                    <img src = "../../static/icons/password.svg"
-                         th:src = "@{/icons/password.svg}"
+                    <img
+                            src = "/icons/password.svg"
+                    >
                     >
                 </label>
                 <input
@@ -91,59 +92,21 @@
                 >
             </div>
         </div>
-        <!-- Modal pedir password -->
-        <div class = "container__password" id = "idContainerPassword">
-            <h2 class = "modal__subtitle">Escriba su Password</h2>
-            <img
-                    class = "form__close"
-                    src = "../static/icons/close.svg"
-                    th:src = "@{/icons/close.svg}"
-                    id = "idCloseFormModalPassword"
-            >
-            <div class = "container__input" style="margin-top: 15px;">
-                <label for = "idInputPassword" class = "form__label">
-                    <img
-                            th:src = @{/icons/password.svg}
-                            src = "../../static/icons/password.svg"
-                            class = "form__icon"
-                    >
-                </label>
-                <input type = "password" id = "idInputPassword" placeholder="Password" class = "form__input">
-            </div>
-            <div
-                    class = "container__input container__input--error"
-                    style="margin-top: 15px; margin-bottom: -15px"
-                    id = "idContainerPasswordError"
-            >
-                <p id = "idMessagePasswordError">Error</p>
-            </div>
-            <div class = "container__input container__input--modal" style="margin-top: 15px">
-                <input
-                        type = "submit"
-                        value = "Confirmar"
-                        class = "form__button"
-                        style = "margin-top: 5px"
-                        id = "idButtonPassword"
-                >
-            </div>
-        </div>
-        <!-- Modal Autenticacion Correo-->
         <div
                 class = "container__email"
                 id = "idContainerEmail"
         >
             <img
                     class = "form__close"
-                    src = "../static/icons/close.svg"
-                    th:src = "@{/icons/close.svg}"
+                    src = "/icons/close.svg"
                     id = "idCloseFormModalEmail"
             >
             <h2 class = "modal__subtitle">Autenticacion Correo</h2>
             <p>Se le envio un correo con el codigo</p>
             <div class = "container__input">
                 <label class = "form__label">
-                    <img src = "../../static/icons/password.svg"
-                         th:src = "@{/icons/password.svg}"
+                    <img
+                            src = "/icons/password.svg"
                     >
                 </label>
                 <input
@@ -171,6 +134,21 @@
                         class = "form__button"
                         style="margin-top: 5px"
                 >
+            </div>
+
+        </div>
+        <!-- Modal para mensaje de desabilitar metodo -->
+        <div class = "modal__configurar" id = "idContainerMessage" style="height: 130px">
+            <img
+                    class = "form__close"
+                    src = "/icons/close.svg"
+                    id = "idCloseFormMessage"
+            >
+            <div style = "position: relative; top: 20px;">
+                <h2 style="font-size: 20px">Esta seguro de Desactivar el metodo </h2>
+            </div>
+            <div style="position: relative; top: 40px">
+                <input id = "idButtonAceptarMessage" type = "submit" class = "form__button" value = "Aceptar" style="position: relative">
             </div>
 
         </div>

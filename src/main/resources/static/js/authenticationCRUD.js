@@ -1,33 +1,35 @@
-const idMainFirst = document.getElementById("idMainFirst");
-const idMainSecond = document.getElementById("idMainSecond");
-const idModalConfigurar = document.getElementById("idModalConfigurar");
-const idModalBarCode = document.getElementById("idModalBarCode");
-const idCloseFormModal = document.getElementById("idCloseFormModal");
-const idButtonCodigo = document.getElementById("idButtonCodigo");
-const idInputCodigo = document.getElementById("idInputCodigo");
-const idContainerError = document.getElementById("idContainerError");
-const idMessageError = document.getElementById("idMessageError");
-const idContainerPassword = document.getElementById("idContainerPassword");
-const idCloseFormModalPassword = document.getElementById("idCloseFormModalPassword");
-const idButtonPassword = document.getElementById("idButtonPassword");
-const idInputPassword = document.getElementById("idInputPassword");
-const idContainerPasswordError = document.getElementById("idContainerPasswordError");
-const idMessagePasswordError = document.getElementById("idMessagePasswordError");
-const idContainerEmail = document.getElementById("idContainerEmail");
-const idInputCorreo = document.getElementById("idInputCorreo");
-const idCloseFormModalEmail = document.getElementById("idCloseFormModalEmail")
-const idContainerEmailError = document.getElementById("idContainerEmailError")
-const idMessageEmailError = document.getElementById("idMessageEmailError")
-const idButtonEmail = document.getElementById("idButtonEmail");
 
+ const idMainFirst = document.getElementById("idMainFirst");
+ const idMainSecond = document.getElementById("idMainSecond");
+ const idModalConfigurar = document.getElementById("idModalConfigurar");
+ const idModalBarCode = document.getElementById("idModalBarCode");
+ const idCloseFormModal = document.getElementById("idCloseFormModal");
+ const idButtonCodigo = document.getElementById("idButtonCodigo");
+ const idInputCodigo = document.getElementById("idInputCodigo");
+ const idContainerError = document.getElementById("idContainerError");
+ const idMessageError = document.getElementById("idMessageError");
+ const idContainerEmail = document.getElementById("idContainerEmail");
+ const idInputCorreo = document.getElementById("idInputCorreo");
+ const idCloseFormModalEmail = document.getElementById("idCloseFormModalEmail")
+ const idContainerEmailError = document.getElementById("idContainerEmailError")
+ const idMessageEmailError = document.getElementById("idMessageEmailError")
+ const idButtonEmail = document.getElementById("idButtonEmail");
+ const idContainerMessage = document.getElementById("idContainerMessage");
+ const idCloseFormMessage = document.getElementById("idCloseFormMessage");
+ const idButtonAceptarMessage = document.getElementById("idButtonAceptarMessage");
+
+
+//Se inicializa cuales metodos no estan configurados y cuales si
 const initMethods = () => {
     fetch("http://localhost:8080/api/getMethods2Fac", {
         method: "POST"
     })
         .then(response => response.json())
         .then((data) => {
+            let contadorMethods = 0;
             if(data.doubleAuthenticationApp) {
                 methodOption("Aplicacion de Autenticacion", "Puede usar las aplicacion de Google Authenticator o Authy", "qrCode.png", "app")
+                contadorMethods += 1;
             } else {
                 methodOptionOptional("Aplicacion de Autenticacion",
                     "Puede usar las aplicacion de Google Authenticator o Authy",
@@ -35,13 +37,23 @@ const initMethods = () => {
                     "app");
             }
             if(data.doubleAuthenticationEmail === true) {
-                methodOption("Correo Electronico", "El codigo se le enviara a su correo", "correo.png", "correo")
+                methodOption("Correo Electronico", "El codigo se le enviara a su correo", "correo.png", "correo");
+                contadorMethods += 1;
             } else {
-                methodOptionOptional("Correo Electronico", "El codigo se le enviara a su correo", "correo.png", "correo")
+                methodOptionOptional("Correo Electronico", "El codigo se le enviara a su correo", "correo.png", "correo");
+            }
+            if(data.doubleAuthenticationEmailSms === true) {
+                methodOption("Mensaje de Texto", "El codigo se le enviara por un mensaje de SMS", "sms");
+                contador += 1;
+            } else {
+                methodOptionOptional("Mensaje de Texto", "El codigo se le enviara por un mensaje de SMS", "sms.jpg", "sms");
+            }
+
+            if(contadorMethods === 0) {
+                idMainFirst.innerHTML += `<p style="text-align: center; font-size: 15px">Aun no tiene registrado ningun metodo</p>`;
             }
         })
         .catch(error => console.log(error))
-
 }
 initMethods();
 
@@ -57,13 +69,6 @@ const methodOption = (title, description, img, tipo) => {
                 <p class = "main__text--description">${description}</p>
             </div>
             <div class = "main__options">
-                <p 
-                    class = "main__option"
-                    option = "editar"
-                    tipo = "${tipo}"
-                >
-                    Editar
-                </p>
                 <p 
                     class = "main__option"
                     option = "desactivar"
@@ -98,71 +103,103 @@ const methodOptionOptional = (title, description, img, tipo) => {
 
 idMainFirst.addEventListener('click', (e) => {
     if(e.target.getAttribute("tipo") === 'app') {
-        if(e.target.getAttribute("option")==='editar') {
-            console.log("Se esta editando");
-        }
         if(e.target.getAttribute("option") === 'desactivar') {
-            idContainerPassword.classList.add("open-modal-configurar");
-            idContainerPassword.classList.remove("close-modal-configurar");
-            console.log("Se quiere eliminar");
+            idButtonAceptarMessage.setAttribute("option", "app");
+            idContainerMessage.classList.add("open-modal-configurar");
+            idContainerMessage.classList.remove("close-modal-configurar");
+        }
+    }
+    if(e.target.getAttribute("tipo") === 'correo') {
+        idButtonAceptarMessage.setAttribute("option", "correo");
+        idContainerMessage.classList.add("open-modal-configurar");
+        idContainerMessage.classList.remove("close-modal-configurar");
+    }
+    if(e.target.getAttribute('tipo') === 'sms') {
+        idButtonAceptarMessage.setAttribute("option", "sms");
+        idContainerMessage.classList.add("open-modal-configurar");
+        idContainerMessage.classList.remove("close-modal-configurar");
+    }
+});
+
+idButtonAceptarMessage.addEventListener('click', () => {
+    if(idButtonAceptarMessage.getAttribute('option') === 'app') {
+        fetch("http://localhost:8080/api/disabled-method/app", {
+            method: "POST"
+        })
+            .then(response => response.json())
+            .then(data => {
+                if(data.res) {
+                    idContainerMessage.classList.add("close-modal-configurar");
+                    idContainerMessage.classList.remove("open-modal-configurar");
+                    location.reload(true);
+                }
+            });
+    }
+    if(idButtonAceptarMessage.getAttribute('option') === 'correo') {
+        fetch("http://localhost:8080/api/disabled-method/correo", {
+            method: "POST"
+        })
+            .then(response => response.json())
+            .then(data => {
+                if(data.res) {
+                    idContainerMessage.classList.add("close-modal-configurar");
+                    idContainerMessage.classList.remove("open-modal-configurar");
+                    location.reload(true);
+                }
+            });
+
+    }
+
+    if(idButtonAceptarMessage.getAttribute('option') === 'sms') {
+        fetch("http://localhost:8080/api/disabled-method/sms", {
+            method: "POST"
+        })
+            .then(response => response.json())
+            .then(data => {
+                if(data.res) {
+                    idContainerMessage.classList.add("close-modal-configurar");
+                    idContainerMessage.classList.remove("open-modal-configurar");
+                    location.reload(true);
+                }
+            });
+
+    }
+});
+
+idMainSecond.addEventListener('click', (e) => {
+    if(e.target.getAttribute('option') === 'configurar') {
+        if(e.target.getAttribute('tipo') === 'correo') {
+            idContainerEmail.classList.add("open-modal-configurar");
+            idContainerEmail.classList.remove("close-modal-configurar");
+            setTimeout(() => {
+                fetch("http://localhost:8080/api/send-email-token", {
+                    method: "POST"
+                })
+                    .then(response => response.json())
+                    .catch(error => console.log(error));
+            }, 1000)
+        }
+        if(e.target.getAttribute('tipo') === "app") {
+            fetch("http://localhost:8080/create-secret-key")
+                .then(response => response.json())
+                .then((data) => {
+                    if(data.message === 'Creado') {
+                        idModalBarCode.setAttribute("src", "/barCode");
+                        idModalConfigurar.classList.add("open-modal-configurar");
+                        idModalConfigurar.classList.remove("close-modal-configurar");
+                    }
+                })
+                .catch(error => console.log(error));
+            console.log("Configuraemos el metodo de app");
+        }
+        if(e.target.getAttribute('tipo') === 'sms') {
+            console.log("Se quiere configurar");
         }
     }
 });
 
-idButtonPassword.addEventListener('click', () => {
-    const data = {"password": idInputPassword.value};
-    fetch("http://localhost:8080/api/verified-equals-password", {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {'Content-Type': 'application/json'}
-    })
-        .then(response => response.json())
-        .then(data => {
-            if(data.messageT) {
-                idContainerPassword.classList.remove("open-modal-configurar");
-                idContainerPassword.classList.remove("close-modal-configurar");
-                idMainFirst.innerHTML = `<h2 class = "main__subtitle">Tus metodos de Seguridad</h2>`;
-                idMainSecond.innerHTML = `<h2 class = "main__subtitle">Metodos Adicionales</h2>`;
-                initMethods();
-            } else {
-                idContainerPasswordError.style.display = "block";
-                idMessagePasswordError.innerText = "El password es incorrecto";
-                idInputPassword.value = "";
-            }
-        });
-})
-
-idMainSecond.addEventListener('click', (e) => {
-   if(e.target.getAttribute('option') === 'configurar') {
-       if(e.target.getAttribute('tipo') === 'correo') {
-           idContainerEmail.classList.add("open-modal-configurar");
-           idContainerEmail.classList.remove("close-modal-configurar");
-           setTimeout(() => {
-               fetch("http://localhost:8080/api/send-email-token", {
-                   method: "POST"
-               })
-                   .then(response => response.json())
-                   .catch(error => console.log(error));
-           }, 1000)
-       }
-       if(e.target.getAttribute('tipo') === "app") {
-           fetch("http://localhost:8080/create-secret-key")
-               .then(response => response.json())
-               .then((data) => {
-                   if(data.message === 'Creado') {
-                       idModalBarCode.setAttribute("src", "/barCode");
-                       idModalConfigurar.classList.add("open-modal-configurar");
-                       idModalConfigurar.classList.remove("close-modal-configurar");
-                   }
-               })
-               .catch(error => console.log(error));
-           console.log("Configuraemos el metodo de app");
-       }
-   }
-})
 
 idButtonEmail.addEventListener('click', () => {
-
     const data = {"code": idInputCorreo.value};
     fetch("http://localhost:8080/api/verified-code-email", {
         method: "POST",
@@ -174,7 +211,8 @@ idButtonEmail.addEventListener('click', () => {
             console.log(data);
             if(data.messageT === 'correcto') {
                 idContainerEmailError.style.background = "green";
-                idContainerEmailError.innerText = "Se ha configurado";
+                idContainerEmailError.style.display = "block";
+                idMessageEmailError.innerText = "Se ha configurado";
                 idInputCorreo.value=""
                 idInputCorreo.dissable=true
                 idMainFirst.innerHTML = `<h2 class = "main__subtitle">Tus metodos de Seguridad</h2>`;
@@ -184,26 +222,30 @@ idButtonEmail.addEventListener('click', () => {
                     idContainerEmail.classList.add("close-modal-configurar")
                 }, 1000)
                 initMethods();
+            } else {
+                idContainerEmailError.style.display = "block";
+                idMessageEmailError.innerText = "El codigo es incorrecto";
             }
 
         })
         .catch(error => console.log(error));
-})
+});
 
 idCloseFormModal.addEventListener('click', () =>{
     idModalConfigurar.classList.add("close-modal-configurar");
     idModalConfigurar.classList.remove("open-modal-configurar");
 });
 
-idCloseFormModalPassword.addEventListener('click', () => {
-   idContainerPassword.classList.add("close-modal-configurar");
-   idContainerPassword.classList.remove("open-modal-configurar");
-});
+
+idCloseFormMessage.addEventListener('click', () => {
+    idContainerMessage.classList.add("close-modal-configurar");
+    idContainerMessage.classList.remove("open-modal-configurar");
+})
 
 idCloseFormModalEmail.addEventListener('click', () => {
     idContainerEmail.classList.add("close-modal-configurar");
     idContainerEmail.classList.remove("open-modal-configurar");
-})
+});
 
 idButtonCodigo.addEventListener('click', (e) => {
     e.preventDefault()
@@ -236,7 +278,7 @@ idButtonCodigo.addEventListener('click', (e) => {
             }
         })
         .catch((error) => console.log(error));
-})
+});
 
 const modalMessage = () => {
     return `
@@ -269,7 +311,8 @@ const modalConfigurarApp = () => {
                 style="margin-top: 15px"
         >
             <label for = "idInputCodigo" class = "form__label">
-                <img src = "/icons/password.svg"
+                <img 
+                src = "/icons/password.svg"
                 >
             </label>
             <input
@@ -300,4 +343,3 @@ const modalConfigurarApp = () => {
         </div>
     `
 }
-

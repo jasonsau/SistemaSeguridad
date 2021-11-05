@@ -64,7 +64,7 @@ body {
     border-radius: 50%;
     position: absolute;
     left: 10px;
-    top: 10px;
+    top: -5px;
 }
 
 .main__text {
@@ -103,6 +103,7 @@ body {
 }
 .container__password {
     height: 210px;
+    transform: scale(1);
 }
 
 .container__email {

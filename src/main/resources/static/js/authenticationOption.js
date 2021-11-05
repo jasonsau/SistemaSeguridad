@@ -11,7 +11,8 @@ fetch("http://localhost:8080/api/getMethodsAuthentication", {
 })
 .then(response => response.json())
 .then((data) => {
-    if(data.secretKeyGoogleAuthenticator !== "") {
+    console.log(data);
+    if(data.doubleAuthenticationApp === true) {
         contador = contador + 1;
         idTokenApp.style.display = "block";
         idLinkTokenApp.setAttribute("href", `/authentication/${data.idUser}?tipo=app`);

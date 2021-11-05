@@ -17,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 
 @Service
 public class TwoFactorService {
@@ -115,4 +116,9 @@ public class TwoFactorService {
     public int updateDoubleEmail(boolean value, Long idUser) {
         return userEmployeeRepository.updateDoubleEmail(value, idUser);
     }
+
+    public int updateDoubleSms(boolean value, Long idUser) {
+        return userEmployeeRepository.updateDoubleSms(value, idUser);
+    }
+
 }

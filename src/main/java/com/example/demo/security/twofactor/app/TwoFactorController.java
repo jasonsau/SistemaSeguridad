@@ -271,8 +271,28 @@ public class TwoFactorController {
         Map<String, Boolean> messages = new HashMap<>();
         Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
         if(userEmployee.isPresent()) {
-            if(userEmployeeService.verifieEquealsPassword(responseBodyPassword.getPassword(),
+            if (userEmployeeService.verifieEquealsPassword(responseBodyPassword.getPassword(),
                     userEmployee.get())) {
+                messages.put("messageT", true);
+            } else {
+                messages.put("messageT", false);
+            }
+        }
+        return messages;
+    }
+
+    @PostMapping("api/disabled-method/{tipo}")
+    public Map<String, Boolean> disabledMetod(@PathVariable String tipo,
+                              Authentication authentication) {
+
+        System.out.println(tipo);
+
+        Map<String, Boolean> messages = new HashMap<>();
+
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        if(userEmployee.isPresent()) {
+            if(tipo.equals("app")) {
+                System.out.println("Entra a app");
                 twoFactorService.updateDoubleApp(false, userEmployee.get().getIdUser());
                 userEmployeeService.updateSecretKey("", userEmployee.get().getIdUser());
                 int number = numberMethods(userEmployee.get());
@@ -280,14 +300,29 @@ public class TwoFactorController {
                     twoFactorService.uddateDoubleAuthenticator(false,
                             userEmployee.get().getIdUser());
                 }
-                messages.put("messageT", true);
-            } else {
-                messages.put("messageT", false);
+                messages.put("res", true);
             }
-        } else {
-            messages.put("messageT", false);
+            if(tipo.equals("correo")) {
+                int number = numberMethods(userEmployee.get());
+                twoFactorService.updateDoubleEmail(false, userEmployee.get().getIdUser());
+                if(number == 1) {
+                    twoFactorService.uddateDoubleAuthenticator(false,
+                            userEmployee.get().getIdUser());
+                }
+                messages.put("res", true);
+            }
+            if(tipo.equals("sms")) {
+                int number = numberMethods(userEmployee.get());
+                twoFactorService.updateDoubleSms(false, userEmployee.get().getIdUser());
+                if(number == 1) {
+                    twoFactorService.uddateDoubleAuthenticator(false,
+                            userEmployee.get().getIdUser());
+                }
+                messages.put("res", true);
+            }
         }
         return messages;
+
     }
 
     @PostMapping("api/send-email-token")
@@ -318,6 +353,8 @@ public class TwoFactorController {
             if(confirmationToken.isPresent()) {
                 if(confirmationToken.get().getToken().equals(responsebodyCode.getCode())) {
                     if(!confirmationToken.get().getExpiredAtToken().isBefore(LocalDateTime.now())) {
+                        confirmationTokenService.updateDateConfiramtionToken(confirmationToken.get().getIdToken(),
+                                LocalDateTime.now());
                         if(!verifiedMethods(userEmployee.get())) {
                             twoFactorService.uddateDoubleAuthenticator(true, userEmployee.get().getIdUser());
                         }
