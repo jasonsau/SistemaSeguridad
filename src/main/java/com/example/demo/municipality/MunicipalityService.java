@@ -1,7 +1,5 @@
 package com.example.demo.municipality;
 
-import com.example.demo.employee.EmployeeRepository;
-import com.example.demo.employee.EmployeeService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

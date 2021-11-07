@@ -391,6 +391,7 @@ public class UserEmployeeConfig {
                     addressJason,
                     LocalDate.of(1999,6,5)
             );
+
             Employee marvin = new Employee(
                     "Marvin Sigfredo",
                     "Martinez Hernandez",
@@ -406,19 +407,35 @@ public class UserEmployeeConfig {
                     LocalDate.of(1999,1,16)
             );
 
+            Employee gerson = new Employee(
+                    "Gerson Wilfredo",
+                    "Palacios Giron",
+                    "048633790",
+                    "06141808931510",
+                    "8888888",
+                    "88888888",
+                    "pg15012@ues.edu.sv",
+                    "76288036",
+                    workStation,
+                    masculino,
+                    addressJason,
+                    LocalDate.of(1993,8,18)
+            );
+
             UserEmployee userEmployeeJason = new UserEmployee(
                     "jason__saul",
                     jason,
                     true,
                     false,
                     bCryptPasswordEncoder.encode( "password"),
-                    false,
+                    true,
                     LocalDateTime.now().plusDays(30),
-                    UserRole.ADMIN
+                    UserRole.USER
                     );
-            //userEmployeeJason.setSecretKeyGoogleAuthenticator("PM23CN6VVDAAL52L364N5SBM6AEDNGZJ");
+            userEmployeeJason.setSecretKeyGoogleAuthenticator("PM23CN6VVDAAL52L364N5SBM6AEDNGZJ");
             userEmployeeJason.setIsDoubleAuthenticator(false);
             userEmployeeJason.setDoubleAuthenticationEmail(false);
+            userEmployeeJason.setDoubleAuthenticationApp(false);
 
             UserEmployee userEmployeeJuan = new UserEmployee(
                     "juan__acosta",
@@ -428,9 +445,10 @@ public class UserEmployeeConfig {
                     bCryptPasswordEncoder.encode("password1234"),
                     false,
                     LocalDateTime.now().plusDays(30),
-                    UserRole.ADMIN
+                    UserRole.USER
             );
             userEmployeeJuan.setSecretKeyGoogleAuthenticator("64SXX3E6R6XJMG6JJ57JGWZUTUMNFQUL");
+            userEmployeeJuan.setDoubleAuthenticationApp(true);
             userEmployeeJuan.setIsDoubleAuthenticator(true);
             userEmployeeJuan.setDoubleAuthenticationEmail(true);
             
@@ -753,9 +771,9 @@ public class UserEmployeeConfig {
             addressRepository.save(addressJason);
             workStationRepository.save(workStation);
             gendersRepository.saveAll(List.of(masculino, femenino));
-            employeeRepository.saveAll(List.of(jason, juan, lizt, marvin));
-            userEmployeeRepository.saveAll(List.of(userEmployeeJason, userEmployeeJuan, userEmployeeMarvin));
-            passwordHistoryRepository.saveAll(List.of(passwordHistoryJason, passwordHistoryJuan, passwordHistoryMarvin));
+            employeeRepository.saveAll(List.of(jason, juan, lizt, gerson));
+            userEmployeeRepository.saveAll(List.of(userEmployeeJason, userEmployeeJuan));
+            passwordHistoryRepository.saveAll(List.of(passwordHistoryJason, passwordHistoryJuan));
         };
     }
 }

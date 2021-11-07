@@ -1,4 +1,4 @@
-package com.example.demo.security.twofactor.email;
+package com.example.demo.security.twofactor.token;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -24,5 +24,6 @@ public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationT
 
     @Query("SELECT t FROM ConfirmationToken t WHERE t.token = ?1")
     Optional<ConfirmationToken> findByToken(String token);
+
 
 }
