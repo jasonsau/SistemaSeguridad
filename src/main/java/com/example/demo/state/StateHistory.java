@@ -37,11 +37,9 @@ public class StateHistory {
     	private UserEmployee userEmployee;
     	private String userEmployeeStateHistory;
     public StateHistory(LocalDateTime startDate,
-    		            LocalDateTime endingDate,
     		            UserEmployee userEmployee,
     		            String userEmployeeStateHistory) {
     	this.startDate= startDate;
-    	this.endingDate= endingDate;
     	this.userEmployee= userEmployee;
     	this.userEmployeeStateHistory=userEmployeeStateHistory;
     }

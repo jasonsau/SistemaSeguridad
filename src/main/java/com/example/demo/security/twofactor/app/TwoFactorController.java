@@ -45,17 +45,14 @@ public class TwoFactorController {
     public BufferedImage barCode(Authentication authentication) {
 
         Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
-        if(userEmployee.isPresent()) {
-            return twoFactorService.createQRCode(
-                    twoFactorService.getGoogleAuthenticationBarCode(
-                            userEmployee.get().getSecretKeyGoogleAuthenticator(),
-                            userEmployee.get().getUsername(),
-                            ISSUER_COMPANY),
-                    "png",
-                    200,
-                    200);
-        }
-        return null;
+        return userEmployee.map(employee -> twoFactorService.createQRCode(
+                twoFactorService.getGoogleAuthenticationBarCode(
+                        employee.getSecretKeyGoogleAuthenticator(),
+                        employee.getUsername(),
+                        ISSUER_COMPANY),
+                "png",
+                200,
+                200)).orElse(null);
     }
     @GetMapping(value = "create-secret-key")
     public Map<String, String> createSecretKey(Authentication authentication) {

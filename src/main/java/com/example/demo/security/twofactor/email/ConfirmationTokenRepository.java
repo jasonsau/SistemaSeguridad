@@ -25,4 +25,5 @@ public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationT
     @Query("SELECT t FROM ConfirmationToken t WHERE t.token = ?1")
     Optional<ConfirmationToken> findByToken(String token);
 
+
 }

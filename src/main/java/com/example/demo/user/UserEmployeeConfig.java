@@ -398,13 +398,14 @@ public class UserEmployeeConfig {
                     true,
                     false,
                     bCryptPasswordEncoder.encode( "password"),
-                    false,
+                    true,
                     LocalDateTime.now().plusDays(30),
-                    UserRole.ADMIN
+                    UserRole.USER
                     );
-            //userEmployeeJason.setSecretKeyGoogleAuthenticator("PM23CN6VVDAAL52L364N5SBM6AEDNGZJ");
+            userEmployeeJason.setSecretKeyGoogleAuthenticator("PM23CN6VVDAAL52L364N5SBM6AEDNGZJ");
             userEmployeeJason.setIsDoubleAuthenticator(false);
             userEmployeeJason.setDoubleAuthenticationEmail(false);
+            userEmployeeJason.setDoubleAuthenticationApp(false);
 
             UserEmployee userEmployeeJuan = new UserEmployee(
                     "juan__acosta",
@@ -414,9 +415,10 @@ public class UserEmployeeConfig {
                     bCryptPasswordEncoder.encode("password1234"),
                     false,
                     LocalDateTime.now().plusDays(30),
-                    UserRole.ADMIN
+                    UserRole.USER
             );
             userEmployeeJuan.setSecretKeyGoogleAuthenticator("64SXX3E6R6XJMG6JJ57JGWZUTUMNFQUL");
+            userEmployeeJuan.setDoubleAuthenticationApp(true);
             userEmployeeJuan.setIsDoubleAuthenticator(true);
             userEmployeeJuan.setDoubleAuthenticationEmail(true);
 

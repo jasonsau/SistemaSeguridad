@@ -10,14 +10,14 @@
        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
        <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@300;500&display=swap" rel="stylesheet">
        <link href = "../../static/css/styleAddMethod.css" th:href = "@{/css/styleAddMethod.css}" rel = "stylesheet ">
-        <link href = "../../static/css/styleGoogleAuthenticator.css.css" th:href = "@{/css/styleGoogleAuthenticator.css}" rel = "stylesheet ">
+        <link href = "../../static/css/styleGoogleAuthenticator.css" th:href = "@{/css/styleGoogleAuthenticator.css}" rel = "stylesheet ">
        <title>Recursos Humanos</title>
     </head>
     <body id = "idBody">
         <div class="container-fluid">
             <nav class="navbar navbar-light bg-light border-3 border-bottom border-primary">
                 <span class="navbar-brand mb-0 h1">Sistema de Seguridad</span>
-                <a class="navbar-brand" th:href="@{http://localhost:8080/userAccount}">Inicio</a>
+                <a id = "idLinkHome" href="#" class="navbar-brand">Inicio</a>
             </nav>
         </div>
 
@@ -45,14 +45,18 @@
         >
             <img
                     class = "form__close"
-                    src = "/icons/close.svg"
+                    src = "../../static/icons/close.svg"
+                    th:src = "@{/icons/close.svg}"
                     id = "idCloseFormModal"
+                    alt = "icon-close"
             >
             <h2 class = "modal__subtitle">Autenticacion App</h2>
             <div>
                 <img
+                        src = ""
                         id = "idModalBarCode"
                         class = "modal__img"
+                        alt = "img qrcode"
                 >
             </div>
             <div
@@ -61,8 +65,9 @@
             >
                 <label for = "idInputCodigo" class = "form__label">
                     <img
-                            src = "/icons/password.svg"
-                    >
+                            src = "../../static/icons/password.svg"
+                            th:src = "@{/icons/password.svg}"
+                            alt = "icon-password"
                     >
                 </label>
                 <input
@@ -70,6 +75,7 @@
                         id = "idInputCodigo"
                         placeholder="Codigo"
                         class = "form__input"
+                        maxlength="6"
                 >
             </div>
             <div
@@ -92,28 +98,34 @@
                 >
             </div>
         </div>
+        <!-- Modal para el codigo de email -->
         <div
                 class = "container__email"
                 id = "idContainerEmail"
         >
             <img
                     class = "form__close"
-                    src = "/icons/close.svg"
+                    src = "../../static/icons/close.svg"
+                    th:src = "@{/icons/close.svg}"
+                    alt = "icon-close"
                     id = "idCloseFormModalEmail"
             >
             <h2 class = "modal__subtitle">Autenticacion Correo</h2>
             <p>Se le envio un correo con el codigo</p>
             <div class = "container__input">
-                <label class = "form__label">
+                <label class = "form__label" for = "idInputCorreo">
                     <img
-                            src = "/icons/password.svg"
+                            src = "../../static/icons/password.svg"
+                            th:src = "@{/icons/password.svg}"
+                            alt = "icon-password"
                     >
                 </label>
                 <input
                         class = "form__input"
-                        type = "form__input"
+                        type = "text"
                         id = "idInputCorreo"
                         placeholder="Codigo"
+                        maxlength="6"
                 >
             </div>
             <div
@@ -135,14 +147,66 @@
                         style="margin-top: 5px"
                 >
             </div>
+        </div>
+        <!-- Modal para codigo de sms -->
+        <div
+                class = "container__email"
+                id = "idContainerSms"
+        >
+            <img
+                    class = "form__close"
+                    src = "../../static/icons/close.svg"
+                    th:src = "@{/icons/close.svg}"
+                    id = "idCloseFormModalSms"
+                    alt = "icon-close"
+            >
+            <h2 class = "modal__subtitle">Autenticacion Correo</h2>
+            <p>Se le envio un correo con el codigo</p>
+            <div class = "container__input">
+                <label class = "form__label" for = "idInputSms">
+                    <img
+                            src = "../../static/icons/password.svg"
+                            th:src = "@{/icons/password.svg}"
+                            alt = "icon-password"
+                    >
+                </label>
+                <input
+                        class="form__input"
+                        id="idInputSms"
+                        maxlength="6"
+                        placeholder="Codigo"
+                        type="text"
+                >
+            </div>
+            <div
+                    class = "container__input container__input--error"
+                    style="margin-top: 15px; margin-bottom: -15px"
+                    id = "idContainerSmsError"
+            >
+                <p id = "idMessageSmsError">Error</p>
+            </div>
+            <div
+                    class = "container__input container__input--modal"
+                    style="margin-top: 15px"
+            >
+                <input
+                        type = "submit"
+                        id = "idButtonSms"
+                        value = "Configurar"
+                        class = "form__button"
+                        style="margin-top: 5px"
+                >
+            </div>
 
         </div>
         <!-- Modal para mensaje de desabilitar metodo -->
         <div class = "modal__configurar" id = "idContainerMessage" style="height: 130px">
             <img
                     class = "form__close"
-                    src = "/icons/close.svg"
+                    src = "../../static/icons/close.svg"
+                    th:src = "@{/icons/close.svg}"
                     id = "idCloseFormMessage"
+                    alt = "icon-close"
             >
             <div style = "position: relative; top: 20px;">
                 <h2 style="font-size: 20px">Esta seguro de Desactivar el metodo </h2>

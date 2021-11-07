@@ -17,6 +17,38 @@
  const idContainerMessage = document.getElementById("idContainerMessage");
  const idCloseFormMessage = document.getElementById("idCloseFormMessage");
  const idButtonAceptarMessage = document.getElementById("idButtonAceptarMessage");
+ const idLinkHome = document.getElementById("idLinkHome");
+
+ idButtonCodigo.disabled = true;
+ idButtonEmail.disabled = true;
+ idButtonCodigo.style.backgroundColor = "#a8a8ad";
+ idButtonEmail.style.backgroundColor = "#a8a8ad";
+
+ idInputCodigo.addEventListener('input', (e) => {
+     let regex = /\D/g;
+     idInputCodigo.value = idInputCodigo.value.replaceAll(regex, '');
+     let regexlimit = /\d{6}/;
+     if(regexlimit.test(idInputCodigo.value)) {
+         idButtonCodigo.disabled = false;
+         idButtonCodigo.style.backgroundColor = "blue";
+     } else {
+         idButtonCodigo.disabled = true;
+         idButtonCodigo.style.backgroundColor = "#a8a8ad";
+     }
+ });
+
+ idInputCorreo.addEventListener('input', (e) => {
+     let regex = /\D/g;
+     idInputCorreo.value = idInputCorreo.value.replaceAll(regex, '');
+     let regexlimit = /\d{6}/;
+     if(regexlimit.test(idInputCorreo.value)) {
+         idButtonEmail.disabled = false;
+         idButtonEmail.style.backgroundColor = "blue";
+     } else {
+         idButtonEmail.disabled = true;
+         idButtonEmail.style.backgroundColor = "blue";
+     }
+ });
 
 
 //Se inicializa cuales metodos no estan configurados y cuales si
@@ -51,7 +83,10 @@ const initMethods = () => {
 
             if(contadorMethods === 0) {
                 idMainFirst.innerHTML += `<p style="text-align: center; font-size: 15px">Aun no tiene registrado ningun metodo</p>`;
+            }else {
+                idLinkHome.setAttribute("href", "/userAccount");
             }
+
         })
         .catch(error => console.log(error))
 }
@@ -234,6 +269,7 @@ idButtonEmail.addEventListener('click', () => {
 idCloseFormModal.addEventListener('click', () =>{
     idModalConfigurar.classList.add("close-modal-configurar");
     idModalConfigurar.classList.remove("open-modal-configurar");
+    window.location.reload(true);
 });
 
 

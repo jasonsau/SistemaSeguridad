@@ -1,8 +1,9 @@
 package com.example.demo.user;
 
 import com.example.demo.Email;
+import com.example.demo.municipality.Municipality;
+import com.example.demo.municipality.MunicipalityService;
 import com.example.demo.paswword.PasswordHistoryService;
-import com.example.demo.responsebody.ResponseBodyPassword;
 import org.apache.commons.lang3.RandomStringUtils;
 import com.example.demo.responsebody.ResponseBodyUserEmail;
 import com.example.demo.security.twofactor.email.ConfirmationToken;
@@ -24,16 +25,10 @@ import com.example.demo.api.email.rest.SendEmailService;
 import com.example.demo.employee.Employee;
 import com.example.demo.employee.EmployeeService;
 import com.example.demo.paswword.PasswordHistory;
-import com.example.demo.paswword.PasswordHistoryService;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 @RestController
@@ -48,6 +43,7 @@ public class UserEmployeeController {
     private final Email email;
     private final PasswordHistoryService passwordHistoryService;
     private final StateHistoryService stateHistoryService;
+    private final MunicipalityService municipalityService;
 
 
     public UserEmployeeController(UserEmployeeService userEmployeeService,
@@ -57,7 +53,8 @@ public class UserEmployeeController {
                                   BCryptPasswordEncoder bCryptPasswordEncoder,
                                   Email email,
                                   PasswordHistoryService passwordHistoryService,
-                                  StateHistoryService stateHistoryService) {
+                                  StateHistoryService stateHistoryService,
+                                  MunicipalityService municipalityService) {
         this.userEmployeeService = userEmployeeService;
         this.employeeService = employeeService;
         this.confirmationTokenService = confirmationTokenService;
@@ -66,13 +63,20 @@ public class UserEmployeeController {
         this.email = email;
         this.passwordHistoryService = passwordHistoryService;
         this.stateHistoryService= stateHistoryService;
+        this.municipalityService = municipalityService;
     }
 
     @GetMapping("home")
-    public ModelAndView homeView() {
-        ModelAndView model = new ModelAndView();
-        model.setViewName("home");
-        return model;
+    public ModelAndView homeView(Authentication authentication) {
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        if(authentication.getAuthorities().toArray()[0].toString().equals("USER")) {
+            return new ModelAndView("redirect:/userAccount");
+        }
+        if(authentication.getAuthorities().toArray()[0].toString().equals("ADMIN")) {
+            return new ModelAndView("redirect:/add-2fac");
+        }
+
+        return  null;
     }
 
     @GetMapping("change-password")
@@ -118,10 +122,12 @@ public class UserEmployeeController {
         }
         int response = userEmployeeService.updatePassword(password, authentication.getName());
         if(response == 1) {
-            Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
-            if(userEmployee.isPresent()) {
-                if(userEmployee.get().isBlocked()) {
-                    userEmployeeService.updateUserUnlockedUser(userEmployee.get().getIdUser());
+            if(userEmployeeT.isPresent()) {
+                if(userEmployeeT.get().isBlocked()) {
+                    Optional<StateHistory> stateHistory = stateHistoryService.getLastRegister();
+                    stateHistory.ifPresent(history -> stateHistoryService.updateUnlockedHistory(LocalDateTime.now(), history.getId()));
+                    userEmployeeService.updateUserUnlockedUser(userEmployeeT.get().getIdUser());
+                    userEmployeeService.restartAttempts(userEmployeeT.get().getIdUser());
                 }
             }
             SecurityContextHolder.clearContext();
@@ -282,13 +288,22 @@ public class UserEmployeeController {
     public ModelAndView unlockedUserCheck(@RequestParam("token") String token) {
         Optional<ConfirmationToken>confirmationToken = confirmationTokenService.findByToken(token);
         if(confirmationToken.isPresent()) {
-            UserEmployee userEmployee = confirmationToken.get().getUserEmployee();
-            Authentication authentication = userEmployeeService.getAuthentication(userEmployee.getUsername(),
-                    userEmployee.getPassword(),
-                    userEmployeeService.addRole("AUTHENTICATOR"));
-            userEmployeeService.setAuthentication(authentication);
+            if(confirmationToken.get().getConfirmationAtToken() == null) {
+                UserEmployee userEmployee = confirmationToken.get().getUserEmployee();
+                Authentication authentication = userEmployeeService.getAuthentication(userEmployee.getUsername(),
+                        userEmployee.getPassword(),
+                        userEmployeeService.addRole("AUTHENTICATOR"));
+                userEmployeeService.setAuthentication(authentication);
+                confirmationTokenService.updateDateConfiramtionToken(confirmationToken.get().getIdToken(),
+                        LocalDateTime.now());
+                return new ModelAndView("redirect:/options");
+            } else {
+                return new ModelAndView("redirect:/login");
+            }
+
+        } else {
+            throw new IllegalStateException("No se ha encontrado el token");
         }
-        return new ModelAndView("redirect:/options");
 
     }
 

@@ -1,9 +1,10 @@
 package com.example.demo.login;
 
 import com.example.demo.Email;
+import com.example.demo.state.StateHistory;
+import com.example.demo.state.StateHistoryService;
 import com.example.demo.user.UserEmployee;
 import com.example.demo.user.UserEmployeeService;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller
@@ -22,14 +24,17 @@ public class LoginController {
     private final UserEmployeeService userEmployeeService;
     private final Email email;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final StateHistoryService stateHistoryService;
 
     //Constructor
     public LoginController(UserEmployeeService userEmployeeService,
                            Email email,
-                           BCryptPasswordEncoder bCryptPasswordEncoder) {
+                           BCryptPasswordEncoder bCryptPasswordEncoder,
+                           StateHistoryService stateHistoryService) {
         this.userEmployeeService = userEmployeeService;
         this.email = email;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.stateHistoryService = stateHistoryService;
     }
 
     @GetMapping("/")
@@ -74,7 +79,8 @@ public class LoginController {
 
     @PostMapping("/login-check")
     public ModelAndView loginCheck(@RequestParam(name = "username") String username,
-                                   @RequestParam(name = "password") String password){
+                                   @RequestParam(name = "password") String password,
+                                   Authentication authentication){
 
         boolean locked;
         if(username.isEmpty() || password.isEmpty()) {
@@ -91,6 +97,15 @@ public class LoginController {
                 }
                 else if(!userEmployee.get().isEnabled()) {
                     return new ModelAndView("redirect:/login?error=4");
+                }else if(userEmployee.get().getTemporaryPassword()) {
+                     authentication = userEmployeeService.getAuthentication(
+                            userEmployee.get().getUsername(),
+                            userEmployee.get().getPassword(),
+                            userEmployeeService.addRole("CHANGE_PASSWORD")
+                    );
+                    userEmployeeService.setAuthentication(authentication);
+                    return new ModelAndView("redirect:/change-password");
+
                 } else if (userEmployee.get().getIsDoubleAuthenticator()) {
                     userEmployeeService.setAuthentication(userEmployeeService.getAuthentication(
                             userEmployee.get().getUsername(),
@@ -108,6 +123,11 @@ public class LoginController {
                 userEmployeeService.updateUserAttempts(username);
                 locked = userEmployeeService.chekcedAttempts(username);
                 if(locked) {
+                    stateHistoryService.insertStateHistory(new StateHistory(
+                            LocalDateTime.now(),
+                            userEmployee.get(),
+                            "Bloqueado"
+                    ));
                     email.sendEmailLocker(userEmployee.get().getEmployee().getEmailEmployee());
                     return new ModelAndView("redirect:/login?error=3");
                 }
