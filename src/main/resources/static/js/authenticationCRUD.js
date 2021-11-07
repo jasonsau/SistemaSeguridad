@@ -18,11 +18,18 @@
  const idCloseFormMessage = document.getElementById("idCloseFormMessage");
  const idButtonAceptarMessage = document.getElementById("idButtonAceptarMessage");
  const idLinkHome = document.getElementById("idLinkHome");
+ const idContainerSms = document.getElementById("idContainerSms");
+ const idCloseFormModalSms = document.getElementById("idCloseFormModalSms");
+ const idInputSms = document.getElementById("idInputSms");
+ const idButtonSms = document.getElementById("idButtonSms");
+ const idContainerSmsError = document.getElementById("idContainerSmsError");
+ const idMessageSmsError = document.getElementById("idMessageSmsError");
 
  idButtonCodigo.disabled = true;
  idButtonEmail.disabled = true;
  idButtonCodigo.style.backgroundColor = "#a8a8ad";
  idButtonEmail.style.backgroundColor = "#a8a8ad";
+ idButtonSms.style.backgroundColor = "#a8a8ad";
 
  idInputCodigo.addEventListener('input', (e) => {
      let regex = /\D/g;
@@ -46,9 +53,22 @@
          idButtonEmail.style.backgroundColor = "blue";
      } else {
          idButtonEmail.disabled = true;
-         idButtonEmail.style.backgroundColor = "blue";
+         idButtonEmail.style.backgroundColor = "#a8a8ad";
      }
  });
+
+ idInputSms.addEventListener('input', (e) => {
+     let regex = /\D/g;
+     idInputSms.value = idInputSms.value.replaceAll(regex, '');
+     let regexlimit = /\d{6}/;
+     if(regexlimit.test(idInputSms.value)) {
+         idButtonSms.disabled = false;
+         idButtonSms.style.backgroundColor = "blue";
+     } else {
+         idButtonSms.disabled = true;
+         idButtonSms.style.backgroundColor = "#a8a8ad"
+     }
+ })
 
 
 //Se inicializa cuales metodos no estan configurados y cuales si
@@ -60,7 +80,9 @@ const initMethods = () => {
         .then((data) => {
             let contadorMethods = 0;
             if(data.doubleAuthenticationApp) {
-                methodOption("Aplicacion de Autenticacion", "Puede usar las aplicacion de Google Authenticator o Authy", "qrCode.png", "app")
+                methodOption("Aplicacion de Autenticacion",
+                    "Puede usar las aplicacion de Google Authenticator o Authy",
+                    "qrCode.png", "app")
                 contadorMethods += 1;
             } else {
                 methodOptionOptional("Aplicacion de Autenticacion",
@@ -69,16 +91,28 @@ const initMethods = () => {
                     "app");
             }
             if(data.doubleAuthenticationEmail === true) {
-                methodOption("Correo Electronico", "El codigo se le enviara a su correo", "correo.png", "correo");
+                methodOption("Correo Electronico",
+                    "El codigo se le enviara a su correo",
+                    "correo.png",
+                    "correo");
                 contadorMethods += 1;
             } else {
-                methodOptionOptional("Correo Electronico", "El codigo se le enviara a su correo", "correo.png", "correo");
+                methodOptionOptional("Correo Electronico",
+                    "El codigo se le enviara a su correo",
+                    "correo.png",
+                    "correo");
             }
-            if(data.doubleAuthenticationEmailSms === true) {
-                methodOption("Mensaje de Texto", "El codigo se le enviara por un mensaje de SMS", "sms");
+            if(data.doubleAuthenticationSms === true) {
+                methodOption("Mensaje de Texto",
+                    "El codigo se le enviara por un mensaje de SMS",
+                    "sms.jpg",
+                    "sms");
                 contador += 1;
             } else {
-                methodOptionOptional("Mensaje de Texto", "El codigo se le enviara por un mensaje de SMS", "sms.jpg", "sms");
+                methodOptionOptional("Mensaje de Texto",
+                    "El codigo se le enviara por un mensaje de SMS",
+                    "sms.jpg",
+                    "sms");
             }
 
             if(contadorMethods === 0) {
@@ -228,10 +262,54 @@ idMainSecond.addEventListener('click', (e) => {
             console.log("Configuraemos el metodo de app");
         }
         if(e.target.getAttribute('tipo') === 'sms') {
+            idContainerSms.classList.add("open-modal-configurar");
+            idContainerSms.classList.remove("close-modal-configurar");
+
+            setTimeout( () => {
+                fetch("http://localhost:8080/api/send-sms-token", {
+                    method: "POST"
+                })
+                    .then(response => response.json())
+                    .then(data => console.log(data))
+                    .catch(error => console.log(error));
+
+            },1000)
             console.log("Se quiere configurar");
         }
     }
 });
+
+idButtonSms.addEventListener('click', () => {
+    data = {"code": idInputSms.value};
+    fetch("http://localhost:8080/api/verified-code-sms", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {'Content-Type': 'application/json'}
+    })
+        .then(response => response.json())
+        .then(data => {
+            if(data.res === "Correcto") {
+                idContainerSmsError.style.backgroundColor = "green";
+                idContainerSmsError.style.display = "block";
+                idMessageSmsError.innerText = "Se ha configurado";
+                idInputSms.value = "";
+                idInputSms.dissable = true;
+                idMainFirst.innerHTML = `<h2 class = "main__subtitle">Tus metodos de Seguridad</h2>`;
+                idMainSecond.innerHTML = `<h2 class = "main__subtitle">Metodos Adicionales</h2>`;
+                setInterval(() => {
+                    idContainerSms.classList.remove("open-modal-configurar");
+                    idContainerSms.classList.add("close-modal-configurar")
+                }, 1000)
+                initMethods();
+            }
+
+            if(data.res === "Incorrecto") {
+                idContainerSmsError.style.backgroundColor = "red";
+                idContainerSmsError.style.display = "block";
+                idMessageSmsError.innerText = "El codigo es incorrecto";
+            }
+        })
+ });
 
 
 idButtonEmail.addEventListener('click', () => {
@@ -282,6 +360,11 @@ idCloseFormModalEmail.addEventListener('click', () => {
     idContainerEmail.classList.add("close-modal-configurar");
     idContainerEmail.classList.remove("open-modal-configurar");
 });
+
+idCloseFormModalSms.addEventListener('click', () => {
+    idContainerSms.classList.add("close-modal-configurar");
+    idContainerSms.classList.remove("open-modal-configurar");
+})
 
 idButtonCodigo.addEventListener('click', (e) => {
     e.preventDefault()

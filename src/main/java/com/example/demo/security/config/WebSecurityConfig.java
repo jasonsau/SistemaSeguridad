@@ -50,7 +50,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/barCode", "/users",
                         "/add-2fac", "/api/getMethods2Fac", "/create-secret-key", "api/verification-code-app",
                         "/api/verified-equals-password", "/api/send-email-token", "api/verified-code-email",
-                        "api/disabled-method/**", "/home")
+                        "api/disabled-method/**", "/home", "/api/send-sms-token", "api/verified-code-sms")
                 .hasAnyAuthority(UserRole.ADMIN.name(), UserRole.USER.name())
                 .anyRequest()
                 .authenticated();
