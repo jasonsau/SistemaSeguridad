@@ -51,6 +51,7 @@ public class EmployeeController {
 	private UserEmployeeController userEmployeeController;
 	
 	private static final String INDEX_VIEW="index";
+	private static final String DETAILS_VIEW="details";
 
     /*@GetMapping("/employee/index")
     public ModelAndView index() {
@@ -126,6 +127,13 @@ public class EmployeeController {
 		return "redirect:/employee/index";
 	}
 
-
+	@GetMapping("/details/{dui}")
+	public ModelAndView details(@PathVariable("dui") String duiEmployee) {
+		ModelAndView model = new ModelAndView(DETAILS_VIEW);
+		model.setViewName("/employee/details");
+		List<Employee> empleados=employeeService.findByDui(duiEmployee);
+		model.addObject("empleados",empleados);
+		return model;
+	}
 
 }

@@ -65,8 +65,9 @@
 									<div th:if="${empleado.blocked==false}">
 									      <h5>No Bloqueado</h5>
 								   </div>-->
-								    <a th:href="editar" class="btn btn-primary">Editar</a>
+								    <a th:href="@{/edit/}+${empleado.duiEmployee}" class="btn btn-primary">Editar</a>
 								 	<a th:href="@{/delete/}+${empleado.idEmployee}" class="btn btn-danger">Eliminar</a>
+								    <a th:href="@{/details/}+${empleado.duiEmployee}" class="btn btn-primary">Detalles</a>
 								  </div>
 								  </div>
 

@@ -48,4 +48,8 @@ public class EmployeeService{
 		this.employeeRepository.deleteById(id);
 		return true;
 	}
+
+	public List<Employee> findByDui(String dui){
+		return this.employeeRepository.findByDui(dui);
+	}
 }

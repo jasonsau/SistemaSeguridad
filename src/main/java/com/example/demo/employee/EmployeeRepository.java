@@ -1,5 +1,6 @@
 package com.example.demo.employee;
 
+import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,5 +21,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
 	//@Query(nativeQuery = false, value = "delete from Employee e Where e.duiEmployee= ?1")
 	//Optional<Employee> deleteByDui(String dui);
+
+	@Query("Select e from Employee e where e.duiEmployee=?1")
+	List<Employee> findByDui(String dui);
 
 }
