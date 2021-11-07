@@ -415,7 +415,7 @@ public class UserEmployeeController {
 			  errors.put("usuarioNoExiste", "El usuario que ha ingresado es incorrecto");
 		  }
 		  else if(error.equals("2")) {
-			  errors.put("longituIncorrecta","La contraseña tiene que tener minimo 12 caracteres");
+			  errors.put("longituIncorrecta","La contraseña tiene que tener 12 carácteres una mayuscula un número y un caracter especial");
 		  }
 		  else if(error.equals("3")) {
 			  errors.put("contraseñasDistintas","las contraseña no coincide");
@@ -441,7 +441,7 @@ public class UserEmployeeController {
 	  Optional<UserEmployee> users = userEmployeeService.findByUsername(user);
 	  BCryptPasswordEncoder newbCryptPasswordEncoder= new BCryptPasswordEncoder();
 	  if(users.isPresent()) {
-		  if(!(new_password.length()<12)) {
+		  if(userEmployeeService.validatePassword(new_password)) {
 			  boolean condicion= newbCryptPasswordEncoder.matches(password, users.get().getPassword());
 		  if(condicion) {
 			  if(!passwordHistoryService.verifiedLastestPassword(new_password, users.get())) {
@@ -469,13 +469,6 @@ public class UserEmployeeController {
   }
   
   //aqui termina el codigo para las interfazes y funciones del usuario 
-
-//    @GetMapping("/home")
-//    public ModelAndView inicio(Model model,@RequestParam(name="employee_name")String username) {
-//		Optional<UserEmployee> empleados=this.userEmployeeService.findByUsername(username);
-//		model.addAttribute("empleados",empleados);
-//		return model;
-//    }
 }
 
 
