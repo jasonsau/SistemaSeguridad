@@ -391,6 +391,7 @@ public class UserEmployeeConfig {
                     addressJason,
                     LocalDate.of(1999,6,5)
             );
+
             Employee marvin = new Employee(
                     "Marvin Sigfredo",
                     "Martinez Hernandez",
@@ -404,6 +405,21 @@ public class UserEmployeeConfig {
                     masculino,
                     addressJason,
                     LocalDate.of(1999,1,16)
+            );
+
+            Employee gerson = new Employee(
+                    "Gerson Wilfredo",
+                    "Palacios Giron",
+                    "048633790",
+                    "06141808931510",
+                    "8888888",
+                    "88888888",
+                    "pg15012@ues.edu.sv",
+                    "76288036",
+                    workStation,
+                    masculino,
+                    addressJason,
+                    LocalDate.of(1993,8,18)
             );
 
             UserEmployee userEmployeeJason = new UserEmployee(
@@ -755,9 +771,9 @@ public class UserEmployeeConfig {
             addressRepository.save(addressJason);
             workStationRepository.save(workStation);
             gendersRepository.saveAll(List.of(masculino, femenino));
-            employeeRepository.saveAll(List.of(jason, juan, lizt, marvin));
-            userEmployeeRepository.saveAll(List.of(userEmployeeJason, userEmployeeJuan, userEmployeeMarvin));
-            passwordHistoryRepository.saveAll(List.of(passwordHistoryJason, passwordHistoryJuan, passwordHistoryMarvin));
+            employeeRepository.saveAll(List.of(jason, juan, lizt, gerson));
+            userEmployeeRepository.saveAll(List.of(userEmployeeJason, userEmployeeJuan));
+            passwordHistoryRepository.saveAll(List.of(passwordHistoryJason, passwordHistoryJuan));
         };
     }
 }

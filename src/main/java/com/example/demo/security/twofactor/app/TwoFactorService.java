@@ -104,6 +104,11 @@ public class TwoFactorService {
                 "<p>Su codigo de es " + token +
                 " El codigo expira en 15 minutos";
     }
+    public String createBodySmsConfirmationToken(String token) {
+        return   ":" + token +
+                " El codigo expira en 15 minutos";
+    }
+
 
     public int updateDoubleApp(boolean value, Long idUser) {
         return userEmployeeRepository.updateDoubleApp(value, idUser);

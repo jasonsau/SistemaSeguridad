@@ -1,4 +1,4 @@
-package com.example.demo.security.twofactor.email;
+package com.example.demo.security.twofactor.token;
 
 import com.example.demo.security.twofactor.app.TwoFactorService;
 import com.example.demo.user.UserEmployee;

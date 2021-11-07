@@ -6,8 +6,8 @@ import com.example.demo.municipality.MunicipalityService;
 import com.example.demo.paswword.PasswordHistoryService;
 import org.apache.commons.lang3.RandomStringUtils;
 import com.example.demo.responsebody.ResponseBodyUserEmail;
-import com.example.demo.security.twofactor.email.ConfirmationToken;
-import com.example.demo.security.twofactor.email.ConfirmationTokenService;
+import com.example.demo.security.twofactor.token.ConfirmationToken;
+import com.example.demo.security.twofactor.token.ConfirmationTokenService;
 import com.example.demo.state.StateHistory;
 import com.example.demo.state.StateHistoryService;
 
