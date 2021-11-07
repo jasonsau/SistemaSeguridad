@@ -1,4 +1,4 @@
-package com.example.demo.user;
+/*package com.example.demo.user;
 
 import com.example.demo.address.Address;
 import com.example.demo.address.AddressRepository;
@@ -470,18 +470,18 @@ public class UserEmployeeConfig {
             userEmployeeMarvin.setDoubleAuthenticationEmail(true);
 
             PasswordHistory passwordHistoryJason = new PasswordHistory(LocalDateTime.now(),
-                    LocalDateTime.now().plusMinutes(15),
+                    LocalDateTime.now().plusDays(30),
                     userEmployeeJason,
                     userEmployeeJason.getPassword());
 
             PasswordHistory passwordHistoryJuan = new PasswordHistory(LocalDateTime.now(),
-                    LocalDateTime.now().plusDays(3),
+                    LocalDateTime.now().plusDays(30),
                     userEmployeeJuan,
                     userEmployeeJuan.getPassword());
 
 
             PasswordHistory passwordHistoryMarvin = new PasswordHistory(LocalDateTime.now(),
-                    LocalDateTime.now().plusMinutes(15),
+                    LocalDateTime.now().plusDays(30),
                     userEmployeeMarvin,
                     userEmployeeMarvin.getPassword());
 
@@ -778,4 +778,4 @@ public class UserEmployeeConfig {
             passwordHistoryRepository.saveAll(List.of(passwordHistoryJason, passwordHistoryJuan, passwordHistoryMarvin));
         };
     }
-}
+}*/

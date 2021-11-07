@@ -105,7 +105,7 @@ public class TwoFactorService {
                 " El codigo expira en 15 minutos";
     }
     public String createBodySmsConfirmationToken(String token) {
-        return   ":" + token +
+        return   ": " + token +
                 " El codigo expira en 15 minutos";
     }
 

@@ -21,8 +21,7 @@
             th:action = "@{/register-check}"
         >
 
-            <div
-                    c <input type = "hidden" name = "register" value = "register"/>
+            <input type = "hidden" name = "register" value = "register"/>
             <div class = "container-form__data">
                 <label
                         class = "container-form__label"
@@ -44,7 +43,8 @@
                         name = "employee_name"
                         id = "idInputFirstName"
                 />
-            </div>lass = "container-form__error"
+            </div>
+            <div class = "container-form__error"
                     id = "error-name"
                     th:if = "${errors.get('errorFirstName') != null}" style="opacity: 1"
             >
@@ -213,10 +213,6 @@
                     maxlength="4"
                 />
             </div>
-
-            <select>
-                <value name = ""></value>
-            </select>
             <div
                     class = "container-form__error"
                     id = "error-passcode"

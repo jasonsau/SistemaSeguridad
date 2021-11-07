@@ -101,6 +101,8 @@ public class TwoFactorController {
                                              @PathVariable(name = "idUser", required = false) Long idUser,
                                              @RequestParam(name = "tipo") String tipo,
                                              Authentication authentication) {
+        System.out.println(authentication.getAuthorities());
+        System.out.println(tipo);
         Optional<UserEmployee> userEmployee = userEmployeeService.findByIdUser(idUser);
         ModelAndView model = new ModelAndView();
         ConfirmationToken confirmationToken = new ConfirmationToken();
@@ -156,6 +158,9 @@ public class TwoFactorController {
                     SecurityContextHolder.clearContext();
                     return new ModelAndView("redirect:/login");
                 }
+            } else {
+                SecurityContextHolder.clearContext();
+                return new ModelAndView("redirect:/login");
             }
             model.setViewName("/password/AppAuthenticator");
             return model;
@@ -168,6 +173,7 @@ public class TwoFactorController {
                                          @RequestParam(name = "idUser") Long idUser,
                                          @RequestParam(name = "tipo") String tipo,
                                          Authentication authentication) {
+
 
         Optional<UserEmployee> userEmployee = userEmployeeService.findByIdUser(idUser);
         if (userEmployee.isPresent()) {

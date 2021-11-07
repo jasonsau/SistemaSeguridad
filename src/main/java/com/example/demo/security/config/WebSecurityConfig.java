@@ -13,34 +13,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-/*        http
-                .cors().and()
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/login", "/login-check" , "/register", "/register-check",
-
-                        "/unlocked-user/**","/changeAuthenticationForm","/changePasswordUser","/userAccount","/userStatistics","/changePassword/check-password",
-
-                        "/unlocked-user/**", "/enabled-user")
-
-                .permitAll()
-                .antMatchers("/change-password", "/change-password-check").hasAuthority(UserRole.CHANGE_PASSWORD.name())
-                .antMatchers("/authentication/**", "/api/getMethodsAuthentication", "/options", "/verification-code")
-                .hasAuthority(UserRole.AUTHENTICATOR.name())
-                .antMatchers("/barCode", "/home", "/users",
-                        "/add-2fac", "/api/getMethods2Fac", "/create-secret-key", "api/verification-code-app",
-                        "/api/verified-equals-password", "/api/send-email-token", "api/verified-code-email",
-                        "api/disabled-method/**")
-                .hasAuthority(UserRole.ADMIN.name())
-                .anyRequest()
-                .authenticated();*/
         http
                 .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/login", "/login-check" , "/register", "/register-check",
-                        "/unlocked-user/**","/changeAuthenticationForm","/changePasswordUser","/userAccount",
-                        "/userStatistics","/changePassword/check-password", "/unlocked-user/**", "/enabled-user")
+                        "/unlocked-user/**", "/enabled-user")
                 .permitAll()
                 .antMatchers("/change-password", "/change-password-check")
                 .hasAnyAuthority(UserRole.CHANGE_PASSWORD.name())
@@ -50,8 +28,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/barCode", "/users",
                         "/add-2fac", "/api/getMethods2Fac", "/create-secret-key", "api/verification-code-app",
                         "/api/verified-equals-password", "/api/send-email-token", "api/verified-code-email",
-                        "api/disabled-method/**", "/home", "/api/send-sms-token", "api/verified-code-sms")
+                        "api/disabled-method/**", "/home", "/api/send-sms-token", "api/verified-code-sms",
+                        "/userStatistics","/changePassword/check-password", "/changeAuthenticationForm",
+                        "/changePasswordUser", "/userAccount")
                 .hasAnyAuthority(UserRole.ADMIN.name(), UserRole.USER.name())
+                .antMatchers("/homeAdmin")
+                .hasAnyAuthority(UserRole.ADMIN.name())
                 .anyRequest()
                 .authenticated();
 

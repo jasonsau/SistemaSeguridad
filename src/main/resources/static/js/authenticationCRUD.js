@@ -107,13 +107,14 @@ const initMethods = () => {
                     "El codigo se le enviara por un mensaje de SMS",
                     "sms.jpg",
                     "sms");
-                contador += 1;
+                contadorMethods += 1;
             } else {
                 methodOptionOptional("Mensaje de Texto",
                     "El codigo se le enviara por un mensaje de SMS",
                     "sms.jpg",
                     "sms");
             }
+            console.log(contadorMethods)
 
             if(contadorMethods === 0) {
                 idMainFirst.innerHTML += `<p style="text-align: center; font-size: 15px">Aun no tiene registrado ningun metodo</p>`;
