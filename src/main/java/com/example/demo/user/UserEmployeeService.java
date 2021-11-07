@@ -114,6 +114,10 @@ public class UserEmployeeService implements UserDetailsService {
     public List<UserEmployee> selectUsers() {
         return userEmployeeRepository.findAll();
     }
+    
+    public List<UserEmployee> getAll(){
+    	return userEmployeeRepository.findAll();
+    }
 
     public int getAgeUserEmployee(LocalDate dateNow, LocalDate dateBirth) {
         int age = dateNow.getYear() - dateBirth.getYear();
@@ -177,6 +181,9 @@ public class UserEmployeeService implements UserDetailsService {
         return userEmployeeRepository.enabledUser(idUser);
     }
 
+    public void delete(Long id) {
+        this.userEmployeeRepository.deleteById(id);
+    }
     public boolean verifieEquealsPassword(String password, UserEmployee userEmployee) {
         return bCryptPasswordEncoder.matches(password, userEmployee.getPassword());
     }

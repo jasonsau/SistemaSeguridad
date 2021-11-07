@@ -38,6 +38,7 @@ public class UserEmployeeController {
     private final UserEmployeeService userEmployeeService;
     private final EmployeeService employeeService;
     private final ConfirmationTokenService confirmationTokenService;
+	private static final String INDEX_VIEW="index";
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final SendEmailService  sendEmailSender;
     private final Email email;
@@ -69,16 +70,33 @@ public class UserEmployeeController {
     @GetMapping("home")
     public ModelAndView homeView(Authentication authentication) {
         Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
-        if(authentication.getAuthorities().toArray()[0].toString().equals("USER")) {
+        if (authentication.getAuthorities().toArray()[0].toString().equals("USER")) {
             return new ModelAndView("redirect:/userAccount");
         }
-        if(authentication.getAuthorities().toArray()[0].toString().equals("ADMIN")) {
+        if (authentication.getAuthorities().toArray()[0].toString().equals("ADMIN")) {
             return new ModelAndView("redirect:/add-2fac");
         }
 
-        return  null;
+        return null;
     }
 
+	
+    @GetMapping("/homeAdmin")
+    public ModelAndView homeView() {
+        ModelAndView model = new ModelAndView();
+        model.setViewName("homeAdmin");
+        return model;
+    }
+
+    @GetMapping("/employee/index")
+    public ModelAndView index() {
+    	ModelAndView model = new ModelAndView(INDEX_VIEW);
+        model.setViewName("/employee/index");
+        List<Employee> empleados=employeeService.getAll();
+		model.addObject("empleados",empleados);
+        return model;
+    }
+    
     @GetMapping("change-password")
     public ModelAndView changePassword(@RequestParam(name = "error", required = false) String error) {
         ModelAndView model = new ModelAndView();
@@ -452,4 +470,12 @@ public class UserEmployeeController {
   
   //aqui termina el codigo para las interfazes y funciones del usuario 
 
+//    @GetMapping("/home")
+//    public ModelAndView inicio(Model model,@RequestParam(name="employee_name")String username) {
+//		Optional<UserEmployee> empleados=this.userEmployeeService.findByUsername(username);
+//		model.addAttribute("empleados",empleados);
+//		return model;
+//    }
 }
+
+

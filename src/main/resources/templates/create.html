@@ -1,0 +1,343 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <title>Register</title>
+        <meta charset = "UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content = "IE = edge" />
+        <meta 
+        name = "viewport" 
+        content = "width = device-width, 
+        initial-scale = 1.0" />
+        <link rel = "stylesheet" th:href = "@{/css/style.css}" href = "../static/css/style.css" >
+    </head>
+    <body>
+        <h1 class = "title">Nuevo Empleado</h1>
+
+        <form 
+            class = "container-form" 
+            method = "POST" 
+            name = "form-register-employee"
+            id = "form-register-employee-id"
+            th:action = "@{/save}"
+        >
+
+            <!--<input type = "hidden" name = "register" value = "register"/>-->
+            <!--Nombre-->
+            <div class = "container-form__data">
+                <label
+                        class = "container-form__label"
+                        for = "firstNameEmployee"
+                >
+                    Nombres
+                </label>
+                <span class = "container-form__icon">
+                    <img
+                            th:src = @{/icons/person.svg}
+                            src = "../static/icons/person.svg"
+                            alt = "Icon person"
+                    />
+                </span>
+                <input
+                        class = "container-form__input"
+                        type = "text"
+                        placeholder = "Nombres de Empleado"
+                        name = "employee_name"
+                        id = "firstNameEmployee"
+                />
+            </div>
+                <!--Apellidos-->
+            <div class = "container-form__data">
+                <label
+                        class = "container-form__label"
+                        for = "lastNameEmployee"
+                >
+                    Apellidos
+                </label>
+                <span class = "container-form__icon">
+                    <img
+                    th:src = @{/icons/person.svg}
+                    src = "../static/icons/person.svg"  
+                        alt = "Icon person" 
+                    />
+                </span>
+                <input 
+                    class = "container-form__input" 
+                    type = "text" 
+                    placeholder = "Apellidos de Empleado"
+                    name = "employee_last_name"
+                    id = "lastNameEmployee"
+                />
+            </div>
+            <!--Dui-->
+            <div class = "container-form__data">
+                    <label
+                            class = "container-form__label"
+                            for = "duiEmployee"
+                    >
+                        Dui
+                    </label>
+                    <span class = "container-form__icon">
+                    <img
+                            th:src = @{/icons/person.svg}
+                            src = "../static/icons/person.svg"
+                            alt = "Icon person"
+                    />
+                </span>
+                    <input
+                            class = "container-form__input"
+                            type = "text"
+                            placeholder = "Dui de Empleado"
+                            name = "employee_dui"
+                            id = "duiEmployee"
+                            maxlength="9"
+                    />
+            </div>
+                <!--Nit-->
+            <div class = "container-form__data">
+                <label
+                        class = "container-form__label"
+                        for = "nitEmployee"
+                >
+                    Nit
+                </label>
+                <span class = "container-form__icon">
+                    <img 
+                        th:src = @{/icons/person.svg}
+                        src = "../static/icons/person.svg"
+                        alt = "Icon person" 
+                    />
+                </span>
+                <input 
+                    class = "container-form__input" 
+                    type = "text" 
+                    placeholder = "Nit del empleado"
+                    name = "employee_nit"
+                    id = "nitEmployee"
+                    maxlength="14"
+                />
+            </div>
+                <!--Fecha de nacimiento-->
+            <div class = "container-form__data">
+                <label
+                        class = "container-form__label"
+                        for = "dateBirthEmployee"
+                >
+                    Fecha de nacimiento
+                </label>
+                <span class = "container-form__icon">
+                    <img 
+                    th:src = @{/icons/date.svg}
+                    src = "../static/icons/date.svg"
+                        alt = "Icon date" 
+                    />
+                </span>
+                <input 
+                    class = "container-form__input" 
+                    type = "date"
+                     placeholder = "Fecha de nacimiento"
+                    name = "employee_date_birth"
+                    id = "dateBirthEmployee"
+                />
+            </div>
+                <!--NUP-->
+            <div class = "container-form__data">
+                <label
+                        class = "container-form__label"
+                        for = "nupEmployee"
+                >
+                    NUP
+                </label>
+                <span class = "container-form__icon">
+                    <img 
+                    th:src = @{/icons/person.svg}
+                    src = "../static/icons/person.svg"
+                        alt = "Icon person"
+                    />
+                </span>
+                <input 
+                    class = "container-form__input" 
+                    type = "text" 
+                    placeholder = "NUP"
+                    name = "employee_nup"
+                    id = "nupEmployee"
+                />
+            </div>
+                <!--Email-->
+            <div class = "container-form__data">
+                <label
+                        class = "container-form__label"
+                        for = "emailEmployee"
+                >
+                    Email
+                </label>
+                <span class = "container-form__icon">
+                    <img 
+                    th:src = @{/icons/mail.svg}
+                    src = "../static/icons/mail.svg"
+                        alt = "Icon mail"
+                    />
+                </span>
+                <input 
+                    class = "container-form__input"
+                    type = "text"
+                    placeholder = "Email"
+                    name = "employee_email"
+                    id = "emailEmployee"
+                />
+            </div>
+                <!--Telefono-->
+            <div class = "container-form__data">
+                    <label
+                            class = "container-form__label"
+                            for = "cellPhoneEmployee"
+                    >
+                        Telefono
+                    </label>
+                    <span class = "container-form__icon">
+                    <img
+                            th:src = @{/icons/cell.svg}
+                            src = "../static/icons/cell.svg"
+                            alt = "Icon cell"
+                    />
+                </span>
+                    <input
+                            class = "container-form__input"
+                            type = "text"
+                            placeholder = "Telefono"
+                            name = "employee_cell_phone"
+                            id = "cellPhoneEmployee"
+                    />
+            </div>
+                <!--WorkStation-->
+            <div class = "container-form__data">
+                    <label
+                            class = "container-form__label"
+                            for = "workStationEmployee"
+                    >
+                        Workstation
+                    </label>
+                    <span class = "container-form__icon">
+                    <img
+                            th:src = @{/icons/person.svg}
+                            src = "../static/icons/person.svg"
+                            alt = "Icon person"
+                    />
+                </span>
+                    <input
+                            class = "container-form__input"
+                            type = "text"
+                            placeholder = "Estación de trabajo"
+                            name = "employee_work_station"
+                            id = "workStationEmployee"
+                            maxlength="1"
+                    />
+            </div>
+                <!--Genero-->
+            <div class = "container-form__data">
+                    <label
+                            class = "container-form__label"
+                            for = "gendersEmployee"
+                    >
+                        Genero
+                    </label>
+                    <span class = "container-form__icon">
+                    <img
+                            th:src = @{/icons/person.svg}
+                            src = "../static/icons/person.svg"
+                            alt = "Icon person"
+                    />
+                </span>
+                    <input
+                            class = "container-form__input"
+                            type = "text"
+                            placeholder = "Genero"
+                            name = "employee_genders"
+                            id = "gendersEmployee"
+                    />
+            </div>
+            <!--Address de prueba-->
+            <!--<div class = "container-form__data">
+                <label
+                        class = "container-form__label"
+                        for = "addressEmployee"
+                >
+                    Direccion
+                </label>
+                <span class = "container-form__icon">
+                    <img
+                            th:src = @{/icons/home.svg}
+                            src = "../static/icons/home.svg"
+                            alt = "Icon home"
+                    />
+                </span>
+                <select
+                        th:each="departamento :${departaments}"
+                        class = "form-control"
+                        th:field="departamento.idDepartament"
+                        placeholder = "Direccion"
+                        name = "employee_address"
+                        id = "addressEmployee"
+
+                />
+                <Option value="0">Seleccione el departamento</Option>
+                <option th:value="${departamento.idDepartament}" th:text="${departamento.nameDepartamento}"></option>
+                </select>
+            </div>-->
+                <!--Address-->
+            <div class = "container-form__data">
+                    <label
+                            class = "container-form__label"
+                            for = "addressEmployee"
+                    >
+                        Direccion
+                    </label>
+                    <span class = "container-form__icon">
+                    <img
+                            th:src = @{/icons/home.svg}
+                            src = "../static/icons/home.svg"
+                            alt = "Icon home"
+                    />
+                </span>
+                    <input
+                            class = "container-form__input"
+                            type = "text"
+                            placeholder = "Direccion"
+                            name = "employee_address"
+                            id = "addressEmployee"
+                            maxlength="1"
+                    />
+            </div>
+                <!--ISSS-->
+            <div class = "container-form__data">
+                    <label
+                            class = "container-form__label"
+                            for = "isssEmployee"
+                    >
+                        Numero de ISSS
+                    </label>
+                    <span class = "container-form__icon">
+                    <img
+                            th:src = @{/icons/person.svg}
+                            src = "../static/icons/person.svg"
+                            alt = "Icon person"
+                    />
+                </span>
+                    <input
+                            class = "container-form__input"
+                            type = "text"
+                            placeholder = "Numero ISSS"
+                            name = "employee_isss"
+                            id = "isssEmployee"
+                    />
+            </div>
+            <div class = "container-form__data">
+                <button 
+                    class = "container-form__button"
+                    id = "button-register-employee-id"
+                >
+                    Registrar
+                </button>
+            </div>
+        </form>
+    </body>
+</html>

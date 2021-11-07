@@ -55,4 +55,8 @@ public class PasswordHistoryService {
         System.out.println(contadorMatches);
         return contadorMatches > 0;
     }
+
+    public void delete(Long id){
+        this.passwordHistoryRepository.deleteById(id);
+    }
 }
