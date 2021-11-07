@@ -70,4 +70,8 @@ public interface UserEmployeeRepository extends JpaRepository<UserEmployee, Long
     @Modifying
     @Query("UPDATE UserEmployee u set u.isDoubleAuthenticationSms = ?1 WHERE u.idUser = ?2")
     int updateDoubleSms(boolean value, Long idUser);
+
+    @Modifying
+    @Query("DELETE FROM UserEmployee u WHERE u.employee.idEmployee = ?1")
+    void deleteUserEmployeeByIdEmployee(Long id);
 }

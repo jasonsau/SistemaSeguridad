@@ -118,8 +118,8 @@ public class EmployeeController {
 	public String delete(@PathVariable("id") String idEmployee, Model model){
 		Long id = Long.parseLong(idEmployee);
 		try {
-			passwordHistoryService.delete(id);
-			userEmployeeService.delete(id);
+			passwordHistoryService.deleteByIdEmployee(id);
+			userEmployeeService.deleteByIdEmployee(id);
 			employeeService.delete(id);
 		}catch (Exception e){
 		}

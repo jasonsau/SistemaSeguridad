@@ -59,4 +59,8 @@ public class PasswordHistoryService {
     public void delete(Long id){
         this.passwordHistoryRepository.deleteById(id);
     }
+
+    public void deleteByIdEmployee(Long id){
+        this.passwordHistoryRepository.deleteByIdEmployee(id);
+    }
 }

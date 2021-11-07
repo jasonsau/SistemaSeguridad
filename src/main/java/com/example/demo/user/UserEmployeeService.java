@@ -187,4 +187,8 @@ public class UserEmployeeService implements UserDetailsService {
     public boolean verifieEquealsPassword(String password, UserEmployee userEmployee) {
         return bCryptPasswordEncoder.matches(password, userEmployee.getPassword());
     }
+
+    public void deleteByIdEmployee(Long id){
+        this.userEmployeeRepository.deleteUserEmployeeByIdEmployee(id);
+    }
 }
