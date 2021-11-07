@@ -1,6 +1,7 @@
 package com.example.demo.security.twofactor.app;
 
 import com.example.demo.user.UserEmployee;
+import com.example.demo.user.UserEmployeeRepository;
 import com.example.demo.user.UserEmployeeService;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
@@ -16,13 +17,17 @@ import java.awt.image.BufferedImage;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
 
 @Service
 public class TwoFactorService {
     private final UserEmployeeService userEmployeeService;
+    private final UserEmployeeRepository userEmployeeRepository;
 
-    public TwoFactorService(UserEmployeeService userEmployeeService) {
+    public TwoFactorService(UserEmployeeService userEmployeeService,
+                            UserEmployeeRepository userEmployeeRepository) {
         this.userEmployeeService = userEmployeeService;
+        this.userEmployeeRepository = userEmployeeRepository;
     }
 
     //Crear una llave secreta para cada usuario para despues generar
@@ -99,4 +104,21 @@ public class TwoFactorService {
                 "<p>Su codigo de es " + token +
                 " El codigo expira en 15 minutos";
     }
+
+    public int updateDoubleApp(boolean value, Long idUser) {
+        return userEmployeeRepository.updateDoubleApp(value, idUser);
+    }
+
+    public int uddateDoubleAuthenticator(boolean value, Long idUser) {
+        return userEmployeeRepository.updateDoubleAuthenticator(value, idUser);
+    }
+
+    public int updateDoubleEmail(boolean value, Long idUser) {
+        return userEmployeeRepository.updateDoubleEmail(value, idUser);
+    }
+
+    public int updateDoubleSms(boolean value, Long idUser) {
+        return userEmployeeRepository.updateDoubleSms(value, idUser);
+    }
+
 }

@@ -1,6 +1,8 @@
 package com.example.demo.security.twofactor.app;
 
 import com.example.demo.Email;
+import com.example.demo.responsebody.ResponseBodyPassword;
+import com.example.demo.responsebody.ResponsebodyCode;
 import com.example.demo.security.twofactor.email.ConfirmationToken;
 import com.example.demo.security.twofactor.email.ConfirmationTokenService;
 import com.example.demo.user.UserEmployee;
@@ -16,6 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.awt.image.BufferedImage;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -53,10 +57,42 @@ public class TwoFactorController {
         }
         return null;
     }
+    @GetMapping(value = "create-secret-key")
+    public Map<String, String> createSecretKey(Authentication authentication) {
+        Map<String, String> messages = new HashMap<>();
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        int response = 0;
+        if(userEmployee.isPresent()) {
+            String secretKey = twoFactorService.generateSecretKey();
+            response = userEmployeeService.updateSecretKey(secretKey, userEmployee.get().getIdUser());
+            if(response == 1) {
+                messages.put("message", "Creado");
+            } else {
+                messages.put("message", "No Creado");
+            }
+        }
+        return messages;
+    }
 
     @GetMapping(value = "options")
-    public ModelAndView optionsAuthentication() {
-        return new ModelAndView("authentication/authenticationOption");
+    public ModelAndView optionsAuthentication(Authentication authentication) {
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+
+        if(userEmployee.isPresent()) {
+            if(userEmployee.get().isDoubleAuthenticator()) {
+                return new ModelAndView("authentication/authenticationOption");
+            }
+            if(userEmployee.get().isBlocked()) {
+                authentication = userEmployeeService.getAuthentication(userEmployee.get().getUsername(),
+                        userEmployee.get().getPassword(),
+                        userEmployeeService.addRole("CHANGE_PASSWORD"));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                return new ModelAndView("redirect:/change-password");
+            }
+            return new ModelAndView("redirect:/home");
+        } else {
+             throw new IllegalStateException("Error el usuario no se encuentra");
+        }
     }
 
     @GetMapping(value = "authentication/{idUser}" )
@@ -190,12 +226,183 @@ public class TwoFactorController {
         return userEmployee.orElseGet(UserEmployee::new);
     }
 
+    @PostMapping("api/getMethods2Fac")
+    public UserEmployee getMethods2Fac(Authentication authentication) {
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        return userEmployee.orElseGet(UserEmployee::new);
+    }
+
+    @GetMapping("/add-2fac")
+    public ModelAndView addMethod() {
+        return new ModelAndView("/authentication/addMethod");
+    }
+
+    @PostMapping("api/verification-code-app")
+    public Map<String, String> verificationCodeApp(@RequestBody ResponsebodyCode responsebodyCode,
+                                   Authentication authentication) {
+        Map<String, String> messages = new HashMap<>();
+        boolean response;
+
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        if (userEmployee.isPresent()) {
+            response = twoFactorService.verificationCode(userEmployee.get().getSecretKeyGoogleAuthenticator(),
+                    responsebodyCode.getCode());
+
+            if (response) {
+                boolean resp = verifiedMethods(userEmployee.get());
+                int res = twoFactorService.updateDoubleApp(true, userEmployee.get().getIdUser());
+                if(!resp) {
+                    twoFactorService.uddateDoubleAuthenticator(true, userEmployee.get().getIdUser());
+                }
+                if (res == 1) {
+                    messages.put("messageSend", "creado");
+                }
+            } else {
+                messages.put("messageSend", "NoValido");
+            }
+        }
+        return messages;
+    }
+
+    @PostMapping("api/verified-equals-password")
+    public Map<String, Boolean> verifiedEqualsPassword(Authentication authentication,
+                                                       @RequestBody ResponseBodyPassword responseBodyPassword) {
+
+        Map<String, Boolean> messages = new HashMap<>();
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        if(userEmployee.isPresent()) {
+            if (userEmployeeService.verifieEquealsPassword(responseBodyPassword.getPassword(),
+                    userEmployee.get())) {
+                messages.put("messageT", true);
+            } else {
+                messages.put("messageT", false);
+            }
+        }
+        return messages;
+    }
+
+    @PostMapping("api/disabled-method/{tipo}")
+    public Map<String, Boolean> disabledMetod(@PathVariable String tipo,
+                              Authentication authentication) {
+
+        System.out.println(tipo);
+
+        Map<String, Boolean> messages = new HashMap<>();
+
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        if(userEmployee.isPresent()) {
+            if(tipo.equals("app")) {
+                System.out.println("Entra a app");
+                twoFactorService.updateDoubleApp(false, userEmployee.get().getIdUser());
+                userEmployeeService.updateSecretKey("", userEmployee.get().getIdUser());
+                int number = numberMethods(userEmployee.get());
+                if(number == 1) {
+                    twoFactorService.uddateDoubleAuthenticator(false,
+                            userEmployee.get().getIdUser());
+                }
+                messages.put("res", true);
+            }
+            if(tipo.equals("correo")) {
+                int number = numberMethods(userEmployee.get());
+                twoFactorService.updateDoubleEmail(false, userEmployee.get().getIdUser());
+                if(number == 1) {
+                    twoFactorService.uddateDoubleAuthenticator(false,
+                            userEmployee.get().getIdUser());
+                }
+                messages.put("res", true);
+            }
+            if(tipo.equals("sms")) {
+                int number = numberMethods(userEmployee.get());
+                twoFactorService.updateDoubleSms(false, userEmployee.get().getIdUser());
+                if(number == 1) {
+                    twoFactorService.uddateDoubleAuthenticator(false,
+                            userEmployee.get().getIdUser());
+                }
+                messages.put("res", true);
+            }
+        }
+        return messages;
+
+    }
+
+    @PostMapping("api/send-email-token")
+    public Map<String, String> sendEmailToken(Authentication authentication){
+        Map<String, String> messages = new HashMap<>();
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        if(userEmployee.isPresent()) {
+            ConfirmationToken confirmationToken =
+                    confirmationTokenService.createNewToken(userEmployee.get());
+            confirmationTokenService.insertConfirmationToken(confirmationToken);
+            email.sendEmailToken(
+                    userEmployee.get().getEmployee().getEmailEmployee(),
+                    twoFactorService.createBodyEmailConfirmationToken(confirmationToken.getToken()),
+                    "Codigo de Verificacion"
+            );
+        }
+        return messages;
+    }
+    @PostMapping("api/verified-code-email")
+    public Map<String,String> verifiedCodeEmail(Authentication authentication,
+                                                @RequestBody ResponsebodyCode responsebodyCode) {
+        Map<String, String> messages = new HashMap<>();
+
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        if(userEmployee.isPresent()) {
+            Optional<ConfirmationToken> confirmationToken =
+                    confirmationTokenService.getLastRegister(userEmployee.get().getIdUser());
+            if(confirmationToken.isPresent()) {
+                if(confirmationToken.get().getToken().equals(responsebodyCode.getCode())) {
+                    if(!confirmationToken.get().getExpiredAtToken().isBefore(LocalDateTime.now())) {
+                        confirmationTokenService.updateDateConfiramtionToken(confirmationToken.get().getIdToken(),
+                                LocalDateTime.now());
+                        if(!verifiedMethods(userEmployee.get())) {
+                            twoFactorService.uddateDoubleAuthenticator(true, userEmployee.get().getIdUser());
+                        }
+                        twoFactorService.updateDoubleEmail(true, userEmployee.get().getIdUser());
+                        messages.put("messageT", "correcto");
+                    } else {
+                        messages.put("messageE", "correcto");
+                    }
+                } else {
+                    messages.put("messageT", "incorrecto");
+                }
+            }
+
+        }
+
+        return messages;
+    }
 
     @Bean
     public HttpMessageConverter<BufferedImage> imageHttpMessageConverter() {
         return new BufferedImageHttpMessageConverter();
     }
 
-
+    private boolean verifiedMethods(UserEmployee userEmployee) {
+        int contador = 0;
+        if(userEmployee.isDoubleAuthenticationEmail()) {
+            contador+=1;
+        }
+        if(userEmployee.isDoubleAuthenticationApp()) {
+            contador+=1;
+        }
+        if(userEmployee.isDoubleAuthenticationSms()){
+            contador+=1;
+        }
+        return contador > 0;
+    }
+    public int numberMethods(UserEmployee userEmployee) {
+        int contador = 0;
+        if(userEmployee.isDoubleAuthenticationEmail()) {
+            contador+=1;
+        }
+        if(userEmployee.isDoubleAuthenticationApp()) {
+            contador+=1;
+        }
+        if(userEmployee.isDoubleAuthenticationSms()){
+            contador+=1;
+        }
+        return contador;
+    }
 
 }

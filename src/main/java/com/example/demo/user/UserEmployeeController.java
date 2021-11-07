@@ -2,10 +2,14 @@ package com.example.demo.user;
 
 import com.example.demo.Email;
 import com.example.demo.paswword.PasswordHistoryService;
+import com.example.demo.responsebody.ResponseBodyPassword;
 import org.apache.commons.lang3.RandomStringUtils;
 import com.example.demo.responsebody.ResponseBodyUserEmail;
 import com.example.demo.security.twofactor.email.ConfirmationToken;
 import com.example.demo.security.twofactor.email.ConfirmationTokenService;
+import com.example.demo.state.StateHistory;
+import com.example.demo.state.StateHistoryService;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +47,7 @@ public class UserEmployeeController {
     private final SendEmailService  sendEmailSender;
     private final Email email;
     private final PasswordHistoryService passwordHistoryService;
+    private final StateHistoryService stateHistoryService;
 
 
     public UserEmployeeController(UserEmployeeService userEmployeeService,
@@ -51,7 +56,8 @@ public class UserEmployeeController {
                                   SendEmailService sendEmailSender,
                                   BCryptPasswordEncoder bCryptPasswordEncoder,
                                   Email email,
-                                  PasswordHistoryService passwordHistoryService) {
+                                  PasswordHistoryService passwordHistoryService,
+                                  StateHistoryService stateHistoryService) {
         this.userEmployeeService = userEmployeeService;
         this.employeeService = employeeService;
         this.confirmationTokenService = confirmationTokenService;
@@ -59,6 +65,7 @@ public class UserEmployeeController {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.email = email;
         this.passwordHistoryService = passwordHistoryService;
+        this.stateHistoryService= stateHistoryService;
     }
 
 
@@ -151,7 +158,7 @@ public class UserEmployeeController {
             	 errors.put("errorEmail", "El email no corresponde a ningun registro de empleado");
              }
              if(error.equals("4")) {
-            	 errors.put("errorDateBirth", "La fecha de nacimiento no corresponde a ningn registro");
+            	 errors.put("errorDateBirth", "La fecha de nacimiento no corresponde a ningun registro");
              }
              if(error.equals("5")) {
             	 errors.put("errorCellPhone", "El numero de telefono no coincide con ningun registro");
@@ -324,8 +331,8 @@ public class UserEmployeeController {
     public ModelAndView userAccount(Authentication authentication){
     	ModelAndView model= new ModelAndView();
     	//descomentar la instruccion de abajo para probar con el objeto authentication y comentar la segunda contando despues de esta linea
-    	//Optional<UserEmployee> users = userEmployeeService.findByUsername(authentication.getName());
-        Optional<UserEmployee> users = userEmployeeService.findByEmail("ae19001@ues.edu.sv");
+    	Optional<UserEmployee> users = userEmployeeService.findByUsername(authentication.getName());
+        //Optional<UserEmployee> users = userEmployeeService.findByEmail("ae19001@ues.edu.sv");
         if(users.isPresent()) {
         	UserEmployee newUser= users.get();
         	model.setViewName("/account/userAccount");
@@ -352,11 +359,13 @@ public class UserEmployeeController {
     		ArrayList<PasswordHistory> passwordHistory=  passwordHistoryService.findByIdUser(users.get().getIdUser());
     		if(!passwordHistory.isEmpty()) {
     		    PasswordHistory passHistory= passwordHistory.get(passwordHistory.size()-1);
+    		    ArrayList<StateHistory> stateHistory = stateHistoryService.findByUserNameEmployee(userNameEmployee);
     			model.setViewName("/account/userStatistics");
     			model.addObject("passwordChanges",passwordHistory.size());
             	model.addObject("userPasswordHistory", passHistory.getUserEmployee().getUsername());
             	model.addObject("passwordCreateAt",passHistory.getCreateAt());
             	model.addObject("passwordExpiredAt",passHistory.getExpiredAt());
+            	model.addObject("stateHistoryUser",stateHistory.size());
             	if(passHistory.getCreateAt().getMonth()==passHistory.getExpiredAt().getMonth()) {
             	    model.addObject("daysToExpire",passHistory.getExpiredAt().getDayOfMonth()-passHistory.getCreateAt().getDayOfMonth());
             	}
@@ -393,6 +402,9 @@ public class UserEmployeeController {
 		  else if(error.equals("4")) {
 			  errors.put("exito","Se cambio la contraeña correctamente");
 		  }
+		  else if(error.equals("5")) {
+			  errors.put("constraseñaUsadaRecientemente","La contraseña se uso recientemente");
+		  }
 	 }
 	  model.setViewName("/account/changePassword");
 	  model.addObject("errors",errors);
@@ -411,8 +423,15 @@ public class UserEmployeeController {
 		  if(!(new_password.length()<12)) {
 			  boolean condicion= newbCryptPasswordEncoder.matches(password, users.get().getPassword());
 		  if(condicion) {
-			  userEmployeeService.updatePassword(new_password, user);
-			  return new ModelAndView("redirect:/changePasswordUser?error=4");
+			  if(!passwordHistoryService.verifiedLastestPassword(new_password, users.get())) {
+				  userEmployeeService.updatePassword(new_password, user);
+				  return new ModelAndView("redirect:/changePasswordUser?error=4");  
+			  }
+			  else {
+				  
+				  return new ModelAndView("redirect:/changePasswordUser?error=5");
+			  }
+			  
 		  }
 		  else {
 			  return new ModelAndView("redirect:/changePasswordUser?error=3");

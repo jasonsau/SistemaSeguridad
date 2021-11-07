@@ -13,9 +13,10 @@ import java.util.Optional;
 @Transactional
 public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationToken, Long> {
 
-    @Query(value = "SELECT *FROM confirmation_token WHERE id_token_employee = ?1 ORDER BY id_token desc LIMIT 1",
+    @Query(value = "SELECT *FROM confirmation_token WHERE id_token_employee = ?1 ORDER BY create_at_token desc LIMIT 1",
     nativeQuery = true)
     Optional<ConfirmationToken> getLastRegister(Long idUser);
+
 
     @Modifying
     @Query("UPDATE ConfirmationToken  SET confirmationAtToken = ?2 WHERE idToken = ?1")

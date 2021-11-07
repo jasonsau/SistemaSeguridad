@@ -101,7 +101,7 @@ public class LoginController {
                 }
                 else {
                     userEmployeeService. setAuthentication(userEmployeeService.getAuthentication(userEmployee.get()));
-                    return new ModelAndView("redirect:/home");
+                    return new ModelAndView("redirect:/add-2fac");
                 }
             }
             else {

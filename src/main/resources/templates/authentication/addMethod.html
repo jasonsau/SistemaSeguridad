@@ -4,88 +4,158 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
        <link rel="preconnect" href="https://fonts.googleapis.com">
        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
        <link href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@300;500&display=swap" rel="stylesheet">
        <link href = "../../static/css/styleAddMethod.css" th:href = "@{/css/styleAddMethod.css}" rel = "stylesheet ">
+        <link href = "../../static/css/styleGoogleAuthenticator.css.css" th:href = "@{/css/styleGoogleAuthenticator.css}" rel = "stylesheet ">
        <title>Recursos Humanos</title>
     </head>
-    <body>
+    <body id = "idBody">
+        <div class="container-fluid">
+            <nav class="navbar navbar-light bg-light border-3 border-bottom border-primary">
+                <span class="navbar-brand mb-0 h1">Sistema de Seguridad</span>
+                <a class="navbar-brand" th:href="@{http://localhost:8080/userAccount}">Inicio</a>
+            </nav>
+        </div>
+
         <h1 class = "title">Autenticacion de 2 pasos</h1>
-
         <div class = "main">
-            <div class = "main__first">
+            <div
+                    id = "idMainFirst"
+                    class = "main__first"
+            >
                 <h2 class = "main__subtitle">Tus metodos de Seguridad</h2>
-                <div class = "main__methods">
-                    <div class = "main__method">
-                        <img class = "main__img" src = "../../static/img/qrCode.png">
-                        <p class = "main__text">Aplicacion de Autenticacion</p>
-                        <p class = "main__text--description">Puede usar las aplicacion de Google Authenticator o Authy</p>
-                    </div>
-                    <div class = "main__options">
-                        <p class = "main__option">Editar</p>
-                        <p class = "main__option">Desactivar</p>
-                    </div>
-                </div>
 
-                <div class = "main__methods">
-                    <div class = "main__method">
-                        <img class = "main__img" src = "../../static/img/correo.png">
-                        <p class = "main__text">Correo Electronico</p>
-                        <p class = "main__text--description">El codigo se le enviara a su correo</p>
-                    </div>
-                    <div class = "main__options">
-                        <p class = "main__option">Editar</p>
-                        <p class = "main__option">Desactivar</p>
-                    </div>
-                </div>
-                <div class = "main__methods">
-                    <div class = "main__method">
-                        <img class = "main__img" src = "../../static/img/sms.png">
-                        <p class = "main__text">Mensaje de Texto</p>
-                        <p class = "main__text--description">El codigo se le enviara por un sms</p>
-                    </div>
-                    <div class = "main__options">
-                        <p class = "main__option">Editar</p>
-                        <p class = "main__option">Desactivar</p>
-                    </div>
-                </div>
             </div>
-            <div class = "main__second">
+            <div
+                    class = "main__second"
+                    id = "idMainSecond"
+            >
                 <h2 class = "main__subtitle">Metodos Adicionales</h2>
-                <div class = "main__methods">
-                    <div class = "main__method">
-                        <img class = "main__img" src = "../../static/img/qrCode.png">
-                        <p class = "main__text">Aplicacion de Autenticacion</p>
-                        <p class = "main__text--description">Puede usar las aplicacion de Google Authenticator o Authy</p>
-                    </div>
-                    <div class = "main__options">
-                        <p class = "main__option">Configurar</p>
-                    </div>
-                </div>
+            </div>
 
-                <div class = "main__methods">
-                    <div class = "main__method">
-                        <img class = "main__img" src = "../../static/img/correo.png">
-                        <p class = "main__text">Correo Electronico</p>
-                        <p class = "main__text--description">El codigo se le enviara a su correo</p>
-                    </div>
-                    <div class = "main__options">
-                        <p class = "main__option">Configurar</p>
-                    </div>
-                </div>
-                <div class = "main__methods">
-                    <div class = "main__method">
-                        <img class = "main__img" src = "../../static/img/sms.png">
-                        <p class = "main__text">Mensaje de Texto</p>
-                        <p class = "main__text--description">El codigo se le enviara por un sms</p>
-                    </div>
-                    <div class = "main__options">
-                        <p class = "main__option">Configurar</p>
-                    </div>
-                    </div>
-                </div>
+        </div>
+        <!-- Modal para configurar el metodo por App -->
+        <div
+                class = "modal__configurar"
+                id = "idModalConfigurar"
+        >
+            <img
+                    class = "form__close"
+                    src = "/icons/close.svg"
+                    id = "idCloseFormModal"
+            >
+            <h2 class = "modal__subtitle">Autenticacion App</h2>
+            <div>
+                <img
+                        id = "idModalBarCode"
+                        class = "modal__img"
+                >
+            </div>
+            <div
+                    class = "container__input"
+                    style="margin-top: 15px"
+            >
+                <label for = "idInputCodigo" class = "form__label">
+                    <img
+                            src = "/icons/password.svg"
+                    >
+                    >
+                </label>
+                <input
+                        type = "text"
+                        id = "idInputCodigo"
+                        placeholder="Codigo"
+                        class = "form__input"
+                >
+            </div>
+            <div
+                    class = "container__input container__input--error"
+                    style="margin-top: 15px; margin-bottom: -15px;"
+                    id = "idContainerError"
+            >
+                <p id = "idMessageError">Error</p>
+            </div>
+            <div
+                    class = "container__input container__input--modal"
+                    style="margin-top: 15px"
+            >
+                <input
+                        type = "submit"
+                        id = "idButtonCodigo"
+                        value = "Configurar"
+                        class = "form__button"
+                        style="margin-top: 5px"
+                >
             </div>
         </div>
+        <div
+                class = "container__email"
+                id = "idContainerEmail"
+        >
+            <img
+                    class = "form__close"
+                    src = "/icons/close.svg"
+                    id = "idCloseFormModalEmail"
+            >
+            <h2 class = "modal__subtitle">Autenticacion Correo</h2>
+            <p>Se le envio un correo con el codigo</p>
+            <div class = "container__input">
+                <label class = "form__label">
+                    <img
+                            src = "/icons/password.svg"
+                    >
+                </label>
+                <input
+                        class = "form__input"
+                        type = "form__input"
+                        id = "idInputCorreo"
+                        placeholder="Codigo"
+                >
+            </div>
+            <div
+                    class = "container__input container__input--error"
+                    style="margin-top: 15px; margin-bottom: -15px"
+                    id = "idContainerEmailError"
+            >
+                <p id = "idMessageEmailError">Error</p>
+            </div>
+            <div
+                    class = "container__input container__input--modal"
+                    style="margin-top: 15px"
+            >
+                <input
+                        type = "submit"
+                        id = "idButtonEmail"
+                        value = "Configurar"
+                        class = "form__button"
+                        style="margin-top: 5px"
+                >
+            </div>
+
+        </div>
+        <!-- Modal para mensaje de desabilitar metodo -->
+        <div class = "modal__configurar" id = "idContainerMessage" style="height: 130px">
+            <img
+                    class = "form__close"
+                    src = "/icons/close.svg"
+                    id = "idCloseFormMessage"
+            >
+            <div style = "position: relative; top: 20px;">
+                <h2 style="font-size: 20px">Esta seguro de Desactivar el metodo </h2>
+            </div>
+            <div style="position: relative; top: 40px">
+                <input id = "idButtonAceptarMessage" type = "submit" class = "form__button" value = "Aceptar" style="position: relative">
+            </div>
+
+        </div>
     </body>
+<script
+        th:src = "@{/js/authenticationCRUD.js}"
+        src = "../../static/js/authenticationCRUD.js"
+>
+</script>
 </html>

@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -171,11 +172,19 @@ public class UserEmployeeService implements UserDetailsService {
         return pattern.matcher(password).find();
     }
 
+    public int updateSecretKey(String secretKey, Long idUser) {
+        System.out.println(secretKey);
+        return userEmployeeRepository.updateSecretKey(secretKey, idUser);
+    }
+
     public int enabledUser(Long idUser) {
         return userEmployeeRepository.enabledUser(idUser);
     }
 
-    public void delete(Long id){
+    public void delete(Long id) {
         this.userEmployeeRepository.deleteById(id);
+    }
+    public boolean verifieEquealsPassword(String password, UserEmployee userEmployee) {
+        return bCryptPasswordEncoder.matches(password, userEmployee.getPassword());
     }
 }

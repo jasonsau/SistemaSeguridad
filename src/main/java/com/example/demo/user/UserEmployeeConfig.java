@@ -412,13 +412,13 @@ public class UserEmployeeConfig {
                     true,
                     false,
                     bCryptPasswordEncoder.encode( "password"),
-                    true,
+                    false,
                     LocalDateTime.now().plusDays(30),
                     UserRole.ADMIN
                     );
-            userEmployeeJason.setSecretKeyGoogleAuthenticator("PM23CN6VVDAAL52L364N5SBM6AEDNGZJ");
-            userEmployeeJason.setIsDoubleAuthenticator(true);
-            userEmployeeJason.setDoubleAuthenticationEmail(true);
+            //userEmployeeJason.setSecretKeyGoogleAuthenticator("PM23CN6VVDAAL52L364N5SBM6AEDNGZJ");
+            userEmployeeJason.setIsDoubleAuthenticator(false);
+            userEmployeeJason.setDoubleAuthenticationEmail(false);
 
             UserEmployee userEmployeeJuan = new UserEmployee(
                     "juan__acosta",
