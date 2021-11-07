@@ -25,6 +25,11 @@ public interface UserEmployeeRepository extends JpaRepository<UserEmployee, Long
     void updateUserLocked(Long id);
 
     @Modifying
+    @Query("UPDATE UserEmployee u SET u.blocked = false, u.enabled = true " + "WHERE u.idUser = ?1")
+    void updateUserUnlocked(Long id);
+
+
+    @Modifying
     @Query("UPDATE UserEmployee u SET u.attempts = 0" + " WHERE u.idUser = ?1")
     void restartAttempts(Long id);
 
@@ -36,7 +41,13 @@ public interface UserEmployeeRepository extends JpaRepository<UserEmployee, Long
     @Query("UPDATE UserEmployee u SET u.passwordUserEmployee = ?1, u.temporaryPassword = false WHERE u" +
             ".userNameEmployee = ?2")
     int updatePassword(String password, String username);
+
+    @Modifying
     @Query("UPDATE UserEmployee u SET u.passwordUserEmployee = ?1, u.temporaryPassword = false, u.passwordExpiredAt = ?3" +
             " WHERE u.userNameEmployee = ?2")
     int updatePassword(String password, String username, LocalDateTime expiredAt);
+
+    @Modifying
+    @Query("UPDATE UserEmployee u set u.enabled = true WHERE u.idUser = ?1")
+    int enabledUser(Long idUser);
 }

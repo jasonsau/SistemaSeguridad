@@ -13,12 +13,15 @@ import java.util.Optional;
 @Transactional
 public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationToken, Long> {
 
-    @Query(value = "SELECT *FROM confirmation_token ORDER BY id_token desc LIMIT 1",
+    @Query(value = "SELECT *FROM confirmation_token WHERE id_token_employee = ?1 ORDER BY id_token desc LIMIT 1",
     nativeQuery = true)
-    Optional<ConfirmationToken> getLastRegister();
+    Optional<ConfirmationToken> getLastRegister(Long idUser);
 
     @Modifying
     @Query("UPDATE ConfirmationToken  SET confirmationAtToken = ?2 WHERE idToken = ?1")
     void updateDateConfiramtionToken(Long id, LocalDateTime confirmationAtToken);
+
+    @Query("SELECT t FROM ConfirmationToken t WHERE t.token = ?1")
+    Optional<ConfirmationToken> findByToken(String token);
 
 }

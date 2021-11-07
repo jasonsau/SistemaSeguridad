@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.time.LocalDate;
 
 @Entity
 public class Employee {
@@ -83,6 +84,7 @@ public class Employee {
             name = "id_address_employee"
     )
     private Address addressEmployee;
+    private LocalDate dateBirth;
 
     //Constructors
     public Employee(String firstNameEmployee,
@@ -95,7 +97,8 @@ public class Employee {
                     String cellPhoneEmployee,
                     WorkStation workStationEmployee,
                     Genders gendersEmployee,
-                    Address addressEmployee) {
+                    Address addressEmployee,
+                    LocalDate dateBirth) {
         this.firstNameEmployee = firstNameEmployee;
         this.lastNameEmployee = lastNameEmployee;
         this.duiEmployee = duiEmployee;
@@ -107,6 +110,7 @@ public class Employee {
         this.workStationEmployee = workStationEmployee;
         this.gendersEmployee = gendersEmployee;
         this.addressEmployee = addressEmployee;
+        this.dateBirth = dateBirth;
     }
 
     public Employee() {}
@@ -203,5 +207,13 @@ public class Employee {
 
     public void setAddressEmployee(Address addressEmployee) {
         this.addressEmployee = addressEmployee;
+    }
+
+    public LocalDate getDateBirth() {
+        return dateBirth;
+    }
+
+    public void setDateBirth(LocalDate dateBirth) {
+        this.dateBirth = dateBirth;
     }
 }

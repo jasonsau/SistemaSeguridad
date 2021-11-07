@@ -2,15 +2,24 @@ package com.example.demo.user;
 
 import com.example.demo.paswword.PasswordHistory;
 import com.example.demo.paswword.PasswordHistoryService;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 public class UserEmployeeService implements UserDetailsService {
@@ -19,6 +28,9 @@ public class UserEmployeeService implements UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final PasswordHistoryService passwordHistoryService;
     private final int DATE_EXPIRET_PASSWORD = 30;
+    private final String REGEX_PASSWORD = "(?=(.*[0-9]))(?=.*[!@#$%^&*()\\[\\]\\{\\}\\-+=~`\"'<>,./?])(?=.*[a-z])(?=" +
+            "(.*[A-Z]))(?=(.*)).{12,}";
+
 
     public UserEmployeeService(UserEmployeeRepository userEmployeeRepository,
                                BCryptPasswordEncoder bCryptPasswordEncoder,
@@ -76,7 +88,7 @@ public class UserEmployeeService implements UserDetailsService {
                     LocalDateTime.now(),
                     LocalDateTime.now().plusDays(DATE_EXPIRET_PASSWORD),
                     userEmployee.get(),
-                    bCryptPasswordEncoder.encode(username)
+                    bCryptPasswordEncoder.encode(password)
             ));
         } else {
             throw new IllegalStateException("Usuario no se ha encontrado");
@@ -94,6 +106,10 @@ public class UserEmployeeService implements UserDetailsService {
     	userEmployeeRepository.save(userEmployee);
     }
 
+    public void updateUserUnlockedUser(Long idUser) {
+        userEmployeeRepository.updateUserUnlocked(idUser);
+    }
+
     public List<UserEmployee> selectUsers() {
         return userEmployeeRepository.findAll();
     }
@@ -102,4 +118,64 @@ public class UserEmployeeService implements UserDetailsService {
     	return userEmployeeRepository.findAll();
     }
 
+    public int getAgeUserEmployee(LocalDate dateNow, LocalDate dateBirth) {
+        int age = dateNow.getYear() - dateBirth.getYear();
+        if(dateNow.getMonthValue() < dateBirth.getMonthValue()) {
+            age = age - 1;
+        }
+        if(dateNow.getMonthValue() == dateBirth.getMonthValue()) {
+            if(dateNow.getDayOfMonth() < dateBirth.getDayOfMonth()){
+                age = age -1;
+            }
+        }
+        return age;
+    }
+
+
+    public Authentication getAuthentication(UserEmployee userEmployee){
+        return new UsernamePasswordAuthenticationToken(
+                userEmployee.getUsername(),
+                userEmployee.getPassword(),
+                userEmployee.getAuthorities()
+        );
+    }
+    public Authentication getAuthentication(String username,
+                                            String password,
+                                            Collection<? extends GrantedAuthority> role){
+        return new UsernamePasswordAuthenticationToken(
+                username,
+                password,
+                role
+        );
+    }
+
+    public Collection<? extends GrantedAuthority> addRole(String nameRole) {
+        return switch (nameRole) {
+            case "CHANGE_PASSWORD" -> Collections.singleton(new SimpleGrantedAuthority(UserRole.CHANGE_PASSWORD.name()));
+            case "AUTHENTICATOR" -> Collections.singleton(new SimpleGrantedAuthority(UserRole.AUTHENTICATOR.name()));
+            default -> null;
+        };
+    }
+
+    public void setAuthentication(Authentication authentication) {
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    public boolean verifiedPasswordTemporary(UserEmployee userEmployee) {
+        return userEmployee.getPasswordExpiredAt().isBefore(LocalDateTime.now())
+                || userEmployee.getTemporaryPassword();
+    }
+
+    public boolean validatePassword(String password) {
+        Pattern pattern = Pattern.compile(REGEX_PASSWORD);
+        return pattern.matcher(password).find();
+    }
+
+    public int enabledUser(Long idUser) {
+        return userEmployeeRepository.enabledUser(idUser);
+    }
+
+    public void delete(Long id){
+        this.userEmployeeRepository.deleteById(id);
+    }
 }

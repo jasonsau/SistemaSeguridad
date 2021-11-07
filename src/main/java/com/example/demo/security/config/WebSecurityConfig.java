@@ -17,11 +17,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/login", "/login-check", "/verification-code", "/register", "/register-check",
-                        "/unlocked-user")
+                .antMatchers("/login", "/login-check" , "/register", "/register-check",
+
+                        "/unlocked-user/**","/changeAuthenticationForm","/changePasswordUser","/userAccount","/userStatistics","/changePassword/check-password",
+
+                        "/unlocked-user/**", "/enabled-user")
+
                 .permitAll()
                 .antMatchers("/change-password", "/change-password-check").hasAuthority(UserRole.CHANGE_PASSWORD.name())
-                .antMatchers("/authentication/**", "/api/getMethodsAuthentication", "/options").hasAuthority(UserRole.AUTHENTICATOR.name())
+                .antMatchers("/authentication/**", "/api/getMethodsAuthentication", "/options", "verification-code").hasAuthority(UserRole.AUTHENTICATOR.name())
                 .antMatchers("/barCode", "/home", "users", "options").hasAuthority(UserRole.ADMIN.name())
                 .anyRequest()
                 .authenticated();

@@ -20,7 +20,9 @@
             id = "form-register-employee-id"
             th:action = "@{/register-check}"
         >
-            <input type = "hidden" name = "register" value = "register"/>
+
+            <div
+                    c <input type = "hidden" name = "register" value = "register"/>
             <div class = "container-form__data">
                 <label
                         class = "container-form__label"
@@ -29,22 +31,20 @@
                     Nombres
                 </label>
                 <span class = "container-form__icon">
-                    <img 
-                        th:src = @{/icons/person.svg}
-                        src = "../static/icons/person.svg" 
-                        alt = "Icon person" 
+                    <img
+                            th:src = @{/icons/person.svg}
+                            src = "../static/icons/person.svg"
+                            alt = "Icon person"
                     />
                 </span>
                 <input
-                    class = "container-form__input"
-                    type = "text" 
-                    placeholder = "Nombres de Empleado" 
-                    name = "employee_name"
-                    id = "idInputFirstName"
+                        class = "container-form__input"
+                        type = "text"
+                        placeholder = "Nombres de Empleado"
+                        name = "employee_name"
+                        id = "idInputFirstName"
                 />
-            </div>
-            <div
-                    class = "container-form__error"
+            </div>lass = "container-form__error"
                     id = "error-name"
                     th:if = "${errors.get('errorFirstName') != null}" style="opacity: 1"
             >
