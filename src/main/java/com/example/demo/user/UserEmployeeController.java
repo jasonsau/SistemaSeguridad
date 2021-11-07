@@ -89,10 +89,15 @@ public class UserEmployeeController {
     }
 
     @GetMapping("/employee/index")
-    public ModelAndView index() {
-    	ModelAndView model = new ModelAndView(INDEX_VIEW);
-        model.setViewName("/employee/index");
+    public ModelAndView index(Authentication authentication) {
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        ModelAndView model = new ModelAndView(INDEX_VIEW);
         List<Employee> empleados=employeeService.getAll();
+        if(userEmployee.isPresent()) {
+            empleados.removeIf(employee ->
+                    employee.getIdEmployee().equals(userEmployee.get().getEmployee().getIdEmployee()));
+        }
+        model.setViewName("/employee/index");
 		model.addObject("empleados",empleados);
         return model;
     }
@@ -367,6 +372,7 @@ public class UserEmployeeController {
         	model.addObject("idUser",newUser.getIdUser());
         	model.addObject("userMunicipality",users.get().getEmployee().getAddressEmployee().getNameMunicipality().getNameMunicipality());
         	model.addObject("userStreet",users.get().getEmployee().getAddressEmployee().getStreetAddress());
+            model.addObject("userRole", newUser.getUserRole().name());
             
         }
     	return model;
@@ -415,7 +421,9 @@ public class UserEmployeeController {
 			  errors.put("usuarioNoExiste", "El usuario que ha ingresado es incorrecto");
 		  }
 		  else if(error.equals("2")) {
-			  errors.put("longituIncorrecta","La contraseña tiene que tener minimo 12 caracteres");
+			  errors.put("longituIncorrecta","La contraseña deber tener una mayuscula, un numero y un caracter " +
+                        "especial " +
+                        "con 12 caracteres");
 		  }
 		  else if(error.equals("3")) {
 			  errors.put("contraseñasDistintas","las contraseña no coincide");
@@ -439,43 +447,29 @@ public class UserEmployeeController {
 		  @RequestParam(name="password")String password,
 		  @RequestParam(name="new_password")String new_password) {
 	  Optional<UserEmployee> users = userEmployeeService.findByUsername(user);
-	  BCryptPasswordEncoder newbCryptPasswordEncoder= new BCryptPasswordEncoder();
 	  if(users.isPresent()) {
-		  if(!(new_password.length()<12)) {
-			  boolean condicion= newbCryptPasswordEncoder.matches(password, users.get().getPassword());
-		  if(condicion) {
-			  if(!passwordHistoryService.verifiedLastestPassword(new_password, users.get())) {
-				  userEmployeeService.updatePassword(new_password, user);
-				  return new ModelAndView("redirect:/changePasswordUser?error=4");  
-			  }
-			  else {
-				  
-				  return new ModelAndView("redirect:/changePasswordUser?error=5");
-			  }
-			  
-		  }
-		  else {
-			  return new ModelAndView("redirect:/changePasswordUser?error=3");
-		  }
-		}
-		  else {
-			return new ModelAndView("redirect:/changePasswordUser?error=2");  
-		  }
-	  }
-	  else {
-		  return new ModelAndView("redirect:/changePasswordUser?error=1");
-	  }
+          if (bCryptPasswordEncoder.matches(password, users.get().getPassword())) {
+              if (!userEmployeeService.validatePassword(new_password)) {
+                  return new ModelAndView("redirect:/changePasswordUser?error=2");
+              }
+              if(passwordHistoryService.verifiedLastestPassword(new_password, users.get())) {
+                  return new ModelAndView("redirect:/changePasswordUser?error=5");
+              }
 
+              int response = userEmployeeService.updatePassword(new_password, users.get().getUserNameEmployee());
+              if(response == 1) {
+                  return new ModelAndView("redirect:/changePasswordUser?error=4");
+              }
+
+          } else {
+              return new ModelAndView("redirect:/changePasswordUser?error=3");
+          }
+      } else {
+          return new ModelAndView(("redirect:/changePasswordUser?error=1"));
+      }
+      return null;
   }
   
-  //aqui termina el codigo para las interfazes y funciones del usuario 
-
-//    @GetMapping("/home")
-//    public ModelAndView inicio(Model model,@RequestParam(name="employee_name")String username) {
-//		Optional<UserEmployee> empleados=this.userEmployeeService.findByUsername(username);
-//		model.addAttribute("empleados",empleados);
-//		return model;
-//    }
 }
 
 

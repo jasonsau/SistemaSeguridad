@@ -30,9 +30,16 @@
                           Opciones de usuario
                         </a>
                         <ul class="dropdown-menu">
-                          <li><a class="dropdown-item" href="userStatistics.html" th:href = "@{http://localhost:8080/userStatistics(userNameEmployee=${userNameEmployee})}">Estadisticas de usuario</a></li>
-                          <li><a class="dropdown-item" th:href = "@{http://localhost:8080/changePasswordUser(userNameEmployee=${userNameEmployee})}">Cambiar contraseña</a></li>
-                          <li><a class="dropdown-item" th:href = "@{/add-2fac}">Cambiar forma de autenticación</a></li>
+                            <li><a class="dropdown-item" href="userStatistics.html" th:href = "@{http://localhost:8080/userStatistics(userNameEmployee=${userNameEmployee})}">Estadisticas de usuario</a></li>
+                            <li><a class="dropdown-item" th:href = "@{http://localhost:8080/changePasswordUser(userNameEmployee=${userNameEmployee})}">Cambiar contraseña</a></li>
+                            <li><a class="dropdown-item" th:href = "@{/add-2fac}">Cambiar forma de autenticación</a></li>
+                            <li th:if = "${userRole == 'ADMIN'}" style="display:block;">
+                                <a class="dropdown-item"
+                                   th:href = "@{/homeAdmin}"
+                                >
+                                    Admin
+                                </a>
+                            </li>
                         </ul>
                     </li>
 				</ul>
