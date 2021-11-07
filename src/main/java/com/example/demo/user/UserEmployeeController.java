@@ -74,7 +74,7 @@ public class UserEmployeeController {
             return new ModelAndView("redirect:/userAccount");
         }
         if (authentication.getAuthorities().toArray()[0].toString().equals("ADMIN")) {
-            return new ModelAndView("redirect:/add-2fac");
+            return new ModelAndView("redirect:/homeAdmin");
         }
 
         return null;

@@ -397,6 +397,57 @@ public class TwoFactorController {
         return messages;
     }
 
+    @PostMapping("api/send-sms-token")
+    public Map<String, String> sendSmsToken(Authentication authentication) {
+
+        Map<String, String> messages = new HashMap<>();
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        if(userEmployee.isPresent()) {
+            ConfirmationToken confirmationToken = confirmationTokenService.createNewToken(userEmployee.get());
+            confirmationTokenService.insertConfirmationToken(confirmationToken);
+            sms.sendSmsToken(confirmationToken.getToken());
+            messages.put("res", "Creado");
+        } else {
+            messages.put("res", "NoCreado");
+        }
+
+        return messages;
+    }
+
+    @PostMapping("api/verified-code-sms")
+    public Map<String, String> verifiedCodeSms(Authentication authentication,
+                                               @RequestBody ResponsebodyCode responsebodyCode) {
+        Map<String, String> messages = new HashMap<>();
+        Optional<UserEmployee> userEmployee = userEmployeeService.findByUsername(authentication.getName());
+        if(userEmployee.isPresent()) {
+            Optional<ConfirmationToken> confirmationToken =
+                    confirmationTokenService.getLastRegister(
+                            userEmployee.get().getIdUser());
+
+            if(confirmationToken.isPresent()){
+                if(confirmationToken.get().getToken().equals(responsebodyCode.getCode())) {
+                    if(!confirmationToken.get().getExpiredAtToken().isBefore(LocalDateTime.now())) {
+                        confirmationTokenService.updateDateConfiramtionToken(confirmationToken.get().getIdToken(),
+                                LocalDateTime.now());
+                        if(!verifiedMethods(userEmployee.get())) {
+                            twoFactorService.uddateDoubleAuthenticator(true, userEmployee.get().getIdUser());
+                        }
+                        twoFactorService.updateDoubleSms(true, userEmployee.get().getIdUser());
+                        messages.put("res", "Correcto");
+                    }
+                } else {
+                    messages.put("res", "Incorrecto");
+                }
+            } else {
+                messages.put("res", "No encontrado");
+            }
+        } else {
+            messages.put("res", "User No Encontrado");
+        }
+        return messages;
+    }
+
+
     @Bean
     public HttpMessageConverter<BufferedImage> imageHttpMessageConverter() {
         return new BufferedImageHttpMessageConverter();
