@@ -11,6 +11,7 @@ public class Sms {
 
     private static final String ACCOUNT_SID = "ACd532c779181ca12b3cf9b8e6bf96d0c5";
     private static final String AUTH_TOKEN = "8362c7905b4ee6f00d9a6b07e9bd2f26";
+
     @Async
     public void sendSmsLocker(String email) {
 

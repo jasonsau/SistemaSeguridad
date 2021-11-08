@@ -1,4 +1,3 @@
-
  const idMainFirst = document.getElementById("idMainFirst");
  const idMainSecond = document.getElementById("idMainSecond");
  const idModalConfigurar = document.getElementById("idModalConfigurar");

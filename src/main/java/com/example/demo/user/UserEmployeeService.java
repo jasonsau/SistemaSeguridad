@@ -191,4 +191,29 @@ public class UserEmployeeService implements UserDetailsService {
     public void deleteByIdEmployee(Long id){
         this.userEmployeeRepository.deleteUserEmployeeByIdEmployee(id);
     }
+
+    public void updateResetPasswordToken(String token, String email) throws UserEmployeeNotFoundException {
+        Optional<UserEmployee> userEmployee = userEmployeeRepository.findByEmail(email);
+
+        if(userEmployee.isPresent()){
+            UserEmployee userEmployee1 = userEmployee.get();
+            userEmployee1.setResetPasswordToken(token);
+            userEmployeeRepository.save(userEmployee1);
+        }else{
+            throw new UserEmployeeNotFoundException("No se encontró ningún usuario con el email " + email);
+        }
+    }
+
+    public UserEmployee get(String resetPasswordToken){
+        return userEmployeeRepository.findByResetPasswordToken(resetPasswordToken);
+    }
+
+    public void updateNewPassword(UserEmployee userEmployee, String newPassword){
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encoderPassword = passwordEncoder.encode(newPassword);
+
+        userEmployee.setPasswordUserEmployee(encoderPassword);
+        userEmployee.setResetPasswordToken(null);
+        userEmployeeRepository.save(userEmployee);
+    }
 }

@@ -465,7 +465,8 @@ public class TwoFactorController {
             contador+=1;
         }
         if(userEmployee.isDoubleAuthenticationApp()) {
-            contador+=1;
+            contador+=1
+;
         }
         if(userEmployee.isDoubleAuthenticationSms()){
             contador+=1;

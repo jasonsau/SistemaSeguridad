@@ -34,6 +34,11 @@ public class UserEmployee implements UserDetails {
     )
     private Employee employee;
 
+    @JoinColumn(
+            nullable = false,
+            name = "reset_password_token"
+    )
+    private String resetPasswordToken;
 
     private String userNameEmployee;
     private String passwordUserEmployee;
@@ -223,5 +228,13 @@ public class UserEmployee implements UserDetails {
 
     public void setDoubleAuthenticationSms(boolean doubleAuthenticationSms) {
         isDoubleAuthenticationSms = doubleAuthenticationSms;
+    }
+
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    public void setResetPasswordToken(String resetPasswordToken) {
+        this.resetPasswordToken = resetPasswordToken;
     }
 }
