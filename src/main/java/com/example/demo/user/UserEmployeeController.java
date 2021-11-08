@@ -450,19 +450,20 @@ public class UserEmployeeController {
 	  if(users.isPresent()) {
           if (bCryptPasswordEncoder.matches(password, users.get().getPassword())) {
               if (!userEmployeeService.validatePassword(new_password)) {
-                  return new ModelAndView("redirect:/changePasswordUser?error=2");
+                  return new ModelAndView("redirect:/changePasswordUser?userNameEmployee="+users.get().getUserNameEmployee()+"&error" +
+                          "=2");
               }
               if(passwordHistoryService.verifiedLastestPassword(new_password, users.get())) {
-                  return new ModelAndView("redirect:/changePasswordUser?error=5");
+                  return new ModelAndView("redirect:/changePasswordUser?userNameEmployee="+users.get().getUserNameEmployee()+"&error=5");
               }
 
               int response = userEmployeeService.updatePassword(new_password, users.get().getUserNameEmployee());
               if(response == 1) {
-                  return new ModelAndView("redirect:/changePasswordUser?error=4");
+                  return new ModelAndView("redirect:/changePasswordUser?userNameEmployee="+users.get().getUserNameEmployee()+"&error=4");
               }
 
           } else {
-              return new ModelAndView("redirect:/changePasswordUser?error=3");
+              return new ModelAndView("redirect:/changePasswordUser?userNameEmployee="+users.get().getUserNameEmployee()+"&error=3");
           }
       } else {
           return new ModelAndView(("redirect:/changePasswordUser?error=1"));

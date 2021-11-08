@@ -85,7 +85,9 @@ public class ForgotPasswordController {
     }
 
     @GetMapping("/reset_password")
-    public String showResetPasswordForm(@Param(value = "token") String token, Model model) {
+    public String showResetPasswordForm(@Param(value = "token") String token,
+                                        @RequestParam(value = "error", required = false) String error,
+                                        Model model) {
         UserEmployee userEmployee = userEmployeeService.get(token);
         /*model.addAttribute("token", token);*/
 
@@ -95,6 +97,20 @@ public class ForgotPasswordController {
             return "message";
         }
 
+        if(error != null) {
+            if(error.equals("1")) {
+                model.addAttribute("message","La contraseña debe tener una mayuscula, un numero y un caracter especial");
+                model.addAttribute("pageTitle","Reestablecer Contraseña");
+            }
+            if(error.equals("2")) {
+                model.addAttribute("message","La contraseña coincide con las ultimas 3 elija otra");
+                model.addAttribute("pageTitle","Reestablecer Contraseña");
+            }
+            if(error.equals("3")) {
+                model.addAttribute("message","La contraseña no coinciden");
+                model.addAttribute("pageTitle","Reestablecer Contraseña");
+            }
+        }
         model.addAttribute("token", token);
         model.addAttribute("pageTitle", "Reestablecer Contraseña");
 
@@ -103,7 +119,7 @@ public class ForgotPasswordController {
 
     @PostMapping("/reset_password")
     public String processResetPassword(HttpServletRequest request, Model model) {
-        /*String token = request.getParameter("token");
+        String token = request.getParameter("token");
         String password = request.getParameter("password");
         String confirnPassword = request.getParameter("confirnPassword");
 
@@ -116,27 +132,25 @@ public class ForgotPasswordController {
             if(!userEmployeeService.validatePassword(password)) {
                 model.addAttribute("message","La contraseña debe tener una mayuscula, un numero y un caracter especial");
                 model.addAttribute("pageTitle","Reestablecer Contraseña");
-                return "redirect:/reset_password?token="+token;
+                return "redirect:/reset_password?token="+token+"&error=1";
             }
 
             if(passwordHistoryService.verifiedLastestPassword(password, userEmployee)) {
                 model.addAttribute("message","La contraseña coincide con las ultimas 3 elija otra");
                 model.addAttribute("pageTitle","Reestablecer Contraseña");
-                return "redirect:/reset_password?token="+token;
+                return "redirect:/reset_password?token="+token+"&error=2";
             }
 
             if(!password.equals(confirnPassword)) {
                 model.addAttribute("message","La contraseña no coinciden");
                 model.addAttribute("pageTitle","Reestablecer Contraseña");
-                return "redirect:/reset_password?token="+token;
+                return "redirect:/reset_password?token="+token+"&error=3";
             } else {
                 userEmployeeService.updateNewPassword(userEmployee, password);
-                model.addAttribute("title", "Reestablecer Contraseña");
-                model.addAttribute("message", "Cambio de contraseña exitoso");
-                return "redirect:/reset_password?token="+token;
+                return "redirect:/login";
             }
 
-        }/*
+        }
         return "message";
         /*if(password != confirnPassword) {
             model.addAttribute("message","Contraseñas no coinciden");
@@ -145,7 +159,7 @@ public class ForgotPasswordController {
         }
         else {
         }*/
-        String token = request.getParameter("token");
+        /*String token = request.getParameter("token");
         String password = request.getParameter("password");
         String confirnPassword = request.getParameter("confirnPassword");
 
@@ -164,9 +178,9 @@ public class ForgotPasswordController {
             userEmployeeService.updateNewPassword(userEmployee, password);
             model.addAttribute("title", "Reestablecer Contraseña");
             model.addAttribute("message", "Cambio de contraseña exitoso");
-        }
+        }*/
 
-        return "message";
+        //return "message";
 
     }
 }

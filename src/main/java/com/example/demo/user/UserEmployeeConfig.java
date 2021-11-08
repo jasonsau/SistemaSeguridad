@@ -1,4 +1,4 @@
-/*package com.example.demo.user;
+package com.example.demo.user;
 
 import com.example.demo.address.Address;
 import com.example.demo.address.AddressRepository;
@@ -355,7 +355,7 @@ public class UserEmployeeConfig {
                     "06142807991550",
                     "123456789",
                     "123456789",
-                    "jason.guerra253@gmail.com",
+                    "ma17092@ues.edu.sv",
                     "75330538",
                     ingenieroDeSistemasInformaticos,
                     masculino,
@@ -371,7 +371,7 @@ public class UserEmployeeConfig {
             		"123213123",
             		"121323231",
             		"1232131232",
-            		"ae19001@ues.edu.sv",
+            		"jason.guerra253@gmail.com",
             		"79976350",
             		gerenteDeRecursosHumanos,
             		masculino,
@@ -386,7 +386,7 @@ public class UserEmployeeConfig {
                     "06122809991200",
                     "123456788",
                     "123456788",
-                    "ma17092@ues.edu.sv",
+                    "ae19001@ues.edu.sv",
                     "65655443",
                     diseniadorGrafico,
                     masculino,
@@ -409,6 +409,37 @@ public class UserEmployeeConfig {
                     LocalDate.of(1999,1,16)
             );
 
+            Employee julio = new Employee(
+                    "Julio Cesar",
+                    "Martinez Rosales",
+                    "020408071",
+                    "06141208242588",
+                    "987654321",
+                    "19283745765",
+                    "mr09090@ues.edu.sv",
+                    "76787672",
+                    gerenteDeRecursosHumanos,
+                    masculino,
+                    addressJason,
+                    LocalDate.of(1993,3,29)
+            );
+
+            Employee kevin = new Employee(
+                    "Kevin Enrique",
+                    "Portillo Ventura",
+                    "059897225",
+                    "14062808931150",
+                    "121416189",
+                    "91929394959697",
+                    "pv17028@ues.edu.sv",
+                    "77787972",
+                    diseniadorGrafico,
+                    masculino,
+                    addressJason,
+                    LocalDate.of(1998,5,25)
+            );
+
+
             Employee gerson = new Employee(
                     "Gerson Wilfredo",
                     "Palacios Giron",
@@ -425,7 +456,7 @@ public class UserEmployeeConfig {
             );
 
             UserEmployee userEmployeeJason = new UserEmployee(
-                    "jason__saul",
+                    "ma17092",
                     jason,
                     true,
                     false,
@@ -437,11 +468,11 @@ public class UserEmployeeConfig {
             userEmployeeJason.setSecretKeyGoogleAuthenticator("PM23CN6VVDAAL52L364N5SBM6AEDNGZJ");
             userEmployeeJason.setIsDoubleAuthenticator(true);
             userEmployeeJason.setDoubleAuthenticationEmail(true);
-            userEmployeeJason.setDoubleAuthenticationApp(true);
+            userEmployeeJason.setDoubleAuthenticationApp(false);
             userEmployeeJason.setDoubleAuthenticationSms(true);
 
             UserEmployee userEmployeeJuan = new UserEmployee(
-                    "juan__acosta",
+                    "ae19001",
                     juan,
                     true,
                     false,
@@ -452,18 +483,18 @@ public class UserEmployeeConfig {
             );
             userEmployeeJuan.setSecretKeyGoogleAuthenticator("64SXX3E6R6XJMG6JJ57JGWZUTUMNFQUL");
             userEmployeeJuan.setDoubleAuthenticationApp(true);
-            userEmployeeJuan.setIsDoubleAuthenticator(true);
+            userEmployeeJuan.setIsDoubleAuthenticator(false);
             userEmployeeJuan.setDoubleAuthenticationEmail(true);
             
             UserEmployee userEmployeeMarvin = new UserEmployee(
-                    "marvin_martinez",
+                    "mh18083",
                     marvin,
                     true,
                     false,
                     bCryptPasswordEncoder.encode( "password"),
                     false,
                     LocalDateTime.now().plusDays(30),
-                    UserRole.ADMIN
+                    UserRole.USER
                     );
             userEmployeeMarvin.setSecretKeyGoogleAuthenticator("PM23CN6VVDAAL52L364N5SBM6AEDNGZJ");
             userEmployeeMarvin.setIsDoubleAuthenticator(true);
@@ -484,7 +515,6 @@ public class UserEmployeeConfig {
                     LocalDateTime.now().plusDays(30),
                     userEmployeeMarvin,
                     userEmployeeMarvin.getPassword());
-
 
             departamentRepository.saveAll(List.of(
                     ahuchapan,
@@ -773,9 +803,9 @@ public class UserEmployeeConfig {
             workStationRepository.saveAll(List.of(ingenieroDeSistemasInformaticos, gerenteDeRecursosHumanos,
                     diseniadorGrafico));
             gendersRepository.saveAll(List.of(masculino, femenino));
-            employeeRepository.saveAll(List.of(jason, juan, lizt, gerson, marvin));
+            employeeRepository.saveAll(List.of(jason, juan, lizt, gerson, marvin, julio, kevin));
             userEmployeeRepository.saveAll(List.of(userEmployeeJason, userEmployeeJuan, userEmployeeMarvin));
             passwordHistoryRepository.saveAll(List.of(passwordHistoryJason, passwordHistoryJuan, passwordHistoryMarvin));
         };
     }
-}*/
+}
