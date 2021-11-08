@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/api/verified-equals-password", "/api/send-email-token", "api/verified-code-email",
                         "api/disabled-method/**", "/home", "/api/send-sms-token", "api/verified-code-sms",
                         "/userStatistics","/changePassword/check-password", "/changeAuthenticationForm",
-                        "/changePasswordUser", "/userAccount")
+                        "/changePasswordUser", "/userAccount", "api/getMunicipality/**")
                 .hasAnyAuthority(UserRole.ADMIN.name(), UserRole.USER.name())
                 .antMatchers("/homeAdmin")
                 .hasAnyAuthority(UserRole.ADMIN.name())

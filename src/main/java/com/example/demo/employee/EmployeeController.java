@@ -7,10 +7,12 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.example.demo.address.Address;
+import com.example.demo.address.AddressService;
 import com.example.demo.departament.Departament;
 import com.example.demo.departament.DepartamentService;
 import com.example.demo.employee.*;
 import com.example.demo.genders.Genders;
+import com.example.demo.genders.GendersService;
 import com.example.demo.municipality.Municipality;
 import com.example.demo.municipality.MunicipalityService;
 import com.example.demo.paswword.PasswordHistory;
@@ -21,6 +23,7 @@ import com.example.demo.user.UserEmployeeService;
 import com.example.demo.workstation.WorkStation;
 
 import com.example.demo.workstation.WorkStation;
+import com.example.demo.workstation.WorkStationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
@@ -47,6 +50,16 @@ public class EmployeeController {
 	@Autowired
 	private MunicipalityService municipalityService;
 
+	@Autowired
+	private WorkStationService workStationService;
+
+	@Autowired
+	private GendersService gendersService;
+
+	@Autowired
+	private AddressService addressService;
+
+
 
 	private UserEmployeeController userEmployeeController;
 	
@@ -66,9 +79,13 @@ public class EmployeeController {
 	public ModelAndView create() {
 		List<Departament> departaments = departamentService.getAll();
 		List<Municipality> municipalities = municipalityService.getAll();
+		List<WorkStation> workStations = workStationService.getAllWork();
+		List<Genders> genders = gendersService.getAllGender();
 		ModelAndView model= new ModelAndView("/create");
 		model.addObject("departaments", departaments);
 		model.addObject("municipalities", municipalities);
+		model.addObject("workStations", workStations);
+		model.addObject("genders", genders);
 		return model;
 	}
 
@@ -89,11 +106,16 @@ public class EmployeeController {
 					   @RequestParam(name = "employee_cell_phone") String cellPhoneEmployee,
 					   @RequestParam(name = "employee_work_station") WorkStation workStationEmployee,
 					   @RequestParam(name = "employee_genders") Genders gendersEmployee,
-					   @RequestParam(name = "employee_address") Address addressEmployee,
-					   @RequestParam(name = "employee_date_birth") String dateBirthEmployee) {
+					   @RequestParam(name = "employee_date_birth") String dateBirthEmployee,
+							 @RequestParam(name = "municipality") Municipality municipality,
+							 @RequestParam(name = "coloniaDirrecion") String coloniaDirrecion,
+							 @RequestParam(name = "calleDireccion") String calleDireccion,
+							 @RequestParam(name = "numeroCasaDireccion") int numeroCasaDireccion) {
 
 		LocalDate dateBirth=LocalDate.parse(dateBirthEmployee);
 		ModelAndView model= new ModelAndView();
+		Address address = new Address(calleDireccion, coloniaDirrecion, numeroCasaDireccion, municipality);
+		addressService.saveAddress(address);
 		Employee newEmployee=new Employee();
 		newEmployee.setFirstNameEmployee(firstNameEmployee);
 		newEmployee.setLastNameEmployee(lastNameEmployee);
@@ -105,8 +127,8 @@ public class EmployeeController {
 		newEmployee.setCellPhoneEmployee(cellPhoneEmployee);
 		newEmployee.setWorkStationEmployee(workStationEmployee);
 		newEmployee.setGendersEmployee(gendersEmployee);
-		newEmployee.setAddressEmployee(addressEmployee);
 		newEmployee.setDateBirth(dateBirth);
+		newEmployee.setAddressEmployee(address);
 
 		employeeService.save(newEmployee);
 		model.setViewName("/save");
@@ -135,5 +157,6 @@ public class EmployeeController {
 		model.addObject("empleados",empleados);
 		return model;
 	}
+
 
 }
