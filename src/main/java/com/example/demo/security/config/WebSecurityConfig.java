@@ -21,7 +21,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                         "/unlocked-user/**","/changeAuthenticationForm","/changePasswordUser","/userAccount","/userStatistics","/changePassword/check-password",
 
-                        "/unlocked-user/**", "/enabled-user")
+                        "/unlocked-user/**", "/enabled-user","/forgot_password","/reset_password","/message")
 
                 .permitAll()
                 .antMatchers("/change-password", "/change-password-check").hasAuthority(UserRole.CHANGE_PASSWORD.name())
@@ -30,7 +30,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/barCode", "/home", "/users",
                         "/add-2fac", "/api/getMethods2Fac", "/create-secret-key", "api/verification-code-app",
                         "/api/verified-equals-password", "/api/send-email-token", "api/verified-code-email",
-                        "api/disabled-method/**")
+                        "api/disabled-method/**","/message")
                 .hasAuthority(UserRole.ADMIN.name())
                 .anyRequest()
                 .authenticated();*/
@@ -40,7 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/login", "/login-check" , "/register", "/register-check",
                         "/unlocked-user/**","/changeAuthenticationForm","/changePasswordUser","/userAccount",
-                        "/userStatistics","/changePassword/check-password", "/unlocked-user/**", "/enabled-user")
+                        "/userStatistics","/changePassword/check-password", "/unlocked-user/**", "/enabled-user","/forgot_password","/reset_password","/message")
                 .permitAll()
                 .antMatchers("/change-password", "/change-password-check")
                 .hasAnyAuthority(UserRole.CHANGE_PASSWORD.name())

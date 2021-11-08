@@ -74,4 +74,6 @@ public interface UserEmployeeRepository extends JpaRepository<UserEmployee, Long
     @Modifying
     @Query("DELETE FROM UserEmployee u WHERE u.employee.idEmployee = ?1")
     void deleteUserEmployeeByIdEmployee(Long id);
+
+    public UserEmployee findByResetPasswordToken(String token);
 }
